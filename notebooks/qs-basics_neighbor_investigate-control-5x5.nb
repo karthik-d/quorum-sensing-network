@@ -1,0 +1,1280 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     49540,       1272]
+NotebookOptionsPosition[     47689,       1238]
+NotebookOutlinePosition[     48032,       1253]
+CellTagsIndexPosition[     47989,       1250]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"areaSize", "=", "5"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"cellDensity", "=", "0.2"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"observationTime", "=", "10"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"timeforSignaling", "=", "1"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"cellDistribution", "[", "]"}], ":=", 
+    RowBox[{"HalfNormalDistribution", "[", "0.5", "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "\n", 
+  RowBox[{"(*", 
+   RowBox[{"Auxiliary", " ", "signalling", " ", "functions"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"neigh", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"For", "[", 
+    RowBox[{
+     RowBox[{"k", "=", "1"}], ",", 
+     RowBox[{"k", "\[LessEqual]", "15"}], ",", 
+     RowBox[{"k", "++"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"neighborhood", "=", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Max", "[", 
+          RowBox[{"0", ",", 
+           RowBox[{"k", "-", 
+            RowBox[{"Abs", "[", "x", "]"}], "-", 
+            RowBox[{"Abs", "[", "y", "]"}]}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"x", ",", 
+           RowBox[{"-", "5"}], ",", "5"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"y", ",", 
+           RowBox[{"-", "5"}], ",", "5"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"neigh", "=", 
+       RowBox[{"Append", "[", 
+        RowBox[{"neigh", ",", "neighborhood"}], "]"}]}]}]}], "]"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"aiDomain", "=", 
+    RowBox[{"{", 
+     RowBox[{
+     "1", ",", "2", ",", "3", ",", "4", ",", "5", ",", "6", ",", "7", ",", 
+      "8", ",", "9", ",", "10"}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"aiConcentration", "[", "level_", "]"}], ":=", 
+    RowBox[{"Switch", "[", 
+     RowBox[{"level", ",", "1", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "3", "]"}], "]"}], ",", "2", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "5", "]"}], "]"}], ",", "3", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "7", "]"}], "]"}], ",", "4", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "9", "]"}], "]"}], ",", "5", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "8", "]"}], "]"}], ",", "6", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "7", "]"}], "]"}], ",", "7", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "6", "]"}], "]"}], ",", "8", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "5", "]"}], "]"}], ",", "9", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "4", "]"}], "]"}], ",", "10", ",", 
+      RowBox[{"neigh", "[", 
+       RowBox[{"[", "3", "]"}], "]"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"aiCell", "[", "level_", "]"}], ":=", 
+    RowBox[{"Switch", "[", 
+     RowBox[{
+     "level", ",", "1", ",", "1", ",", "2", ",", "3", ",", "3", ",", "5", ",",
+       "4", ",", "7", ",", "5", ",", "6", ",", "6", ",", "5", ",", "7", ",", 
+      "4", ",", "8", ",", "3", ",", "9", ",", "2", ",", "10", ",", "1"}], 
+     "]"}]}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"aiDistance", "[", "level_", "]"}], ":=", 
+    RowBox[{"1", "+", 
+     RowBox[{"aiCell", "[", "level", "]"}]}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"aiUpdate", "[", 
+     RowBox[{"levels_", ",", "lccore_"}], "]"}], ":=", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"levelsNew", "=", "levels"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"cellPos1", "=", 
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"levels", "[", 
+          RowBox[{"[", 
+           RowBox[{"First", "[", "aiDomain", "]"}], "]"}], "]"}], ",", "1"}], 
+        "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"conc1", "=", 
+       RowBox[{"Extract", "[", 
+        RowBox[{"lccore", ",", "cellPos1"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"s", "=", "1"}], ",", 
+        RowBox[{"s", "\[LessEqual]", 
+         RowBox[{"Length", "[", "conc1", "]"}]}], ",", 
+        RowBox[{"s", "++"}], ",", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"conc1", "[", 
+             RowBox[{"[", "s", "]"}], "]"}], ">", 
+            RowBox[{
+             RowBox[{"First", "[", "aiDomain", "]"}], "+", "3"}]}], ",", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"levelsNew", "[", 
+              RowBox[{"[", 
+               RowBox[{
+                RowBox[{"First", "[", "aiDomain", "]"}], "+", "1"}], "]"}], 
+              "]"}], "=", 
+             RowBox[{"ReplacePart", "[", 
+              RowBox[{
+               RowBox[{"levelsNew", "[", 
+                RowBox[{"[", 
+                 RowBox[{
+                  RowBox[{"First", "[", "aiDomain", "]"}], "+", "1"}], "]"}], 
+                "]"}], ",", "1", ",", 
+               RowBox[{"cellPos1", "[", 
+                RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}], ";", 
+            RowBox[{
+             RowBox[{"levelsNew", "[", 
+              RowBox[{"[", 
+               RowBox[{"First", "[", "aiDomain", "]"}], "]"}], "]"}], "=", 
+             RowBox[{"ReplacePart", "[", 
+              RowBox[{
+               RowBox[{"levelsNew", "[", 
+                RowBox[{"[", 
+                 RowBox[{"First", "[", "aiDomain", "]"}], "]"}], "]"}], ",", 
+               "0", ",", 
+               RowBox[{"cellPos1", "[", 
+                RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}]}]}], "]"}], ";"}]}],
+        "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Clear", "[", 
+       RowBox[{"cellPos1", ",", "conc1"}], "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"cellPos1", "=", 
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"levels", "[", 
+          RowBox[{"[", 
+           RowBox[{"Last", "[", "aiDomain", "]"}], "]"}], "]"}], ",", "1"}], 
+        "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"conc1", "=", 
+       RowBox[{"Extract", "[", 
+        RowBox[{"lccore", ",", "cellPos1"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"s", "=", "1"}], ",", 
+        RowBox[{"s", "\[LessEqual]", 
+         RowBox[{"Length", "[", "conc1", "]"}]}], ",", 
+        RowBox[{"s", "++"}], ",", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"conc1", "[", 
+             RowBox[{"[", "s", "]"}], "]"}], "<", 
+            RowBox[{
+             RowBox[{"Last", "[", "aiDomain", "]"}], "+", "3"}]}], ",", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"levelsNew", "[", 
+              RowBox[{"[", 
+               RowBox[{
+                RowBox[{"Last", "[", "aiDomain", "]"}], "-", "1"}], "]"}], 
+              "]"}], "=", 
+             RowBox[{"ReplacePart", "[", 
+              RowBox[{
+               RowBox[{"levelsNew", "[", 
+                RowBox[{"[", 
+                 RowBox[{
+                  RowBox[{"Last", "[", "aiDomain", "]"}], "-", "1"}], "]"}], 
+                "]"}], ",", "1", ",", 
+               RowBox[{"cellPos1", "[", 
+                RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"levelsNew", "[", 
+              RowBox[{"[", 
+               RowBox[{"Last", "[", "aiDomain", "]"}], "]"}], "]"}], "=", 
+             RowBox[{"ReplacePart", "[", 
+              RowBox[{
+               RowBox[{"levelsNew", "[", 
+                RowBox[{"[", 
+                 RowBox[{"Last", "[", "aiDomain", "]"}], "]"}], "]"}], ",", 
+               "0", ",", 
+               RowBox[{"cellPos1", "[", 
+                RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}]}]}], "]"}], ";"}]}],
+        "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Clear", "[", 
+       RowBox[{"cellPos1", ",", "conc1"}], "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"r", "=", 
+         RowBox[{
+          RowBox[{"First", "[", "aiDomain", "]"}], "+", "1"}]}], ",", 
+        RowBox[{"r", "<", 
+         RowBox[{"Last", "[", "aiDomain", "]"}]}], ",", 
+        RowBox[{"r", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"cellPos1", "=", 
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"levels", "[", 
+             RowBox[{"[", "r", "]"}], "]"}], ",", "1"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"conc1", "=", 
+          RowBox[{"Extract", "[", 
+           RowBox[{"lccore", ",", "cellPos1"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"s", "=", "1"}], ",", 
+           RowBox[{"s", "\[LessEqual]", 
+            RowBox[{"Length", "[", "conc1", "]"}]}], ",", 
+           RowBox[{"s", "++"}], ",", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"conc1", "[", 
+                RowBox[{"[", "s", "]"}], "]"}], "<", 
+               RowBox[{"r", "+", "3"}]}], ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"levelsNew", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"r", "-", "1"}], "]"}], "]"}], "=", 
+                RowBox[{"ReplacePart", "[", 
+                 RowBox[{
+                  RowBox[{"levelsNew", "[", 
+                   RowBox[{"[", 
+                    RowBox[{"r", "-", "1"}], "]"}], "]"}], ",", "1", ",", 
+                  RowBox[{"cellPos1", "[", 
+                   RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}], ";", 
+               RowBox[{
+                RowBox[{"levelsNew", "[", 
+                 RowBox[{"[", "r", "]"}], "]"}], "=", 
+                RowBox[{"ReplacePart", "[", 
+                 RowBox[{
+                  RowBox[{"levelsNew", "[", 
+                   RowBox[{"[", "r", "]"}], "]"}], ",", "0", ",", 
+                  RowBox[{"cellPos1", "[", 
+                   RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}]}], ",", 
+              RowBox[{
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"conc1", "[", 
+                   RowBox[{"[", "s", "]"}], "]"}], ">", 
+                  RowBox[{"r", "+", "3"}]}], ",", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"levelsNew", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"r", "+", "1"}], "]"}], "]"}], "=", 
+                   RowBox[{"ReplacePart", "[", 
+                    RowBox[{
+                    RowBox[{"levelsNew", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"r", "+", "1"}], "]"}], "]"}], ",", "1", ",", 
+                    RowBox[{"cellPos1", "[", 
+                    RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}], ";", 
+                  RowBox[{
+                   RowBox[{"levelsNew", "[", 
+                    RowBox[{"[", "r", "]"}], "]"}], "=", 
+                   RowBox[{"ReplacePart", "[", 
+                    RowBox[{
+                    RowBox[{"levelsNew", "[", 
+                    RowBox[{"[", "r", "]"}], "]"}], ",", "0", ",", 
+                    RowBox[{"cellPos1", "[", 
+                    RowBox[{"[", "s", "]"}], "]"}]}], "]"}]}]}]}], "]"}], 
+               ";"}]}], "]"}], ";"}]}], "]"}], ";"}]}], "\[IndentingNewLine]",
+        "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Clear", "[", 
+       RowBox[{"cellPos1", ",", "conc1"}], "]"}], ";", "\[IndentingNewLine]", 
+      "levelsNew"}], "\[IndentingNewLine]", ")"}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Initializing", " ", "all", " ", "necessary", " ", "data", " ", 
+    "structures"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"levels", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Last", "[", "aiDomain", "]"}], "-", 
+       RowBox[{"First", "[", "aiDomain", "]"}], "+", "1"}], "}"}], ",", 
+     RowBox[{"{", "areaSize", "}"}], ",", 
+     RowBox[{"{", "areaSize", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"levelsDynamic", "=", "levels"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"levelsDynamicNew", "=", "levels"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"levelsStatic", "=", "levels"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"graph", "=", 
+   RowBox[{"Range", "[", "observationTime", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"productionList", "=", 
+   RowBox[{"Range", "[", "observationTime", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"cells", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Random", "[", "]"}], "<", "cellDensity"}], ",", "1", ",", 
+       "0"}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "areaSize"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"j", ",", "areaSize"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"cells", "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0", ",", "1", ",", "0", ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0", ",", "0", ",", "0", ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "1", ",", "1", ",", "0", ",", "1"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0", ",", "0", ",", "1", ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"0", ",", "1", ",", "0", ",", "0", ",", "0"}], "}"}]}], 
+     "}"}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"cell", " ", "position", " ", "specified"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"levels", "=", 
+   RowBox[{"ReplacePart", "[", 
+    RowBox[{"levels", ",", "cells", ",", "1"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"lc", "=", 
+   RowBox[{"ListCorrelate", "[", 
+    RowBox[{
+     RowBox[{"aiConcentration", "[", "1", "]"}], ",", "cells", ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", "1"}], "}"}], ",", "0"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"lccore", "=", 
+   RowBox[{"lc", "[", 
+    RowBox[{"[", 
+     RowBox[{
+      RowBox[{"6", ";;", 
+       RowBox[{"areaSize", "+", "5"}]}], ",", 
+      RowBox[{"6", ";;", 
+       RowBox[{"areaSize", "+", "5"}]}]}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"levels", "=", 
+    RowBox[{"aiUpdate", "[", 
+     RowBox[{"levels", ",", "lccore"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nCells", "=", 
+   RowBox[{"Count", "[", 
+    RowBox[{"cells", ",", "1", ",", "2"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"cellPos", "=", 
+   RowBox[{"Position", "[", 
+    RowBox[{"cells", ",", "1"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"EdgeMatrix", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{"0", ",", 
+      RowBox[{"{", "nCells", "}"}], ",", 
+      RowBox[{"{", "nCells", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Main", " ", "QS", " ", "cycle"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"For", "[", 
+   RowBox[{
+    RowBox[{"clock", "=", "1"}], ",", 
+    RowBox[{"clock", "\[LessEqual]", "observationTime"}], ",", 
+    RowBox[{"clock", "++"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"(*", 
+     RowBox[{
+     "update", " ", "level", " ", "and", " ", "concentration", " ", "table"}],
+      "*)"}], "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Mod", "[", 
+         RowBox[{"clock", ",", "timeforSignaling"}], "]"}], "\[Equal]", "0"}],
+        ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"lc", "=", 
+         RowBox[{"Plus", "@@", 
+          RowBox[{
+           RowBox[{"Function", "[", 
+            RowBox[{
+             RowBox[{"{", "i", "}"}], ",", 
+             RowBox[{"ListCorrelate", "[", 
+              RowBox[{
+               RowBox[{"aiConcentration", "[", "i", "]"}], ",", 
+               RowBox[{"levels", "[", 
+                RowBox[{"[", "i", "]"}], "]"}], ",", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"-", "1"}], ",", "1"}], "}"}], ",", "0"}], "]"}]}], 
+            "]"}], "/@", "aiDomain"}]}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"lccore", "=", 
+         RowBox[{"lc", "[", 
+          RowBox[{"[", 
+           RowBox[{
+            RowBox[{"6", ";;", 
+             RowBox[{"areaSize", "+", "5"}]}], ",", 
+            RowBox[{"6", ";;", 
+             RowBox[{"areaSize", "+", "5"}]}]}], "]"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"signalingCells", "=", "cells"}], ";", " ", 
+        "\[IndentingNewLine]", 
+        RowBox[{"For", "[", 
+         RowBox[{
+          RowBox[{"k", "=", "1"}], ",", 
+          RowBox[{"k", "\[LessEqual]", "nCells"}], ",", 
+          RowBox[{"k", "++"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+            RowBox[{
+             RowBox[{
+             "To", " ", "avoid", " ", "artificial", " ", "cyclic", " ", 
+              "activation"}], "-", 
+             RowBox[{"inhibition", " ", "dependencies"}]}], ",", " ", 
+            RowBox[{
+            "only", " ", "a", " ", "small", " ", "fraction", " ", "of", " ", 
+             "cells", " ", "is", " ", "signalling", " ", "at", " ", 
+             "once"}]}], "*)"}], "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Random", "[", "]"}], "<", ".8"}], ",", 
+             RowBox[{"signalingCells", "=", 
+              RowBox[{"ReplacePart", "[", 
+               RowBox[{"signalingCells", ",", "0", ",", 
+                RowBox[{"cellPos", "[", 
+                 RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}]}], "]"}], ";"}]}], 
+         "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"For", "[", 
+         RowBox[{
+          RowBox[{"k", "=", 
+           RowBox[{"First", "[", "aiDomain", "]"}]}], ",", 
+          RowBox[{"k", "\[LessEqual]", 
+           RowBox[{"Last", "[", "aiDomain", "]"}]}], ",", 
+          RowBox[{"k", "++"}], ",", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"levelsStatic", "[", 
+             RowBox[{"[", "k", "]"}], "]"}], "=", 
+            RowBox[{
+             RowBox[{"levels", "[", 
+              RowBox[{"[", "k", "]"}], "]"}], "-", "signalingCells"}]}], ";", 
+           "\[IndentingNewLine]", 
+           RowBox[{"mins", "=", 
+            RowBox[{"Position", "[", 
+             RowBox[{
+              RowBox[{"levelsStatic", "[", 
+               RowBox[{"[", "k", "]"}], "]"}], ",", 
+              RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+           RowBox[{"For", "[", 
+            RowBox[{
+             RowBox[{"v", "=", "1"}], ",", 
+             RowBox[{"v", "\[LessEqual]", 
+              RowBox[{"Length", "[", "mins", "]"}]}], ",", 
+             RowBox[{"v", "++"}], ",", 
+             RowBox[{
+              RowBox[{"levelsStatic", "[", 
+               RowBox[{"[", "k", "]"}], "]"}], "=", 
+              RowBox[{"ReplacePart", "[", 
+               RowBox[{
+                RowBox[{"levelsStatic", "[", 
+                 RowBox[{"[", "k", "]"}], "]"}], ",", "0", ",", 
+                RowBox[{"mins", "[", 
+                 RowBox[{"[", "v", "]"}], "]"}]}], "]"}]}]}], "]"}], ";"}]}], 
+         "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"levelsDynamic", "=", 
+         RowBox[{"levels", "-", "levelsStatic"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"levelsDynamicNew", "=", 
+         RowBox[{"aiUpdate", "[", 
+          RowBox[{"levelsDynamic", ",", "lccore"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"levels", "=", 
+         RowBox[{"levelsDynamicNew", "+", "levelsStatic"}]}], ";"}]}], 
+      "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"graph", "[", 
+       RowBox[{"[", "clock", "]"}], "]"}], "=", 
+      RowBox[{"Plus", "@@", 
+       RowBox[{
+        RowBox[{"Function", "[", 
+         RowBox[{
+          RowBox[{"{", "i", "}"}], ",", 
+          RowBox[{
+           RowBox[{"aiDistance", "[", "i", "]"}], "*", 
+           RowBox[{"levels", "[", 
+            RowBox[{"[", "i", "]"}], "]"}]}]}], "]"}], "/@", "aiDomain"}]}]}],
+      ";", "\[IndentingNewLine]", 
+     RowBox[{"Print", "[", 
+      RowBox[{"ListDensityPlot", "[", 
+       RowBox[{
+        RowBox[{"graph", "[", 
+         RowBox[{"[", "clock", "]"}], "]"}], ",", 
+        RowBox[{"PlotLabel", "\[Rule]", "\"\<QS Network\>\""}]}], "]"}], 
+      "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"productionList", "[", 
+       RowBox[{"[", "clock", "]"}], "]"}], "=", 
+      RowBox[{"N", "[", 
+       RowBox[{
+        RowBox[{"Total", "[", 
+         RowBox[{
+          RowBox[{"graph", "[", 
+           RowBox[{"[", "clock", "]"}], "]"}], ",", "2"}], "]"}], "/", 
+        "nCells"}], "]"}]}]}]}], 
+   RowBox[{"(*", 
+    RowBox[{
+    "average", " ", "ai", " ", "production", " ", "per", " ", "cell"}], 
+    "*)"}], "\[IndentingNewLine]", "]"}], ";", " ", 
+  RowBox[{"(*", 
+   RowBox[{"end", " ", "main", " ", "QS", " ", "cycle"}], "*)"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Pathway", " ", "Analysis"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"EdgeMatrix", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", "nCells", "}"}], ",", 
+     RowBox[{"{", "nCells", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"highlyConnectedCells", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", "nCells", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nHighlyConnected", "=", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"For", "[", 
+   RowBox[{
+    RowBox[{"k", "=", "1"}], ",", 
+    RowBox[{"k", "\[LessEqual]", "nCells"}], ",", 
+    RowBox[{"k", "++"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"maxDist", "=", 
+      RowBox[{
+       RowBox[{"Last", "[", "graph", "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{
+         RowBox[{"cellPos", "[", 
+          RowBox[{"[", 
+           RowBox[{"k", ",", "1"}], "]"}], "]"}], ",", 
+         RowBox[{"cellPos", "[", 
+          RowBox[{"[", 
+           RowBox[{"k", ",", "2"}], "]"}], "]"}]}], "]"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"For", "[", 
+      RowBox[{
+       RowBox[{"v", "=", "1"}], ",", 
+       RowBox[{"v", "\[LessEqual]", "nCells"}], ",", 
+       RowBox[{"v", "++"}], ",", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"k", "\[Equal]", "v"}], ",", 
+          RowBox[{"Continue", "[", "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+        RowBox[{"dist", "=", 
+         RowBox[{
+          RowBox[{"Abs", "[", 
+           RowBox[{
+            RowBox[{"cellPos", "[", 
+             RowBox[{"[", 
+              RowBox[{"k", ",", "1"}], "]"}], "]"}], "-", 
+            RowBox[{"cellPos", "[", 
+             RowBox[{"[", 
+              RowBox[{"v", ",", "1"}], "]"}], "]"}]}], "]"}], "+", 
+          RowBox[{"Abs", "[", 
+           RowBox[{
+            RowBox[{"cellPos", "[", 
+             RowBox[{"[", 
+              RowBox[{"k", ",", "2"}], "]"}], "]"}], "-", 
+            RowBox[{"cellPos", "[", 
+             RowBox[{"[", 
+              RowBox[{"v", ",", "2"}], "]"}], "]"}]}], "]"}]}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{"dist", "\[LessEqual]", "maxDist"}], ",", 
+          RowBox[{
+           RowBox[{"EdgeMatrix", "[", 
+            RowBox[{"[", 
+             RowBox[{"k", ",", "v"}], "]"}], "]"}], "++"}]}], "]"}], ";"}]}], 
+      "]"}], ";"}]}], "\[IndentingNewLine]", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"totalEdgeMatrix", "=", 
+   RowBox[{"Total", "[", 
+    RowBox[{"EdgeMatrix", ",", 
+     RowBox[{"{", "2", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"For", "[", 
+    RowBox[{
+     RowBox[{"k", "=", "1"}], ",", 
+     RowBox[{"k", "\[LessEqual]", "nCells"}], ",", 
+     RowBox[{"k", "++"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"totalEdgeMatrix", "[", 
+          RowBox[{"[", "k", "]"}], "]"}], ">", "5"}], ",", 
+        RowBox[{
+         RowBox[{"nHighlyConnected", "++"}], ";", 
+         RowBox[{
+          RowBox[{"highlyConnectedCells", "[", 
+           RowBox[{"[", "k", "]"}], "]"}], "=", "1"}]}]}], "]"}], ";"}]}], 
+    "\[IndentingNewLine]", "]"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"SetDirectory", "[", 
+  "\"\<D:\\\\Neu_cell-cell\\\\Cell-cell communication {QS based}\\\\QS basics \
+- testing neighbors 02-22-20\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Dimensions", "[", "graph", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"graph1", "=", 
+   RowBox[{"ArrayReshape", "[", 
+    RowBox[{"graph", ",", 
+     RowBox[{"{", 
+      RowBox[{"10", ",", "25"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+  "\"\<Signal-lccore-control-5x5.csv\>\"", ",", "graph1", ",", 
+   "\"\<CSV\>\""}], "]"}]}], "Input",
+ CellChangeTimes->{{3.7918548770675225`*^9, 3.791854889722251*^9}, {
+  3.791854930628207*^9, 3.791854935262159*^9}, {3.791855034105874*^9, 
+  3.7918550419426064`*^9}, {3.791855182371048*^9, 3.7918552215280666`*^9}, {
+  3.7918555927962785`*^9, 3.791855629106455*^9}, {3.7918556714220805`*^9, 
+  3.7918556755523977`*^9}},ExpressionUUID->"11fb938a-ee5e-4ad3-beba-\
+be70a5c101c2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LvGz
+Z0Dgjf31xQW2XNcf2/cf+qoR038Jp/qhIs4ABh/s08DgHZT/Aqc4qebQ2p2D
+LR4B1VcuQQ==
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855631634979*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"2936a703-2166-4156-8cb1-bfe03865c7ea"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LnEl
+MHhnr/Pz6KR4nef2l9ischdcvoVT/VARx+UvBjD4YJ8GBu+g/BcDFj7UMp/W
+7gQAG5YycQ==
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.7918556317242165`*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"57fbee52-1388-4aca-89b2-962fdc320131"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LvGz
+Z0Dgjf31xQW2XNcf2/cf+qoR038Jp/qhIo7LXwxg8ME+DQzeQfkvBix8IOa/
+g5r/wh5k+qGv9wbMHFziAD0bSRY=
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855631788792*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"2b2e6569-a864-4bc9-bb35-4baf9ff143f1"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LvGz
+Z0Dgnf31xQW2XNdf2H/ViOk/9PUeTvVDRRzirzdQfz22B3oK6LNL9gxg8ME+
+DQzeQfkvSDaHuu6kPPxpHY8AN1lJjw==
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855631856725*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"f3d9e904-094b-4e3a-9523-2fd655fafc68"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LnEG
+MPhgnwYG76D8FzjVDxXxs2dA4I399cUFtlzXH9v3H/qqEdN/iWT/Qsx5BzXn
+hT3IlENf71HZnZSbT2t3AgBe/EDu
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855631954197*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"ae8e961c-e91b-4943-a8ce-32e52b9a5840"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LnEG
+MPhgnwYG76D8FzjVDxXxs2dA4I399cUFtlzXH9v3H/qqEdN/CSr+HiIe/toe
+pLhqyiMC5ryDmvPCHmTKoa/3qOxOys2ntTsBr8VIyQ==
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855632110038*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"7dc11676-b6af-4ae7-b3d0-dd5fcaf82c49"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LnEG
+MPhgnwYG76D8FzjVDxXxj6LxQPTWflPUPYmDLk/t7XY33AiRukayf1usVjRb
+rXhvr2A2tW3O71f2//zCTksrP6KaO6llPq3dCQAOTDU6
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.7918556322130585`*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"be5f9a4b-ee0f-402e-bcde-bdf6d0d3776b"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LnEG
+MPhgnwYG76D8FzjVDxXxj6LxQPTWflPUPYmDLk/t7XY33AiRukayf1usVjRb
+rXhvr2A2tW3O71f2//zCTksrP6KaO6llPq3dCQAOTDU6
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855632325478*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"2c8b93e9-b0c9-45b5-9a8a-9139a5d45515"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LvGz
+Z0Dgvf31xQW2XOGv7UGCVVMe4VQ/VMQh/noH8df1F/ZfNWL6D329R7J/GcDg
+g30aGLyD8l/Q3J0DZQ4ucQDl10gD
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.7918556324755573`*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"9d3b9673-da17-4cb3-a3a5-a5dc608946bb"],
+
+Cell[BoxData[
+ GraphicsBox[GraphicsComplexBox[CompressedData["
+1:eJxTTMoPSmViYGCQBGIQDQEf7FFpBgdUPgcaXwCNL4LGRzcHneZA4wug8UXQ
++OjuQDcHnRZA44ug8dH9ge4OdHPQaRE0Pno4oPsD3R3o5iBoACReGVU=
+   "], {
+    {GrayLevel[0.8], EdgeForm[None], 
+     GraphicsGroupBox[
+      PolygonBox[{{7, 1, 2}, {9, 3, 4}, {14, 8, 9}, {8, 2, 3}, {13, 7, 8}, {
+       10, 4, 5}, {12, 6, 7}, {15, 9, 10}, {23, 17, 18}, {18, 12, 13}, {17, 
+       11, 12}, {19, 13, 14}, {22, 16, 17}, {20, 14, 15}, {24, 18, 19}, {25, 
+       19, 20}, {1, 7, 6}, {3, 9, 8}, {4, 10, 9}, {6, 12, 11}, {7, 13, 12}, {
+       8, 14, 13}, {2, 8, 7}, {9, 15, 14}, {12, 18, 17}, {14, 20, 19}, {13, 
+       19, 18}, {16, 22, 21}, {11, 17, 16}, {17, 23, 22}, {18, 24, 23}, {19, 
+       25, 24}}]]}, {}, {}, {}, {}},
+   VertexColors->CompressedData["
+1:eJxTTMoPSmViYGCQBGJmIO7Oef575cdD9vKtrwN3yF2193hYJbLO/aE9LvGz
+Z0Dgvf31xQW2XOGv7UGCVVMe4VQ/VMQh/noH8df1F/ZfNWL6D329R7J/GcDg
+g30aGLyD8l/Q3J0DZQ4ucQDl10gD
+    "]],
+  AspectRatio->1,
+  AxesOrigin->{Automatic, Automatic},
+  DisplayFunction->Identity,
+  Frame->True,
+  FrameLabel->{None, None},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
+    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+  PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
+  PlotRange->{{1., 5.}, {1., 5.}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.02]}},
+  Ticks->{Automatic, Automatic}]], "Print",
+ CellChangeTimes->{
+  3.791854943398142*^9, {3.7918552102348614`*^9, 3.7918552249281235`*^9}, {
+   3.791855607929079*^9, 3.791855632549644*^9}},
+ CellLabel->
+  "During evaluation of \
+In[1771]:=",ExpressionUUID->"d441d8da-6eb9-49f0-9b3e-0c571ad5bc06"]
+}, Open  ]],
+
+Cell[BoxData["\<\"D:\\\\Neu_cell-cell\\\\Cell-cell communication {QS based}\\\
+\\QS basics - testing neighbors 02-22-20\"\>"], "Output",
+ CellChangeTimes->{{3.7918552115112677`*^9, 3.7918552257667074`*^9}, {
+  3.7918556086965213`*^9, 3.791855632556098*^9}},
+ CellLabel->
+  "Out[1803]=",ExpressionUUID->"c60ee636-772d-481e-9c20-fe7afcdf6f74"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"10", ",", "5", ",", "5"}], "}"}]], "Output",
+ CellChangeTimes->{{3.7918552115112677`*^9, 3.7918552257667074`*^9}, {
+  3.7918556086965213`*^9, 3.7918556325601273`*^9}},
+ CellLabel->
+  "Out[1804]=",ExpressionUUID->"87a2f63f-3493-4f02-9866-50048219688e"],
+
+Cell[BoxData["\<\"Signal-lccore-control-5x5.csv\"\>"], "Output",
+ CellChangeTimes->{{3.7918552115112677`*^9, 3.7918552257667074`*^9}, {
+  3.7918556086965213`*^9, 3.7918556325634804`*^9}},
+ CellLabel->
+  "Out[1806]=",ExpressionUUID->"39bd4326-367f-4168-896b-d38b29c194dc"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["cells"], "Input",
+ CellChangeTimes->{{3.791855012264923*^9, 3.79185501357686*^9}},
+ CellLabel->
+  "In[1807]:=",ExpressionUUID->"12cb24ee-3556-4f11-a3dd-2dc7b6967203"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "1", ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "0", ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "1", ",", "0", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "0", ",", "1", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "0", ",", "0", ",", "0"}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{
+  3.791855014050894*^9, {3.791855211653866*^9, 3.791855225981629*^9}, {
+   3.791855608847477*^9, 3.791855632774314*^9}},
+ CellLabel->
+  "Out[1807]=",ExpressionUUID->"d2291b7a-14fb-4623-a16b-477a06bb1b08"]
+}, Open  ]]
+},
+WindowSize->{1920, 997},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
+FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (March 6, 2018)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 26285, 691, 2100, "Input",ExpressionUUID->"11fb938a-ee5e-4ad3-beba-be70a5c101c2"],
+Cell[CellGroupData[{
+Cell[26890, 717, 1870, 45, 390, "Print",ExpressionUUID->"2936a703-2166-4156-8cb1-bfe03865c7ea"],
+Cell[28763, 764, 1872, 45, 390, "Print",ExpressionUUID->"57fbee52-1388-4aca-89b2-962fdc320131"],
+Cell[30638, 811, 1886, 45, 390, "Print",ExpressionUUID->"2b2e6569-a864-4bc9-bb35-4baf9ff143f1"],
+Cell[32527, 858, 1890, 45, 390, "Print",ExpressionUUID->"f3d9e904-094b-4e3a-9523-2fd655fafc68"],
+Cell[34420, 905, 1886, 45, 390, "Print",ExpressionUUID->"ae8e961c-e91b-4943-a8ce-32e52b9a5840"],
+Cell[36309, 952, 1902, 45, 390, "Print",ExpressionUUID->"7dc11676-b6af-4ae7-b3d0-dd5fcaf82c49"],
+Cell[38214, 999, 1904, 45, 390, "Print",ExpressionUUID->"be5f9a4b-ee0f-402e-bcde-bdf6d0d3776b"],
+Cell[40121, 1046, 1902, 45, 390, "Print",ExpressionUUID->"2c8b93e9-b0c9-45b5-9a8a-9139a5d45515"],
+Cell[42026, 1093, 1888, 45, 390, "Print",ExpressionUUID->"9d3b9673-da17-4cb3-a3a5-a5dc608946bb"],
+Cell[43917, 1140, 1886, 45, 390, "Print",ExpressionUUID->"d441d8da-6eb9-49f0-9b3e-0c571ad5bc06"]
+}, Open  ]],
+Cell[45818, 1188, 341, 5, 32, "Output",ExpressionUUID->"c60ee636-772d-481e-9c20-fe7afcdf6f74"],
+Cell[46162, 1195, 291, 6, 32, "Output",ExpressionUUID->"87a2f63f-3493-4f02-9866-50048219688e"],
+Cell[46456, 1203, 271, 4, 32, "Output",ExpressionUUID->"39bd4326-367f-4168-896b-d38b29c194dc"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[46764, 1212, 180, 3, 28, "Input",ExpressionUUID->"12cb24ee-3556-4f11-a3dd-2dc7b6967203"],
+Cell[46947, 1217, 726, 18, 32, "Output",ExpressionUUID->"d2291b7a-14fb-4623-a16b-477a06bb1b08"]
+}, Open  ]]
+}
+]
+*)
+
