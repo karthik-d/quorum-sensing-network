@@ -10,36 +10,40 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    125357,       3080]
-NotebookOptionsPosition[    120553,       3016]
-NotebookOutlinePosition[    120896,       3031]
-CellTagsIndexPosition[    120853,       3028]
+NotebookDataLength[    158363,       3771]
+NotebookOptionsPosition[    153266,       3704]
+NotebookOutlinePosition[    153662,       3720]
+CellTagsIndexPosition[    153619,       3717]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-
-Cell[CellGroupData[{
 Cell[BoxData[{
  RowBox[{
   RowBox[{"areaSize", "=", "5"}], ";"}], "\n", 
  RowBox[{
   RowBox[{"cellDensity", "=", "0.2"}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"observationTime", "=", "40"}], ";"}], "\n", 
+  RowBox[{"observationTime", "=", "10"}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"timeforSignaling", "=", "1"}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+   RowBox[{"timeforSignaling", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{":=", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"denotes", " ", "'"}], "set", " ", 
+      RowBox[{"delay", "'"}]}], " ", "-", "KD"}]}], 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
     RowBox[{"cellDistribution", "[", "]"}], ":=", 
     RowBox[{"HalfNormalDistribution", "[", "0.5", "]"}]}], ";"}], 
-  "\[IndentingNewLine]", "\n", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{"(*", 
-   RowBox[{"Auxiliary", " ", "signalling", " ", "functions"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
+   RowBox[{"Auxiliary", " ", "signalling", " ", "functions"}], "*)"}]}], "\n", 
  RowBox[{
   RowBox[{"neigh", "=", 
    RowBox[{"{", "}"}]}], ";"}], "\n", 
@@ -69,15 +73,39 @@ Cell[BoxData[{
       RowBox[{"neigh", "=", 
        RowBox[{"Append", "[", 
         RowBox[{"neigh", ",", "neighborhood"}], "]"}]}]}]}], "]"}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "neighborhood", " ", "is", " ", "a", " ", "nested", " ", "list", " ", 
+     "where", " ", "elements", " ", "are", " ", "the", " ", "Max", " ", 
+     "function", " ", "computed", " ", "for", " ", "all", " ", "Xs", " ", 
+     "and", " ", "Ys"}], " ", "-", "KD"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"Append", " ", "returns", " ", "mutated", " ", "neigh"}], ";", 
+    " ", 
+    RowBox[{
+     RowBox[{
+     "so", " ", "neigh", " ", "is", " ", "a", " ", "list", " ", "with", " ", 
+      "15", " ", "2", "D", " ", "lists", " ", 
+      RowBox[{"(", 
+       RowBox[{"one", " ", "per", " ", "k"}], ")"}]}], " ", "-", "KD"}]}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"physical", " ", "meaning", " ", "of", " ", "k"}], ",", " ", "x", 
+    ",", " ", 
+    RowBox[{"and", " ", 
+     RowBox[{"y", "?", " ", 
+      RowBox[{"-", "KD"}]}]}]}], "*)"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"aiDomain", "=", 
-    RowBox[{"{", 
-     RowBox[{
-     "1", ",", "2", ",", "3", ",", "4", ",", "5", ",", "6", ",", "7", ",", 
-      "8", ",", "9", ",", "10"}], "}"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+  RowBox[{"aiDomain", "=", 
+   RowBox[{"{", 
+    RowBox[{
+    "1", ",", "2", ",", "3", ",", "4", ",", "5", ",", "6", ",", "7", ",", "8",
+      ",", "9", ",", "10"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -103,16 +131,14 @@ Cell[BoxData[{
       RowBox[{"neigh", "[", 
        RowBox[{"[", "4", "]"}], "]"}], ",", "10", ",", 
       RowBox[{"neigh", "[", 
-       RowBox[{"[", "3", "]"}], "]"}]}], "]"}]}], ";"}], 
-  RowBox[{"(*", 
-   RowBox[{
-    RowBox[{"1", "--"}], "Check", " ", "for", " ", "neighbor", " ", "hood", 
-    " ", "signal", " ", "effect", " ", 
+       RowBox[{"[", "3", "]"}], "]"}]}], "]"}]}], ";", 
+   RowBox[{"(*", 
     RowBox[{
-     RowBox[{"02", "/", "27"}], "/", "20"}]}], "*)"}], 
-  "\n"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
+     RowBox[{"1", "--"}], "Check", " ", "for", " ", "neighbor", " ", "hood", 
+     " ", "signal", " ", "effect", " ", 
+     RowBox[{
+      RowBox[{"02", "/", "27"}], "/", "20"}]}], "*)"}], "\n", 
+   "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"aiCell", "[", "level_", "]"}], ":=", 
     RowBox[{"Switch", "[", 
@@ -120,7 +146,7 @@ Cell[BoxData[{
      "level", ",", "1", ",", "1", ",", "2", ",", "3", ",", "3", ",", "5", ",",
        "4", ",", "7", ",", "5", ",", "6", ",", "6", ",", "5", ",", "7", ",", 
       "4", ",", "8", ",", "3", ",", "9", ",", "2", ",", "10", ",", "1"}], 
-     "]"}]}], ";"}], "\n"}], "\[IndentingNewLine]", 
+     "]"}]}], ";"}], "\[IndentingNewLine]"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -772,9 +798,19 @@ Cell[BoxData[{
    3.7936439319383607`*^9, 3.7936439393545265`*^9}, {3.7936444393104696`*^9, 
    3.793644447776794*^9}, {3.7936447211926365`*^9, 3.793644729700918*^9}, {
    3.793645010978035*^9, 3.793645019006563*^9}, {3.7936453405647616`*^9, 
-   3.7936453497581406`*^9}},
- CellLabel->
-  "In[212]:=",ExpressionUUID->"a7964170-7e08-4cd7-8d07-a83529f1f43a"],
+   3.7936453497581406`*^9}, {3.9211744029365273`*^9, 
+   3.9211744115404167`*^9}, {3.921174743272387*^9, 3.9211747613324347`*^9}, {
+   3.921175815052176*^9, 3.92117582647991*^9}, {3.921175893031934*^9, 
+   3.921175898683531*^9}, {3.921175932250189*^9, 3.921175981888578*^9}, {
+   3.9211760381680927`*^9, 3.9211760639183292`*^9}, {3.921176264709949*^9, 
+   3.9211762943536243`*^9}, {3.924917238521277*^9, 3.924917262260593*^9}, {
+   3.924917302249655*^9, 
+   3.924917306879953*^9}},ExpressionUUID->"a7964170-7e08-4cd7-8d07-\
+a83529f1f43a"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[""], "Input",ExpressionUUID->"bba35695-1116-4e2a-9c98-701074ca3881"],
 
 Cell[CellGroupData[{
 
@@ -807,7 +843,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -817,12 +861,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352440999*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205341318*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"7571564c-856d-4a76-b918-3a8956ba6b51"],
+In[106]:=",ExpressionUUID->"3cdac6f9-44d3-4d01-b298-8467e24dbe98"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -853,7 +899,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -863,12 +917,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453524848614`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205421206*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"55dd29d5-c622-4555-8628-3c05fcec9f91"],
+In[106]:=",ExpressionUUID->"94cfa485-a46e-4f6a-93c8-b825f23d68c9"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -899,7 +955,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -909,12 +973,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453525287313`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172054755783`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"c70c2d28-f88c-4b97-8c93-b58f4a4406c4"],
+In[106]:=",ExpressionUUID->"d0478c30-af59-4cea-ab34-af3ffb599f59"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -945,7 +1011,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -955,12 +1029,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453525566597`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205520015*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"f3f17b95-995f-464c-9b99-7007d6de5895"],
+In[106]:=",ExpressionUUID->"2309a398-587b-4280-8d84-4accaa46bd02"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -991,7 +1067,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1001,12 +1085,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453525866113`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172055661707`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"e4a3f5b3-17fe-4d8b-af25-d8f0773da2ce"],
+In[106]:=",ExpressionUUID->"35fff639-702b-41a8-bccc-2e621f1b4aa7"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1037,7 +1123,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1047,12 +1141,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453526205196`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172056091547`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"2dab43fd-4fc3-4f73-9eb3-5f23318b1562"],
+In[106]:=",ExpressionUUID->"a1808eef-5bd7-44fa-ab42-652750f2389d"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1083,7 +1179,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1093,12 +1197,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453526504393`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205652176*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"1904d494-769e-410c-be2c-9f90113f6fef"],
+In[106]:=",ExpressionUUID->"bff3b120-c8ad-484a-8f7b-2bbff4fbdd87"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1129,7 +1235,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1139,12 +1253,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453526774*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205694374*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"1c1bfa59-57fe-4c58-a33f-3bef3d309766"],
+In[106]:=",ExpressionUUID->"d388da1d-02ec-448c-85bc-90799958e1b2"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1175,7 +1291,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1185,12 +1309,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352706291*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205731523*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"953839ad-c246-454d-84fc-41bfd2092099"],
+In[106]:=",ExpressionUUID->"6148c78d-b382-4d36-a59c-fcaca8f7ef1a"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1221,7 +1347,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1231,12 +1365,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352736208*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172057671347`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"defffcf6-cd75-4a3d-9d16-c9c9df05e050"],
+In[106]:=",ExpressionUUID->"5bf22795-14fa-4c4b-86e6-79ef1227bf14"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1267,7 +1403,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1277,12 +1421,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352767127*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205804878*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"bc081bb8-a554-40a7-91ef-139bcb02bf7d"],
+In[106]:=",ExpressionUUID->"ebdc45a8-4afa-4bf7-91e5-cb54f48a3771"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1313,7 +1459,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1323,12 +1477,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453527940207`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205843677*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"fae5b365-3d94-4c00-9530-58487d68319d"],
+In[106]:=",ExpressionUUID->"36191f2d-7f88-43e0-9688-bc12f3cec6af"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1359,7 +1515,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1369,12 +1533,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453528219953`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205880891*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"ac0ce71f-dc7e-4d8c-8803-ab4e6d671d3b"],
+In[106]:=",ExpressionUUID->"d7c3986b-194f-4a04-9996-92ecc0fa4daa"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1405,7 +1571,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1415,12 +1589,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352852909*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205916543*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"41b82930-bce9-40b4-8929-e39614e6e46e"],
+In[106]:=",ExpressionUUID->"e7778786-c1ab-4e4f-813d-8183103abdd9"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1451,7 +1627,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1461,12 +1645,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453528838263`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917205954068*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"68b1ecbc-4bb2-46d3-8fb2-af1eee32f0e6"],
+In[106]:=",ExpressionUUID->"7a70e083-cd87-42bb-80bb-3179f6c06c88"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1497,7 +1683,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1507,12 +1701,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453529117513`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172059938307`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"0dc890df-5607-4d28-bcdb-123dc17b0759"],
+In[106]:=",ExpressionUUID->"f8c8db73-e2af-42f4-8f63-8cacfa0e72f9"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1543,7 +1739,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1553,12 +1757,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352937685*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206032011*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"7b2b8397-b5a8-4abc-9152-0b5a741399e6"],
+In[106]:=",ExpressionUUID->"ee4b44b6-f08a-4621-a671-9337846f0e5a"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1589,7 +1795,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1599,12 +1813,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645352970603*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172060688267`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"1c1c1f2b-d13f-4606-bad0-6511a169b638"],
+In[106]:=",ExpressionUUID->"382afa9c-90e8-444f-b711-dff15f0dc242"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1635,7 +1851,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1645,12 +1869,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453530034614`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206107089*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"8d70b676-50e3-4efc-9dd2-ab11587919c0"],
+In[106]:=",ExpressionUUID->"577f5ccd-d80f-4a64-b0c6-b0be6c0c5193"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1681,7 +1907,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1691,12 +1925,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453530284395`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206148967*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"fd41d645-65bf-43d4-a870-5c1e14e13b6d"],
+In[106]:=",ExpressionUUID->"52877b0b-94a3-4358-b99c-6c4060ff8e0c"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1727,7 +1963,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1737,12 +1981,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353058359*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206186448*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"be5d1d5c-ba63-479f-80b4-f4f4e79e3ffc"],
+In[106]:=",ExpressionUUID->"c9d6352d-170e-47ea-badb-286a0118c14b"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1773,7 +2019,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1783,12 +2037,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353092225*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206227332*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"0e947cf7-6a4e-458c-b8a5-8f42d54602e6"],
+In[106]:=",ExpressionUUID->"46158b4d-d42f-4403-b3db-c93d991a5332"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1819,7 +2075,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1829,12 +2093,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353122175*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206265489*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"d5453b19-c78a-4ef2-9a89-6d5b38f8e3fc"],
+In[106]:=",ExpressionUUID->"d171de81-2ea6-4f72-b12e-00bb37023e59"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1865,7 +2131,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1875,12 +2149,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353152065*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206302738*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"b3522340-ccf8-4d55-b4bd-04f32fd906e6"],
+In[106]:=",ExpressionUUID->"3fe8e6e8-edf8-4349-bfae-7ab0c1ca4cee"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1911,7 +2187,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1921,12 +2205,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353185974*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206342469*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"c8f582f0-d467-43de-8d5d-3e6ee1162182"],
+In[106]:=",ExpressionUUID->"7705e0d0-5989-4ae0-b9cd-30c27a0f142b"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -1957,7 +2243,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -1967,12 +2261,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453532159247`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206382366*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"39cf2bef-f3fe-4f1d-ba64-c0fb1105500f"],
+In[106]:=",ExpressionUUID->"4404fd83-a8ef-4fe9-9c15-9eeb1349723e"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2003,7 +2299,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2013,12 +2317,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353242821*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206418701*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"2834d6d1-60e0-497e-9e2a-ca7d35cce9b7"],
+In[106]:=",ExpressionUUID->"df521f7e-5690-4189-aaa3-b4866d7fc5c3"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2049,7 +2355,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2059,12 +2373,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453532707777`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206458322*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"3eb86729-771b-4b25-a481-bc1e875a0bd8"],
+In[106]:=",ExpressionUUID->"6871ec4f-cdd4-4f52-bedb-d1bac17f85fa"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2095,7 +2411,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2105,12 +2429,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453533016644`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206498343*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"744ab705-dbd3-49e6-b62f-2a1bcfc90d6c"],
+In[106]:=",ExpressionUUID->"f4efb667-b1fc-4dbe-9946-66a4c2d597a0"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2141,7 +2467,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2151,12 +2485,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453533355727`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206535336*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"545cd85d-04b5-42b6-8c09-4b586fe5e084"],
+In[106]:=",ExpressionUUID->"7dc777aa-2567-42df-9faa-00280e8bd351"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2187,7 +2523,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2197,12 +2541,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453533685236`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172065758877`*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"5f9c1ff4-32b5-48ea-b25d-a8c7198274dc"],
+In[106]:=",ExpressionUUID->"a96d961a-233f-487c-9468-ca8d7e47a5bb"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2233,7 +2579,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2243,12 +2597,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453533994484`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.9249172066148*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"50c2691f-2a1a-43c4-9a51-8f4cc76af322"],
+In[106]:=",ExpressionUUID->"8929f8dc-5038-4cc9-9ae8-73436d7552fa"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2279,7 +2635,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2289,12 +2653,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453534263296`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206659848*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"c29baf68-4874-404c-8071-67d589a27ec2"],
+In[106]:=",ExpressionUUID->"53ae0584-f651-4dd7-b7f6-d0d3024ae5a5"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2325,7 +2691,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2335,12 +2709,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353453257*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206746907*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"1091e228-b985-44c3-bf55-5c09f1586fb3"],
+In[106]:=",ExpressionUUID->"1918f4af-512a-4ad2-82af-da21f5de6885"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2371,7 +2747,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2381,12 +2765,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453534862022`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206834914*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"84e3ded4-9a85-425c-868f-2c5b2b33c391"],
+In[106]:=",ExpressionUUID->"3c921a1c-0b48-4777-b827-54ad984e16f7"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2417,7 +2803,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2427,12 +2821,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353516091*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206900845*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"daff2cca-acff-44aa-bab3-8281c8f80075"],
+In[106]:=",ExpressionUUID->"85118877-b695-4521-8ad6-1db4e342f6a7"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2463,7 +2859,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2473,12 +2877,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453535410576`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917206986863*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"4a2cda88-05e0-4f1c-8288-d4c827e34754"],
+In[106]:=",ExpressionUUID->"67bb0257-d1d5-4f84-9af9-8b8b9bdb2109"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2509,7 +2915,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2519,12 +2933,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453535679865`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917207040256*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"a23a3781-1d1d-4427-808a-744e20a6883d"],
+In[106]:=",ExpressionUUID->"aa059e11-e469-4651-a401-be3f6773d62a"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2555,7 +2971,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2565,12 +2989,14 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.793645353598901*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917207112102*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"c74bb3c9-b983-4288-bad1-d9535eeede0b"],
+In[106]:=",ExpressionUUID->"f0094d17-2710-4246-ad19-b4fa9d418f03"],
 
 Cell[BoxData[
  GraphicsBox[GraphicsComplexBox[CompressedData["
@@ -2601,7 +3027,15 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
     GrayLevel[0.5, 0.4]],
   Method->{
    "DefaultBoundaryStyle" -> Automatic, "DefaultColorFunction" -> 
-    "M10DefaultDensityGradient", "GridLinesInFront" -> True},
+    "M10DefaultDensityGradient", 
+    "DefaultGraphicsInteraction" -> {
+     "Version" -> 1.2, "TrackMousePosition" -> {True, False}, 
+      "Effects" -> {
+       "Highlight" -> {"ratio" -> 2}, "HighlightPoint" -> {"ratio" -> 2}, 
+        "Droplines" -> {
+         "freeformCursorMode" -> True, 
+          "placement" -> {"x" -> "All", "y" -> "None"}}}}, "GridLinesInFront" -> 
+    True},
   PlotLabel->FormBox["\"QS Network\"", TraditionalForm],
   PlotRange->{{1., 5.}, {1., 5.}},
   PlotRangeClipping->True,
@@ -2611,37 +3045,58 @@ AIMP9mlg8A7Kf0Fz80kVp7W9gy1ecIkDAD4FHP8=
      Scaled[0.02], 
      Scaled[0.02]}},
   Ticks->{Automatic, Automatic}]], "Print",
- CellChangeTimes->{3.7936414921051455`*^9, 3.7936415853597746`*^9, 
-  3.793642438853162*^9, 3.793643942706597*^9, 3.7936444504317265`*^9, 
-  3.793644732625062*^9, 3.7936453536238365`*^9},
+ CellChangeTimes->{
+  3.7936414921051455`*^9, 3.7936415853597746`*^9, 3.793642438853162*^9, 
+   3.793643942706597*^9, 3.7936444504317265`*^9, 3.793644732625062*^9, 
+   3.793645352440999*^9, {3.924913021001998*^9, 3.924913032327849*^9}, 
+   3.924917207164905*^9},
  CellLabel->
   "During evaluation of \
-In[212]:=",ExpressionUUID->"465cdcf0-dac3-4baa-b256-5f69cc71be3a"]
+In[106]:=",ExpressionUUID->"d7dc8c97-c671-4514-949a-b23b7e23a80d"]
 }, Open  ]],
 
-Cell[BoxData["\<\"D:\\\\Neu_cell-cell\\\\Cell-cell communication {QS based}\\\
-\\QS basics - testing neighbors 02-22-20\"\>"], "Output",
- CellChangeTimes->{3.793641493069601*^9, 3.793641586643325*^9, 
-  3.793642440173631*^9, 3.793643943828622*^9, 3.7936444514360075`*^9, 
-  3.7936447339285946`*^9, 3.793645353631781*^9},
+Cell[BoxData[
+ TemplateBox[{
+  "SetDirectory", "cdir", 
+   "\"Cannot set current directory to \\!\\(\\*RowBox[{\\\"\\\\\\\"D:\\\\\\\\\
+\\\\\\\\Neu_cell-cell\\\\\\\\\\\\\\\\Cell-cell communication {QS based}\\\\\\\
+\\\\\\\\\\QS basics - testing neighbors 02-22-20\\\\\\\"\\\"}]\\).\"", 2, 139,
+    3, 20561256125460465824, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{{3.9249130226441*^9, 3.9249130339429207`*^9}, 
+   3.924917207175556*^9},
  CellLabel->
-  "Out[242]=",ExpressionUUID->"1afec3b3-ec3a-4b9f-94f7-a049b23b2359"],
+  "During evaluation of \
+In[106]:=",ExpressionUUID->"05691832-0d6c-49de-8eb4-1da8e94db16c"],
+
+Cell[BoxData["$Failed"], "Output",
+ CellChangeTimes->{
+  3.793641493069601*^9, 3.793641586643325*^9, 3.793642440173631*^9, 
+   3.793643943828622*^9, 3.7936444514360075`*^9, 3.7936447339285946`*^9, 
+   3.793645353631781*^9, {3.9249130227178173`*^9, 3.9249130339501657`*^9}, 
+   3.924917207199705*^9},
+ CellLabel->
+  "Out[139]=",ExpressionUUID->"04969dfb-4a5a-4cc8-b5d2-a68f981bc687"],
 
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{"40", ",", "5", ",", "5"}], "}"}]], "Output",
- CellChangeTimes->{3.793641493069601*^9, 3.793641586643325*^9, 
-  3.793642440173631*^9, 3.793643943828622*^9, 3.7936444514360075`*^9, 
-  3.7936447339285946`*^9, 3.7936453536347733`*^9},
+ CellChangeTimes->{
+  3.793641493069601*^9, 3.793641586643325*^9, 3.793642440173631*^9, 
+   3.793643943828622*^9, 3.7936444514360075`*^9, 3.7936447339285946`*^9, 
+   3.793645353631781*^9, {3.9249130227178173`*^9, 3.9249130339501657`*^9}, 
+   3.924917207200839*^9},
  CellLabel->
-  "Out[243]=",ExpressionUUID->"ea2b7836-e667-4c9d-aa00-4e951269c68c"],
+  "Out[140]=",ExpressionUUID->"e64eaf59-0d44-41ad-b15a-b217af9186de"],
 
 Cell[BoxData["\<\"Signal-lccore-5-neighbors.csv\"\>"], "Output",
- CellChangeTimes->{3.793641493069601*^9, 3.793641586643325*^9, 
-  3.793642440173631*^9, 3.793643943828622*^9, 3.7936444514360075`*^9, 
-  3.7936447339285946`*^9, 3.7936453536368012`*^9},
+ CellChangeTimes->{
+  3.793641493069601*^9, 3.793641586643325*^9, 3.793642440173631*^9, 
+   3.793643943828622*^9, 3.7936444514360075`*^9, 3.7936447339285946`*^9, 
+   3.793645353631781*^9, {3.9249130227178173`*^9, 3.9249130339501657`*^9}, 
+   3.924917207202095*^9},
  CellLabel->
-  "Out[245]=",ExpressionUUID->"8169be8e-c254-4a10-8e67-68f1c4d54a10"]
+  "Out[142]=",ExpressionUUID->"4ed8dcf0-c1b2-45e9-94f0-24f7df9cefff"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2651,8 +3106,7 @@ Cell[BoxData[
   RowBox[{"ListLinePlot", "[", "graph1", "]"}], 
   "\[IndentingNewLine]"}]], "Input",
  CellChangeTimes->{{3.7936415362042055`*^9, 3.7936415580777082`*^9}},
- CellLabel->
-  "In[246]:=",ExpressionUUID->"9b09dcaa-26b1-4769-b49c-ebe03a3a9852"],
+ CellLabel->"In[75]:=",ExpressionUUID->"9b09dcaa-26b1-4769-b49c-ebe03a3a9852"],
 
 Cell[BoxData[
  GraphicsBox[{{}, {{}, {}, 
@@ -2977,7 +3431,7 @@ bwnnAwB0lQ4b
 1:eJxTTMoPSmViYGCQBGIQDQEf7BlQgQMqlwONL4DGF0HjS6DxZdD4CjA+lFZC
 k1dB46uh8TXQ9Guh8XXQ+Hpo+g3Q+IZo6o3Q+MZo6k3Q+KZofDM0vjka3wKN
 bwnnAwB0lQ4b
-      "]]}}, {}, {}, {}, {}},
+      "]]}}, {{}, {}}},
   AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
   Axes->{True, True},
   AxesLabel->{None, None},
@@ -2989,15 +3443,16 @@ bwnnAwB0lQ4b
   GridLines->{None, None},
   GridLinesStyle->Directive[
     GrayLevel[0.5, 0.4]],
-  ImagePadding->All,
-  Method->{"CoordinatesToolOptions" -> {"DisplayFunction" -> ({
-        (Identity[#]& )[
+  Method->{
+   "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, 
+    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+        Identity[
          Part[#, 1]], 
-        (Identity[#]& )[
+        Identity[
          Part[#, 2]]}& ), "CopiedValueFunction" -> ({
-        (Identity[#]& )[
+        Identity[
          Part[#, 1]], 
-        (Identity[#]& )[
+        Identity[
          Part[#, 2]]}& )}},
   PlotRange->{{0., 25.}, {0, 2.}},
   PlotRangeClipping->True,
@@ -3009,15 +3464,249 @@ bwnnAwB0lQ4b
   Ticks->{Automatic, Automatic}]], "Output",
  CellChangeTimes->{{3.793641546785906*^9, 3.79364158686874*^9}, 
    3.7936424402574387`*^9, 3.7936439439123907`*^9, 3.7936444515138445`*^9, 
-   3.7936447340054064`*^9, 3.793645353712598*^9},
- CellLabel->
-  "Out[246]=",ExpressionUUID->"79161162-86f7-4acc-b3ed-647f27d82024"]
+   3.7936447340054064`*^9, 3.793645353712598*^9, 3.924913034281908*^9},
+ CellLabel->"Out[75]=",ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJztnXmQHdV1xlvMSCMkEFpBSCBGEkgM2lcksWjFYIRYBEIylOOiHFNeyrHL
+ECdeEmPsOEjzeiSNFpCQQBhLGg2kEqecOGs5lSqTvRzH2ZzEiZ3EFcfO4pSX
+OMZA7ul7vnO+vu9p+srYVf7DU9XPuNXv3d+9ffp+X997+/S2Bx5+85ve/sDD
+b3njA703v+uBd775LW98qPc173hX2NU1qihGfTFsS3qL7vDfrxRF28eXiiL3
+v3+q+hyzPXz8Vdi+Hbavh+2FsN0Wtjurf+76on6r+uZ51ef5TxT+NzVsz4ft
+m2H7z7DtC1u3/MPW5u/PC9sfhu1/tPi/DttDcpj8463x+4/x97vi99+fU75+
+/5YO3/8d+v6vh+2rYfu/sAnrgbBNro6lVjrvevkcPSV8TA/bw2F7MWw3yN47
+YjP2hI+xYfujsH1Y/7sbdSnG/Eb4+GTY5CeuDNvf6WGxlSac7dvy11vEk3Gp
+kt2hNX2vV1Ia8p/Dtrv6f2OrSnZRJc9Wun6/e3z4+F3dJgl0/InR9BNvCtvs
+sF0UttVh+9Ow/Ra100OR5DeLeAqqPw0hOcWPYF9sjy6plJyMJbTvjUU8FdXf
+bR2+2xP3vSd8/Dn2aQtcET7+Pmz9VX0yy9DaS2V/NWyfCtsFRWz8cOha/fok
+/zpqKUeWGbWUUyWBMor2LdOfndFQyw+Ejz/Dvhgm3ZeEj8+G7aD+Zm4x+nVp
+l5NFvMQneknrw8fLYZtAFY2dQ8+48HF/2PrCtihscjXKlbJC/vWus1f89UWM
+Ud43W4muPlvFYySNuTd8CL0EtZyub4Tt7WHbFg+SS+BzYdt77sV1yz89G7Y/
+0MrrxbkxfMgVfqU21d+E7ZcMCB3lVP1BuXj+qYg9h3xr+9mb4fs6/7HU0X9Z
+xA7pX8P26bA9IHtjZ9Nztf7GMv1KYznadlJn6f3f6ceNkVj6dy3nM2H7UNjG
+p5XvQuWl+yt2nL3GvUym+6TrGPG6jkV1SY13YV9s1TFfQ82L2BHitzv99O3x
+K8+Fj2cK/5MKiuL0dKzQFRXoWGse+4tNNlr+RZpLLpLPADp2MFWn/tthu7iI
+V8g/FrH5bm38alVXidqxVPwoLv6W6rNH2uMdYbsmbHL1S6f/3bAtKIqatpwd
+o0cO3RO2VWGbVsRgEbV8k/9El7TRkwkOC0gxqmPjkah3fbND450fPuR0/EMR
+exhuvKn6b/K9/yji9dztjTfCV6vGS4tf2d54Y64NHx8P21e0mD8u4vXdlUMw
+Rpr7eBGv9f8t4nX/sH27arIU4uEOTZZjxabHn3zlwQcftK9X//7CD+/fJ8R9
+x4Y+8oaXhlt3yFa8tfrseulM6y477op43IvD/ffacXPjcZ88tef1dtymeNz3
+hls77LhJ8bgvnt5znx23NB73nTOP7UrLle/acWMa0b97Zs99rwweLmQr3lp9
+dr1ycHB8iv7KM60VdtzceNxLQ627U/RXnmr12XGT4nEvD7W2pegvny43tpX7
+dGtRin5RdRqE/LPyMersFbroVeyb8Kq/2/3ic7t3yn6pypeHdt/XUIwc9vLJ
+8vqmYqrjhsqbf1DV09+7qa2MU+XGc/69j7ZWV98/0Vr8qvhezT7Vmx/BiPj9
+4T2vR/PKlZ9zZk6Xm/IiotV4XG71qt8709raVsbJ8rpz/r0TraXV9z/aWvnj
+iDjr6as6zrwLtfHCz+1IcutW8Q3335WWEU7pqnP+PRGDsD/wrftRDId7O+yb
+rfsO7Z+gV9q2yjTHfRNt30jFP91aWDXZs61ri83Vvu5bXhi4C00ZJNo6A8jq
+idaSYrnuO1rOiV3ywIaOxez8wdXy8b0XW6ChlgcO9owYpI6+vEJ/prUUtfzK
+8O77UctvDe3ZpYe+fHJgbXXo8bLPavnEwMxOYvT91vK9uu/IwCzrIaN36e4/
+s/cn4DWkI0bln22tqXY/1boGFXjx+f5dOPTdZx7FaXr59MD6aveT5RyrwOF9
+U6qShlu36ZjGiGDHyqvsWlWwbw/vsdLEM8xGaeWNWtpcBeuSS7Lad/DA2Grc
+ofJV5ZZq3xN7ZxrVwcFxdglnUHmorgaVhGekOnTe1Z868qBRtWJpR0Jpm0HQ
+2lbtO7R/ElFtrfYd3j9Zb65j9A8eGoXozwBDdJ0ol8KDiqXWNhhfzNHSzrRe
+G0vbN9Wpypu1XS4F1UvD5Z363fNB9bWhx+5H80u0ZlBZyIRAvsIIbjWCOSit
+dYeRggqO92jZq1Shqct7tKlHSRst1d1n+ndwFDaDecgMzDWwcGXZCYtg3QFs
+O59bde0vn2pdrxfofLB996RfCv813P+6pTgJ/dstEB/OAfOoAdipcoPBKli4
+D3kdXwq4nRCLGfvHxQCTuy0c+r2h1k7cUXAsMli3cL0HJ6v0kwWcj5VrrR9Q
+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
+xJf08FH/D6KiVhQ=\
+\>", "ImageResolution" -> \
+96.],ExpressionUUID->"0fccd4dd-84b1-42c9-9ec6-4588ca47359c"]
 }, Open  ]]
 },
-WindowSize->{1920, 997},
-WindowMargins->{{-8, Automatic}, {Automatic, -8}},
-FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (March 6, 2018)",
-StyleDefinitions->"Default.nb"
+WindowSize->{1440., 694.5},
+WindowMargins->{{0, Automatic}, {18, Automatic}},
+FrontEndVersion->"13.0 for Linux x86 (64-bit) (February 4, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"7dd120d0-f186-4244-9a2c-79a07d139c01"
 ]
 (* End of Notebook Content *)
 
@@ -3030,57 +3719,59 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
+Cell[558, 20, 30546, 788, 2423, "Input",ExpressionUUID->"a7964170-7e08-4cd7-8d07-a83529f1f43a"],
 Cell[CellGroupData[{
-Cell[580, 22, 28977, 754, 2081, "Input",ExpressionUUID->"a7964170-7e08-4cd7-8d07-a83529f1f43a"],
+Cell[31129, 812, 81, 0, 29, "Input",ExpressionUUID->"bba35695-1116-4e2a-9c98-701074ca3881"],
 Cell[CellGroupData[{
-Cell[29582, 780, 1877, 44, 390, "Print",ExpressionUUID->"7571564c-856d-4a76-b918-3a8956ba6b51"],
-Cell[31462, 826, 1879, 44, 390, "Print",ExpressionUUID->"55dd29d5-c622-4555-8628-3c05fcec9f91"],
-Cell[33344, 872, 1879, 44, 390, "Print",ExpressionUUID->"c70c2d28-f88c-4b97-8c93-b58f4a4406c4"],
-Cell[35226, 918, 1879, 44, 390, "Print",ExpressionUUID->"f3f17b95-995f-464c-9b99-7007d6de5895"],
-Cell[37108, 964, 1879, 44, 390, "Print",ExpressionUUID->"e4a3f5b3-17fe-4d8b-af25-d8f0773da2ce"],
-Cell[38990, 1010, 1879, 44, 390, "Print",ExpressionUUID->"2dab43fd-4fc3-4f73-9eb3-5f23318b1562"],
-Cell[40872, 1056, 1879, 44, 390, "Print",ExpressionUUID->"1904d494-769e-410c-be2c-9f90113f6fef"],
-Cell[42754, 1102, 1875, 44, 390, "Print",ExpressionUUID->"1c1bfa59-57fe-4c58-a33f-3bef3d309766"],
-Cell[44632, 1148, 1877, 44, 390, "Print",ExpressionUUID->"953839ad-c246-454d-84fc-41bfd2092099"],
-Cell[46512, 1194, 1877, 44, 390, "Print",ExpressionUUID->"defffcf6-cd75-4a3d-9d16-c9c9df05e050"],
-Cell[48392, 1240, 1877, 44, 390, "Print",ExpressionUUID->"bc081bb8-a554-40a7-91ef-139bcb02bf7d"],
-Cell[50272, 1286, 1879, 44, 390, "Print",ExpressionUUID->"fae5b365-3d94-4c00-9530-58487d68319d"],
-Cell[52154, 1332, 1879, 44, 390, "Print",ExpressionUUID->"ac0ce71f-dc7e-4d8c-8803-ab4e6d671d3b"],
-Cell[54036, 1378, 1877, 44, 390, "Print",ExpressionUUID->"41b82930-bce9-40b4-8929-e39614e6e46e"],
-Cell[55916, 1424, 1879, 44, 390, "Print",ExpressionUUID->"68b1ecbc-4bb2-46d3-8fb2-af1eee32f0e6"],
-Cell[57798, 1470, 1879, 44, 390, "Print",ExpressionUUID->"0dc890df-5607-4d28-bcdb-123dc17b0759"],
-Cell[59680, 1516, 1877, 44, 390, "Print",ExpressionUUID->"7b2b8397-b5a8-4abc-9152-0b5a741399e6"],
-Cell[61560, 1562, 1877, 44, 390, "Print",ExpressionUUID->"1c1c1f2b-d13f-4606-bad0-6511a169b638"],
-Cell[63440, 1608, 1879, 44, 390, "Print",ExpressionUUID->"8d70b676-50e3-4efc-9dd2-ab11587919c0"],
-Cell[65322, 1654, 1879, 44, 390, "Print",ExpressionUUID->"fd41d645-65bf-43d4-a870-5c1e14e13b6d"],
-Cell[67204, 1700, 1877, 44, 390, "Print",ExpressionUUID->"be5d1d5c-ba63-479f-80b4-f4f4e79e3ffc"],
-Cell[69084, 1746, 1877, 44, 390, "Print",ExpressionUUID->"0e947cf7-6a4e-458c-b8a5-8f42d54602e6"],
-Cell[70964, 1792, 1877, 44, 390, "Print",ExpressionUUID->"d5453b19-c78a-4ef2-9a89-6d5b38f8e3fc"],
-Cell[72844, 1838, 1877, 44, 390, "Print",ExpressionUUID->"b3522340-ccf8-4d55-b4bd-04f32fd906e6"],
-Cell[74724, 1884, 1877, 44, 390, "Print",ExpressionUUID->"c8f582f0-d467-43de-8d5d-3e6ee1162182"],
-Cell[76604, 1930, 1879, 44, 390, "Print",ExpressionUUID->"39cf2bef-f3fe-4f1d-ba64-c0fb1105500f"],
-Cell[78486, 1976, 1877, 44, 390, "Print",ExpressionUUID->"2834d6d1-60e0-497e-9e2a-ca7d35cce9b7"],
-Cell[80366, 2022, 1879, 44, 390, "Print",ExpressionUUID->"3eb86729-771b-4b25-a481-bc1e875a0bd8"],
-Cell[82248, 2068, 1879, 44, 390, "Print",ExpressionUUID->"744ab705-dbd3-49e6-b62f-2a1bcfc90d6c"],
-Cell[84130, 2114, 1879, 44, 390, "Print",ExpressionUUID->"545cd85d-04b5-42b6-8c09-4b586fe5e084"],
-Cell[86012, 2160, 1879, 44, 390, "Print",ExpressionUUID->"5f9c1ff4-32b5-48ea-b25d-a8c7198274dc"],
-Cell[87894, 2206, 1879, 44, 390, "Print",ExpressionUUID->"50c2691f-2a1a-43c4-9a51-8f4cc76af322"],
-Cell[89776, 2252, 1879, 44, 390, "Print",ExpressionUUID->"c29baf68-4874-404c-8071-67d589a27ec2"],
-Cell[91658, 2298, 1877, 44, 390, "Print",ExpressionUUID->"1091e228-b985-44c3-bf55-5c09f1586fb3"],
-Cell[93538, 2344, 1879, 44, 390, "Print",ExpressionUUID->"84e3ded4-9a85-425c-868f-2c5b2b33c391"],
-Cell[95420, 2390, 1877, 44, 390, "Print",ExpressionUUID->"daff2cca-acff-44aa-bab3-8281c8f80075"],
-Cell[97300, 2436, 1879, 44, 390, "Print",ExpressionUUID->"4a2cda88-05e0-4f1c-8288-d4c827e34754"],
-Cell[99182, 2482, 1879, 44, 390, "Print",ExpressionUUID->"a23a3781-1d1d-4427-808a-744e20a6883d"],
-Cell[101064, 2528, 1877, 44, 390, "Print",ExpressionUUID->"c74bb3c9-b983-4288-bad1-d9535eeede0b"],
-Cell[102944, 2574, 1879, 44, 390, "Print",ExpressionUUID->"465cdcf0-dac3-4baa-b256-5f69cc71be3a"]
+Cell[31235, 816, 2281, 54, 388, "Print",ExpressionUUID->"3cdac6f9-44d3-4d01-b298-8467e24dbe98"],
+Cell[33519, 872, 2281, 54, 388, "Print",ExpressionUUID->"94cfa485-a46e-4f6a-93c8-b825f23d68c9"],
+Cell[35803, 928, 2283, 54, 388, "Print",ExpressionUUID->"d0478c30-af59-4cea-ab34-af3ffb599f59"],
+Cell[38089, 984, 2281, 54, 388, "Print",ExpressionUUID->"2309a398-587b-4280-8d84-4accaa46bd02"],
+Cell[40373, 1040, 2283, 54, 388, "Print",ExpressionUUID->"35fff639-702b-41a8-bccc-2e621f1b4aa7"],
+Cell[42659, 1096, 2283, 54, 388, "Print",ExpressionUUID->"a1808eef-5bd7-44fa-ab42-652750f2389d"],
+Cell[44945, 1152, 2281, 54, 388, "Print",ExpressionUUID->"bff3b120-c8ad-484a-8f7b-2bbff4fbdd87"],
+Cell[47229, 1208, 2281, 54, 388, "Print",ExpressionUUID->"d388da1d-02ec-448c-85bc-90799958e1b2"],
+Cell[49513, 1264, 2281, 54, 388, "Print",ExpressionUUID->"6148c78d-b382-4d36-a59c-fcaca8f7ef1a"],
+Cell[51797, 1320, 2283, 54, 388, "Print",ExpressionUUID->"5bf22795-14fa-4c4b-86e6-79ef1227bf14"],
+Cell[54083, 1376, 2281, 54, 388, "Print",ExpressionUUID->"ebdc45a8-4afa-4bf7-91e5-cb54f48a3771"],
+Cell[56367, 1432, 2281, 54, 388, "Print",ExpressionUUID->"36191f2d-7f88-43e0-9688-bc12f3cec6af"],
+Cell[58651, 1488, 2281, 54, 388, "Print",ExpressionUUID->"d7c3986b-194f-4a04-9996-92ecc0fa4daa"],
+Cell[60935, 1544, 2281, 54, 388, "Print",ExpressionUUID->"e7778786-c1ab-4e4f-813d-8183103abdd9"],
+Cell[63219, 1600, 2281, 54, 388, "Print",ExpressionUUID->"7a70e083-cd87-42bb-80bb-3179f6c06c88"],
+Cell[65503, 1656, 2283, 54, 388, "Print",ExpressionUUID->"f8c8db73-e2af-42f4-8f63-8cacfa0e72f9"],
+Cell[67789, 1712, 2281, 54, 388, "Print",ExpressionUUID->"ee4b44b6-f08a-4621-a671-9337846f0e5a"],
+Cell[70073, 1768, 2283, 54, 388, "Print",ExpressionUUID->"382afa9c-90e8-444f-b711-dff15f0dc242"],
+Cell[72359, 1824, 2281, 54, 388, "Print",ExpressionUUID->"577f5ccd-d80f-4a64-b0c6-b0be6c0c5193"],
+Cell[74643, 1880, 2281, 54, 388, "Print",ExpressionUUID->"52877b0b-94a3-4358-b99c-6c4060ff8e0c"],
+Cell[76927, 1936, 2281, 54, 388, "Print",ExpressionUUID->"c9d6352d-170e-47ea-badb-286a0118c14b"],
+Cell[79211, 1992, 2281, 54, 388, "Print",ExpressionUUID->"46158b4d-d42f-4403-b3db-c93d991a5332"],
+Cell[81495, 2048, 2281, 54, 388, "Print",ExpressionUUID->"d171de81-2ea6-4f72-b12e-00bb37023e59"],
+Cell[83779, 2104, 2281, 54, 388, "Print",ExpressionUUID->"3fe8e6e8-edf8-4349-bfae-7ab0c1ca4cee"],
+Cell[86063, 2160, 2281, 54, 388, "Print",ExpressionUUID->"7705e0d0-5989-4ae0-b9cd-30c27a0f142b"],
+Cell[88347, 2216, 2281, 54, 388, "Print",ExpressionUUID->"4404fd83-a8ef-4fe9-9c15-9eeb1349723e"],
+Cell[90631, 2272, 2281, 54, 388, "Print",ExpressionUUID->"df521f7e-5690-4189-aaa3-b4866d7fc5c3"],
+Cell[92915, 2328, 2281, 54, 388, "Print",ExpressionUUID->"6871ec4f-cdd4-4f52-bedb-d1bac17f85fa"],
+Cell[95199, 2384, 2281, 54, 388, "Print",ExpressionUUID->"f4efb667-b1fc-4dbe-9946-66a4c2d597a0"],
+Cell[97483, 2440, 2281, 54, 388, "Print",ExpressionUUID->"7dc777aa-2567-42df-9faa-00280e8bd351"],
+Cell[99767, 2496, 2283, 54, 388, "Print",ExpressionUUID->"a96d961a-233f-487c-9468-ca8d7e47a5bb"],
+Cell[102053, 2552, 2279, 54, 388, "Print",ExpressionUUID->"8929f8dc-5038-4cc9-9ae8-73436d7552fa"],
+Cell[104335, 2608, 2281, 54, 388, "Print",ExpressionUUID->"53ae0584-f651-4dd7-b7f6-d0d3024ae5a5"],
+Cell[106619, 2664, 2281, 54, 388, "Print",ExpressionUUID->"1918f4af-512a-4ad2-82af-da21f5de6885"],
+Cell[108903, 2720, 2281, 54, 388, "Print",ExpressionUUID->"3c921a1c-0b48-4777-b827-54ad984e16f7"],
+Cell[111187, 2776, 2281, 54, 388, "Print",ExpressionUUID->"85118877-b695-4521-8ad6-1db4e342f6a7"],
+Cell[113471, 2832, 2281, 54, 388, "Print",ExpressionUUID->"67bb0257-d1d5-4f84-9af9-8b8b9bdb2109"],
+Cell[115755, 2888, 2281, 54, 388, "Print",ExpressionUUID->"aa059e11-e469-4651-a401-be3f6773d62a"],
+Cell[118039, 2944, 2281, 54, 388, "Print",ExpressionUUID->"f0094d17-2710-4246-ad19-b4fa9d418f03"],
+Cell[120323, 3000, 2281, 54, 388, "Print",ExpressionUUID->"d7dc8c97-c671-4514-949a-b23b7e23a80d"]
 }, Open  ]],
-Cell[104838, 2621, 403, 6, 32, "Output",ExpressionUUID->"1afec3b3-ec3a-4b9f-94f7-a049b23b2359"],
-Cell[105244, 2629, 353, 7, 32, "Output",ExpressionUUID->"ea2b7836-e667-4c9d-aa00-4e951269c68c"],
-Cell[105600, 2638, 333, 5, 32, "Output",ExpressionUUID->"8169be8e-c254-4a10-8e67-68f1c4d54a10"]
+Cell[122619, 3057, 570, 12, 28, "Message",ExpressionUUID->"05691832-0d6c-49de-8eb4-1da8e94db16c"],
+Cell[123192, 3071, 382, 7, 46, "Output",ExpressionUUID->"04969dfb-4a5a-4cc8-b5d2-a68f981bc687"],
+Cell[123577, 3080, 432, 9, 46, "Output",ExpressionUUID->"e64eaf59-0d44-41ad-b15a-b217af9186de"],
+Cell[124012, 3091, 412, 7, 46, "Output",ExpressionUUID->"4ed8dcf0-c1b2-45e9-94f0-24f7df9cefff"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[105970, 2648, 262, 6, 48, "Input",ExpressionUUID->"9b09dcaa-26b1-4769-b49c-ebe03a3a9852"],
-Cell[106235, 2656, 14302, 357, 245, "Output",ExpressionUUID->"79161162-86f7-4acc-b3ed-647f27d82024"]
+Cell[124461, 3103, 258, 5, 51, "Input",ExpressionUUID->"9b09dcaa-26b1-4769-b49c-ebe03a3a9852"],
+Cell[124722, 3110, 28528, 591, 244, 14044, 353, "CachedBoxData", "BoxData", "Output",ExpressionUUID->"0fccd4dd-84b1-42c9-9ec6-4588ca47359c"]
 }, Open  ]]
 }
 ]
