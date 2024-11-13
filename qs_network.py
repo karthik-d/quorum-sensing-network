@@ -75,11 +75,19 @@ class QSNetwork:
 
 class QSNetworkSimulator:
 
-	def __init__(self, qs_net, obs_duration=10, signaling_interval=1):
+	def __init__(
+		self, qs_net, obs_duration=10, 
+		signaling_interval=1, level_update_thresh=3,
+		verbose=False
+	):
+		
 		self.net = qs_net 
 		self.obs_duration = obs_duration
 		self.signaling_interval = signaling_interval
+		self.level_update_thresh = level_update_thresh
+		self.verbose = verbose
 
+		# initialize simulator by seeding network and running one step.
 		self.init_simulation()
 
 
@@ -94,15 +102,15 @@ class QSNetworkSimulator:
 		self.production_list = list(range(self.obs_duration))
 
 		# generate the initial signal cloud by running one convolution with neighborhood.
-		self.signal_cloud = self._convolve_with_neighborhood(curr_signal=1)
+		signal_cloud = self._convolve_with_neighborhood(curr_signal=1)
 
 		# run a single step of simulation.
-		self.net.levels = self.step_simulation()
+		self.net.levels = self.step_simulation(signal_cloud)
 
 
-	def step_simulation(self, levels=None):
+	def step_simulation(self, signal_cloud, levels=None, thresh=3):
 		"""
-		INPUTS (read from the network param if None): levels, signal_cloud.
+		INPUTS: signal_cloud, levels (use from net if None), thresh (for level updation).
 		OUTPUTS: updated levels.
 		> updates `levels` of the network based on current `signal_cloud`.
 		> does NOT mutate any instance members.
@@ -110,23 +118,24 @@ class QSNetworkSimulator:
 
 		# override levels to use if passed.
 		levels = self.net.levels if levels is None else levels
+		thresh = self.net.level_update_thresh if thresh is None else thresh
 
 		# copy current levels and modify the new object.
 		updated_levels = levels.copy()
 
 		# update-routine for first domain value.
 		cellposn_idx_l = np.where(levels[self.net.domain[0]]==1)
-		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 		for i, conc in enumerate(conc_l):
-			if conc > self.net.domain[0] + 13:
+			if conc > self.net.domain[0] + thresh:
 				updated_levels[self.net.domain[0] + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 				updated_levels[self.net.domain[0], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
 		# update-routine for last domain value.
 		cellposn_idx_l = np.where(levels[self.net.domain[-1]]==1)
-		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 		for i, conc in enumerate(conc_l):
-			if conc < self.net.domain[-1] + 13:
+			if conc < self.net.domain[-1] + thresh:
 				updated_levels[self.net.domain[-1] - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 				updated_levels[self.net.domain[-1], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
@@ -134,7 +143,7 @@ class QSNetworkSimulator:
 		for domain_val in self.net.domain[1:-1]:
 			
 			cellposn_idx_l = np.where(levels[domain_val]==1)
-			conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+			conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 			for i, conc in enumerate(conc_l):
 				
 				# conc. is within 13.
@@ -153,16 +162,29 @@ class QSNetworkSimulator:
 
 	def run_qs_simulation(self, obs_duration=None, signaling_interval=None):
 
+		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
 		# override simulator defaults if args passed.
 		obs_duration = self.obs_duration if obs_duration is None else obs_duration
 		signaling_interval = self.signaling_interval if signaling_interval is None else signaling_interval
 
 		# run simulation.
 		log = dict()
-		for clock in range(obs_duration):
+		plot.clf()
+		plot.figure(figsize=(12, 12))
+
+		# plot initial.
+		init_network = np.sum([
+			self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
+		], axis=0) 
+		plot.subplot(5, 5, 1)
+		plot.title(f"time=0")
+		plot.imshow(init_network, vmin=0, vmax=10)
+		plot.colorbar()
+		
+		for time in range(1, obs_duration+1):
 
 			# decide whether or not to signal.
-			if clock % signaling_interval != 0:
+			if time % signaling_interval != 0:
 				continue
 
 			# == signaling routine ==
@@ -172,7 +194,7 @@ class QSNetworkSimulator:
 			signaling_cells = self.net.cells.copy()
 			
 			# generate signal cloud.
-			self.signal_cloud = np.sum([
+			signal_cloud = np.sum([
 				self._convolve_with_neighborhood(curr_signal=i) for i in self.net.domain
 			], axis=0) 
 
@@ -189,22 +211,33 @@ class QSNetworkSimulator:
 			# (rationale unclear??)
 			dynamic_levels = self.net.levels - static_levels
 			# use signaling_cloud and static_levels to run a simulation step.
-			dynamic_levels = self.step_simulation(levels=dynamic_levels)
-			self.levels = dynamic_levels + static_levels
+			dynamic_levels = self.step_simulation(signal_cloud, levels=dynamic_levels)
+			self.net.levels = dynamic_levels + static_levels
 			
 			# log observation.
 			# NOTE: (cell_response_map + 1) is essentially `aiDistance`.
-			log[clock] = np.sum([
-				self.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
+			log[time] = np.sum([
+				self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 			], axis=0) 
 
 			# plot the logged matrix.
-			plot.matshow(log[clock])
-			plot.savefig(f"{clock}-levels.png")
+			plot.subplot(5, 5, time+1)
+			plot.title(f"time={time}")
+			plot.imshow(log[time], vmin=0, vmax=10)
+			plot.colorbar()
+		
+		_ = print("saving plots...") if self.verbose else None
+		# save progression.
+		plot.tight_layout()
+		plot.savefig(f"levels_duration-{obs_duration}.png", dpi=100)
 
 
 simulator = QSNetworkSimulator(
-	qs_net = QSNetwork()
+	qs_net = QSNetwork(
+		cells="00100.00000.01101.00010.01000"
+	),
+	obs_duration = 24,
+	verbose = True
 )
 
 simulator.run_qs_simulation()
