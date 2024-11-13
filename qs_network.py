@@ -1,7 +1,9 @@
 import numpy as np
-
 from matplotlib import pyplot as plot
 from scipy import signal
+
+
+rand_gen = np.random.default_rng()
 
 
 class QSNetwork:
@@ -76,15 +78,23 @@ class QSNetwork:
 class QSNetworkSimulator:
 
 	def __init__(
-		self, qs_net, obs_duration=10, 
-		signaling_interval=1, level_update_thresh=3,
+		self, qs_net, obs_duration=10, signaling_interval=1, 
+		level_update_thresh=3, signaling_frac=1,
 		verbose=False
 	):
+		""" parameters:
+		- qs_net: the network to simulate; a QSNetwork instance.
+		- obs_duration: total simulation length.
+		- signaling_interval: frequency of update steps.
+		- signaling_frac: number of cells to select as signaling cells in each update step (default: all cells signal).
+		- verbose: boolean to indicate if simulation comments should be displayed.
+		"""
 		
 		self.net = qs_net 
 		self.obs_duration = obs_duration
 		self.signaling_interval = signaling_interval
 		self.level_update_thresh = level_update_thresh
+		self.signaling_frac = signaling_frac
 		self.verbose = verbose
 
 		# initialize simulator by seeding network and running one step.
@@ -162,11 +172,11 @@ class QSNetworkSimulator:
 
 	def run_qs_simulation(self, obs_duration=None, signaling_interval=None):
 
-		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
 		# override simulator defaults if args passed.
 		obs_duration = self.obs_duration if obs_duration is None else obs_duration
 		signaling_interval = self.signaling_interval if signaling_interval is None else signaling_interval
 
+		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
 		# run simulation.
 		log = dict()
 		plot.clf()
@@ -191,7 +201,12 @@ class QSNetworkSimulator:
 
 			# select the signaling cells.
 			# NOTE: this is where the probability-based selection of signaling cells would go.
-			signaling_cells = self.net.cells.copy()
+			num_cells = self.net.cells.sum()
+			# signaling_cells = self.net.cells.copy()
+			signaling_cells = np.zeros(self.net.cells.shape)
+			signaling_cells[*list(zip(*rand_gen.choice(
+				list(zip(*np.nonzero(self.net.cells))), int(self.signaling_frac*num_cells), replace=False
+			)))] = 1
 			
 			# generate signal cloud.
 			signal_cloud = np.sum([
@@ -229,7 +244,7 @@ class QSNetworkSimulator:
 		_ = print("saving plots...") if self.verbose else None
 		# save progression.
 		plot.tight_layout()
-		plot.savefig(f"levels_duration-{obs_duration}.png", dpi=100)
+		plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
 
 
 simulator = QSNetworkSimulator(
@@ -237,6 +252,7 @@ simulator = QSNetworkSimulator(
 		cells="00100.00000.01101.00010.01000"
 	),
 	obs_duration = 24,
+	signaling_frac = 1,
 	verbose = True
 )
 
