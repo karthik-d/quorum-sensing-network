@@ -29,11 +29,11 @@ class QSNetwork:
 
 	def init_net(self, cells, cell_response_mapping, conc_response_mapping):
 	
-		# indicator matrix denoting cell positions.
+		# indicator matrix denoting positions of "active" cells.
 		self.cells = np.array([list(map(int, list(row_posns))) for row_posns in cells.split('.')])
 		assert self.cells.shape == (self.size, self.size), f"cell positions must match area dim = {self.size}."
 
-		# levles of signaling at each area, per level.
+		# levles of signaling at each posn in area, per level.
 		self.levels = np.zeros((self.domain[-1]-self.domain[0]+1, self.size, self.size))
 		# set the first 2D matrix to cell positions -- initial level is 1 at the cells?
 		self.levels[0] = self.cells.copy()
@@ -64,6 +64,9 @@ class QSNetwork:
 		])
 
 
+# TODO: 
+# - Add a logging data structure for the simulator to track updates made to the network.
+
 class QSNetworkSimulator:
 
 	def __init__(self, qs_net, obs_duration=10, signaling_interval=1):
@@ -71,20 +74,68 @@ class QSNetworkSimulator:
 		self.obs_duration = obs_duration
 		self.signaling_interval = signaling_interval
 
-		self.init_simulator()
+		self.init_simulation()
 
 
-	def init_simulator(self):
+	def init_simulation(self):
 		self.graph = list(range(self.obs_duration))
 		self.production_list = list(range(self.obs_duration))
 
+		# initialize signal cloud by running one convolution with neighborhood.
 		self.signal_cloud = signal.convolve2d(
 			self.net.cells, self.net.get_neighborhood_kernel(curr_signal=1), 
 			mode='same', boundary='fill', fillvalue=0)
 
-		print(self.net.cells)
-		print(self.net.get_neighborhood_kernel(curr_signal=1))
-		print(self.signal_cloud)
+		# run a single step of simulation.
+		self.net.levels = self.step_simlutation()
+
+
+	def step_simlutation(self):
+		"""
+		INPUTS (read from the network para): levels, signal_cloud.
+		OUTPUTS: updated levels.
+		Does NOT mutate any instance members.
+		"""
+
+		# updates `levels` of the network based on current `signal_cloud`.
+
+		updated_levels = self.net.levels.copy()
+
+		# update-routine for first domain value.
+		cellposn_idx_l = np.where(self.levels[self.net.domain[0]]==1)
+		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		for i, conc in enumerate(conc_l):
+			if conc > self.net.domain[0] + 13:
+				updated_levels[self.net.domain[0] + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+				updated_levels[self.net.domain[0], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+
+		# update-routine for last domain value.
+		cellposn_idx_l = np.where(self.levels[self.net.domain[-1]]==1)
+		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		for i, conc in enumerate(conc_l):
+			if conc < self.net.domain[-1] + 13:
+				updated_levels[self.net.domain[-1] - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+				updated_levels[self.net.domain[-1], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+
+		# update-routine for rest of the domain values.
+		for domain_val in self.net.domain[1:-1]:
+			
+			cellposn_idx_l = np.where(self.levels[domain_val]==1)
+			conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+			for i, conc in enumerate(conc_l):
+				
+				# conc. is within 13.
+				if conc < domain_val + 13:
+					updated_levels[domain_val - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+					updated_levels[domain_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+
+				# conc. is 13 or more over.
+				elif conc > domain_val + 13:
+					updated_levels[domain_val + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+					updated_levels[domain_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+
+		# return the updated levels matrix.
+		return updated_levels.copy()
 
 
 	def run_main_qs_cycle(self):
