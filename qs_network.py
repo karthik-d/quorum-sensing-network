@@ -1,4 +1,6 @@
 import numpy as np
+
+from matplotlib import pyplot as plot
 from scipy import signal
 
 
@@ -33,10 +35,14 @@ class QSNetwork:
 		self.cells = np.array([list(map(int, list(row_posns))) for row_posns in cells.split('.')])
 		assert self.cells.shape == (self.size, self.size), f"cell positions must match area dim = {self.size}."
 
-		# levles of signaling at each posn in area, per level.
-		self.levels = np.zeros((self.domain[-1]-self.domain[0]+1, self.size, self.size))
+		## NOTE: `levels` is always indexed through the values of domains. 
+		## so it has an additional unused element at idx=0.
+		## and it is initialized to have len(domain)+1 size along its first dimension.
+		
+		# levels of signaling at each posn in area, per level.
+		self.levels = np.zeros((self.domain[-1]-self.domain[0]+2, self.size, self.size))
 		# set the first 2D matrix to cell positions -- initial level is 1 at the cells?
-		self.levels[0] = self.cells.copy()
+		self.levels[self.domain[0]] = self.cells.copy()
 
 		# define how current level defines the next level for "cell".
 		# equivalent: aiCell.
@@ -53,8 +59,8 @@ class QSNetwork:
 
 	def get_neighborhood_kernel(self, curr_signal):
 		"""
-		returns a matrix encoding the effect of a cell's level distributes over area.
-		takes current signal; returns neighborhood effect corresponding to the next signal level.
+		INPUT: takes current signal; returns neighborhood effect corresponding to the next signal level.
+		OUTPUT: matrix encoding the effect of a cell's level distributes over area.
 		"""
 
 		next_signal = self.conc_response_map.get(curr_signal)
@@ -77,32 +83,39 @@ class QSNetworkSimulator:
 		self.init_simulation()
 
 
+	def _convolve_with_neighborhood(self, curr_signal):
+		return signal.convolve2d(
+			self.net.cells, self.net.get_neighborhood_kernel(curr_signal), 
+			mode='same', boundary='fill', fillvalue=0)
+
+
 	def init_simulation(self):
 		self.graph = list(range(self.obs_duration))
 		self.production_list = list(range(self.obs_duration))
 
-		# initialize signal cloud by running one convolution with neighborhood.
-		self.signal_cloud = signal.convolve2d(
-			self.net.cells, self.net.get_neighborhood_kernel(curr_signal=1), 
-			mode='same', boundary='fill', fillvalue=0)
+		# generate the initial signal cloud by running one convolution with neighborhood.
+		self.signal_cloud = self._convolve_with_neighborhood(curr_signal=1)
 
 		# run a single step of simulation.
-		self.net.levels = self.step_simlutation()
+		self.net.levels = self.step_simulation()
 
 
-	def step_simlutation(self):
+	def step_simulation(self, levels=None):
 		"""
-		INPUTS (read from the network para): levels, signal_cloud.
+		INPUTS (read from the network param if None): levels, signal_cloud.
 		OUTPUTS: updated levels.
-		Does NOT mutate any instance members.
+		> updates `levels` of the network based on current `signal_cloud`.
+		> does NOT mutate any instance members.
 		"""
 
-		# updates `levels` of the network based on current `signal_cloud`.
+		# override levels to use if passed.
+		levels = self.net.levels if levels is None else levels
 
-		updated_levels = self.net.levels.copy()
+		# copy current levels and modify the new object.
+		updated_levels = levels.copy()
 
 		# update-routine for first domain value.
-		cellposn_idx_l = np.where(self.levels[self.net.domain[0]]==1)
+		cellposn_idx_l = np.where(levels[self.net.domain[0]]==1)
 		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 		for i, conc in enumerate(conc_l):
 			if conc > self.net.domain[0] + 13:
@@ -110,7 +123,7 @@ class QSNetworkSimulator:
 				updated_levels[self.net.domain[0], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
 		# update-routine for last domain value.
-		cellposn_idx_l = np.where(self.levels[self.net.domain[-1]]==1)
+		cellposn_idx_l = np.where(levels[self.net.domain[-1]]==1)
 		conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 		for i, conc in enumerate(conc_l):
 			if conc < self.net.domain[-1] + 13:
@@ -120,7 +133,7 @@ class QSNetworkSimulator:
 		# update-routine for rest of the domain values.
 		for domain_val in self.net.domain[1:-1]:
 			
-			cellposn_idx_l = np.where(self.levels[domain_val]==1)
+			cellposn_idx_l = np.where(levels[domain_val]==1)
 			conc_l = self.signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
 			for i, conc in enumerate(conc_l):
 				
@@ -138,18 +151,60 @@ class QSNetworkSimulator:
 		return updated_levels.copy()
 
 
-	def run_main_qs_cycle(self):
+	def run_qs_simulation(self, obs_duration=None, signaling_interval=None):
 
-		for clock in range(self.obs_duration):
+		# override simulator defaults if args passed.
+		obs_duration = self.obs_duration if obs_duration is None else obs_duration
+		signaling_interval = self.signaling_interval if signaling_interval is None else signaling_interval
+
+		# run simulation.
+		log = dict()
+		for clock in range(obs_duration):
 
 			# decide whether or not to signal.
-			if clock % self.signaling_interval == 0:
-				pass 
+			if clock % signaling_interval != 0:
+				continue
 
-			# routine, regardless of signaling.
-			self.graph[clock] = None
+			# == signaling routine ==
+
+			# select the signaling cells.
+			# NOTE: this is where the probability-based selection of signaling cells would go.
+			signaling_cells = self.net.cells.copy()
+			
+			# generate signal cloud.
+			self.signal_cloud = np.sum([
+				self._convolve_with_neighborhood(curr_signal=i) for i in self.net.domain
+			], axis=0) 
+
+			# TODO: vectorize the for-loop using `apply_along_axis` and reshaping the inner 2D matrices in the function.
+			# TODO: can also simply replicate `signaling_cells` are perform a matrix operation.
+			# set any level that has become -1 to 0. (why though??).
+			# reduce the level by 1 for signaling cells -- call it `static_levels`. (why??).
+			static_levels = np.zeros(self.net.levels.shape)
+			for domain in self.net.domain:
+				static_levels[domain] = self.net.levels[domain] - signaling_cells
+				static_levels[domain][np.where(static_levels[domain]==-1)] = 0
+
+			# `dynamic_levels` simply recovers `levels`, but has +1 wherever levels were 0 at a signaling cell position.
+			# (rationale unclear??)
+			dynamic_levels = self.net.levels - static_levels
+			# use signaling_cloud and static_levels to run a simulation step.
+			dynamic_levels = self.step_simulation(levels=dynamic_levels)
+			self.levels = dynamic_levels + static_levels
+			
+			# log observation.
+			# NOTE: (cell_response_map + 1) is essentially `aiDistance`.
+			log[clock] = np.sum([
+				self.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
+			], axis=0) 
+
+			# plot the logged matrix.
+			plot.matshow(log[clock])
+			plot.savefig(f"{clock}-levels.png")
 
 
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork()
 )
+
+simulator.run_qs_simulation()
