@@ -3,6 +3,9 @@ from matplotlib import pyplot as plot
 from scipy import signal
 
 
+from utils import animation
+
+
 rand_gen = np.random.default_rng()
 
 
@@ -190,7 +193,7 @@ class QSNetworkSimulator:
 		plot.title(f"time=0")
 		plot.imshow(init_network, vmin=0, vmax=10)
 		plot.colorbar()
-		
+
 		for time in range(1, obs_duration+1):
 
 			# decide whether or not to signal.
@@ -240,11 +243,18 @@ class QSNetworkSimulator:
 			plot.title(f"time={time}")
 			plot.imshow(log[time], vmin=0, vmax=10)
 			plot.colorbar()
-		
+
+
 		_ = print("saving plots...") if self.verbose else None
 		# save progression.
 		plot.tight_layout()
 		plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
+
+		# make animations from saved plots.
+		animation.save_animation(
+			imgs_l = [log[time] for time in range(1, obs_duration+1)], 
+			save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
+		)
 
 
 simulator = QSNetworkSimulator(
