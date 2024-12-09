@@ -113,7 +113,7 @@ class QSNetworkSimulator:
 	@classmethod 
 	def find_hub_cells(cls, edge_matrix, hub_cell_thresh=5):
 		num_connections_l = np.sum(edge_matrix, axis=1) # sum each row.
-		hub_cells = [int(num_connections_l[i] > hub_cell_thresh) for i in range(edge_matrix.shape[0])]
+		hub_cells = [int(num_connections_l[i] >= hub_cell_thresh) for i in range(edge_matrix.shape[0])]
 		return hub_cells
 
 
@@ -312,7 +312,7 @@ def make_random_cell_array(shape):
 # 	verbose = True
 # )
 
-cell_area_dim = 20
+cell_area_dim = 30
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ))
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
@@ -329,8 +329,8 @@ log = simulator.run_qs_simulation(
 )
 
 edge_matrix = simulator.get_edge_matrix(log)
-hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix)
-print(hub_cells)
+hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+print(f"No. of Hubs: {sum(hub_cells)}")
 
 cell_labels = {i: f"C{i+1}" for i in range(edge_matrix.shape[0])}
 network.plot_graph_with_labels(

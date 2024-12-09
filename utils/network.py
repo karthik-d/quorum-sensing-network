@@ -17,7 +17,6 @@ def plot_graph_with_labels(adjacency_matrix, savepath, hub_nodes=[], labels=None
 	# TODO: fix labeling key-error issue.
 
 	gr = get_graph_object(adjacency_matrix)
-	print(sorted(gr.nodes))
 	fig = plot.figure()
 	# nx.draw(gr, node_size=50, labels=labels, with_labels=True)
 	# nx.draw(gr, node_size=10, with_labels=False)
@@ -25,6 +24,7 @@ def plot_graph_with_labels(adjacency_matrix, savepath, hub_nodes=[], labels=None
 
 	for i, node in enumerate(agr.iternodes()):
 		node.attr['label'] = f"C{str(node)}"
+		node.attr['style'] = 'filled'
 		if int(str(node)) in hub_nodes:
 			node.attr['color'] = 'red'
 			node.attr['fillcolor'] = 'red'
@@ -34,7 +34,7 @@ def plot_graph_with_labels(adjacency_matrix, savepath, hub_nodes=[], labels=None
 			node.attr['fillcolor'] = 'green'
 			node.attr['shape'] = 'ellipse'
 
-	agr.layout(prog='fdp')
+	agr.layout(prog='sfdp')
 	agr.draw(savepath)
 	return fig
 
