@@ -4,7 +4,7 @@ from scipy import signal
 
 
 from utils import animation
-
+from utils import network
 
 rand_gen = np.random.default_rng()
 
@@ -108,6 +108,13 @@ class QSNetworkSimulator:
 		return signal.convolve2d(
 			self.net.cells, self.net.get_neighborhood_kernel(curr_signal), 
 			mode='same', boundary='fill', fillvalue=0)
+	
+
+	@classmethod 
+	def find_hub_cells(cls, edge_matrix, hub_cell_thresh=5):
+		num_connections_l = np.sum(edge_matrix, axis=1) # sum each row.
+		hub_cells = [int(num_connections_l[i] > hub_cell_thresh) for i in range(edge_matrix.shape[0])]
+		return hub_cells
 
 
 	def get_edge_matrix(self, simulation_log, hub_cell_thresh=5, time_step=None):
@@ -132,12 +139,8 @@ class QSNetworkSimulator:
 						abs(cellposn_idx_l[1][i] - cellposn_idx_l[1][j])
 					)
 					edge_matrix[i, j] += 1 if (dist<=max_dist) else 0
-
-		# find hub cells.
-		num_connections_l = np.sum(edge_matrix, axis=1) # sum each row.
-		hub_cells = [int(num_connections_l[i] > hub_cell_thresh) for i in range(num_cells)]
-		print(hub_cells)
-		print(edge_matrix)
+		
+		return edge_matrix
 
 
 	def init_simulation(self):
@@ -295,9 +298,25 @@ class QSNetworkSimulator:
 		return log
 
 
+def make_random_cell_array(shape):
+	cells = np.random.choice([0, 1], size=shape, p=[3./4, 1./4])
+	return ".".join(["".join(map(str, row)) for row in cells])
+
+
+# simulator = QSNetworkSimulator(
+# 	qs_net = QSNetwork(
+# 		cells="00100.00000.01101.00010.01000"
+# 	),
+# 	obs_duration = 10,
+# 	signaling_frac = 1,
+# 	verbose = True
+# )
+
+cell_posn_encoding = make_random_cell_array(shape=(50, 50))
+print(cell_posn_encoding)
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
-		cells="00100.00000.01101.00010.01000"
+		cells = cell_posn_encoding
 	),
 	obs_duration = 10,
 	signaling_frac = 1,
@@ -307,5 +326,11 @@ simulator = QSNetworkSimulator(
 log = simulator.run_qs_simulation(
 	save_outputs = False
 )
-print(log.keys())
-simulator.get_edge_matrix(log)
+
+edge_matrix = simulator.get_edge_matrix(log)
+hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix)
+print(edge_matrix)
+print(hub_cells)
+
+fig = network.plot_graph_with_labels(edge_matrix, {i: f"C{i+1}" for i in range(edge_matrix.shape[0])})
+plot.savefig("check.png")
