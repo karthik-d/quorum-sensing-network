@@ -312,10 +312,11 @@ def make_random_cell_array(shape):
 # 	verbose = True
 # )
 
-cell_posn_encoding = make_random_cell_array(shape=(50, 50))
-print(cell_posn_encoding)
+cell_area_dim = 20
+cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ))
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
+		size = cell_area_dim,
 		cells = cell_posn_encoding
 	),
 	obs_duration = 10,
@@ -329,8 +330,12 @@ log = simulator.run_qs_simulation(
 
 edge_matrix = simulator.get_edge_matrix(log)
 hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix)
-print(edge_matrix)
 print(hub_cells)
 
-fig = network.plot_graph_with_labels(edge_matrix, {i: f"C{i+1}" for i in range(edge_matrix.shape[0])})
-plot.savefig("check.png")
+cell_labels = {i: f"C{i+1}" for i in range(edge_matrix.shape[0])}
+network.plot_graph_with_labels(
+	edge_matrix, 
+	savepath = 'check.png', 
+	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+	labels = cell_labels
+)
