@@ -110,9 +110,39 @@ class QSNetworkSimulator:
 			mode='same', boundary='fill', fillvalue=0)
 
 
+	def get_edge_matrix(self, simulation_log, hub_cell_thresh=5, time_step=None):
+		
+		# use the last time step by default.
+		time_step = max(simulation_log.keys()) if time_step is None else time_step
+		graph = simulation_log[time_step]
+
+		num_cells = self.net.cells.sum()
+		cellposn_idx_l = np.where(self.net.cells==1)
+		edge_matrix = np.zeros((num_cells, num_cells, ))
+		
+		for i in range(num_cells):
+			# the threshold is basically how far this level has "influence" 
+			# (directly translates, since this is Manhattan distance).
+			max_dist = graph[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
+
+			for j in range(num_cells):
+				if i!=j: 
+					# manhattan distance.
+					dist = abs(cellposn_idx_l[0][i] - cellposn_idx_l[0][j]) + (
+						abs(cellposn_idx_l[1][i] - cellposn_idx_l[1][j])
+					)
+					edge_matrix[i, j] += 1 if (dist<=max_dist) else 0
+
+		# find hub cells.
+		num_connections_l = np.sum(edge_matrix, axis=1) # sum each row.
+		hub_cells = [int(num_connections_l[i] > hub_cell_thresh) for i in range(num_cells)]
+		print(hub_cells)
+		print(edge_matrix)
+
+
 	def init_simulation(self):
 		self.graph = list(range(self.obs_duration))
-		self.production_list = list(range(self.obs_duration))
+		self.production_list = list(range(self.obs_duration))   # not used yet.
 
 		# generate the initial signal cloud by running one convolution with neighborhood.
 		signal_cloud = self._convolve_with_neighborhood(curr_signal=1)
@@ -129,51 +159,53 @@ class QSNetworkSimulator:
 		> does NOT mutate any instance members.
 		"""
 
-		# override levels to use if passed.
+		# override `levels` and `thresh` to use if passed.
 		levels = self.net.levels if levels is None else levels
 		thresh = self.net.level_update_thresh if thresh is None else thresh
 
 		# copy current levels and modify the new object.
 		updated_levels = levels.copy()
 
-		# update-routine for first domain value.
+		# update-routine for cells whose current level is 1.
 		cellposn_idx_l = np.where(levels[self.net.domain[0]]==1)
-		conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
-		for i, conc in enumerate(conc_l):
-			if conc > self.net.domain[0] + thresh:
+		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		for i, perceived_signal in enumerate(perceived_signals_l):
+			# if the signal at this cell OVER (min+thresh) --> increase cell's level by 1.
+			if perceived_signal > self.net.domain[0] + thresh:
 				updated_levels[self.net.domain[0] + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 				updated_levels[self.net.domain[0], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
-		# update-routine for last domain value.
+		# update-routine for cells whose current level is 10.
 		cellposn_idx_l = np.where(levels[self.net.domain[-1]]==1)
-		conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
-		for i, conc in enumerate(conc_l):
-			if conc < self.net.domain[-1] + thresh:
+		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		for i, perceived_signal in enumerate(perceived_signals_l):
+			# if the signal at this cell UNDER (max+thresh) --> decrease cell's level by 1.
+			if perceived_signal < self.net.domain[-1] + thresh:
 				updated_levels[self.net.domain[-1] - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 				updated_levels[self.net.domain[-1], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
-		# update-routine for rest of the domain values.
-		for domain_val in self.net.domain[1:-1]:
+		# update-routine for cells at all other levels.
+		for my_val in self.net.domain[1:-1]:
 			
-			cellposn_idx_l = np.where(levels[domain_val]==1)
-			conc_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
-			for i, conc in enumerate(conc_l):
+			cellposn_idx_l = np.where(levels[my_val]==1)
+			perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+			for i, perceived_signal in enumerate(perceived_signals_l):
 				
-				# conc. is within 13.
-				if conc < domain_val + 13:
-					updated_levels[domain_val - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
-					updated_levels[domain_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+				# if the signal at this cell UNDER (curr+thresh) --> decrease cell's level by 1.
+				if perceived_signal < my_val + thresh:
+					updated_levels[my_val - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+					updated_levels[my_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
-				# conc. is 13 or more over.
-				elif conc > domain_val + 13:
-					updated_levels[domain_val + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
-					updated_levels[domain_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+				# if the signal at this cell is OVER (curr+thresh) --> increase cell's level by 1.
+				elif perceived_signal > my_val + thresh:
+					updated_levels[my_val + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
+					updated_levels[my_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
 		# return the updated levels matrix.
 		return updated_levels.copy()
 
 
-	def run_qs_simulation(self, obs_duration=None, signaling_interval=None):
+	def run_qs_simulation(self, obs_duration=None, signaling_interval=None, save_outputs=False):
 
 		# override simulator defaults if args passed.
 		obs_duration = self.obs_duration if obs_duration is None else obs_duration
@@ -216,8 +248,8 @@ class QSNetworkSimulator:
 				self._convolve_with_neighborhood(curr_signal=i) for i in self.net.domain
 			], axis=0) 
 
-			# TODO: vectorize the for-loop using `apply_along_axis` and reshaping the inner 2D matrices in the function.
-			# TODO: can also simply replicate `signaling_cells` are perform a matrix operation.
+			# optimization TODO: vectorize the for-loop using `apply_along_axis` and reshaping the inner 2D matrices in the function.
+			# optimization TODO: can also simply replicate `signaling_cells` are perform a matrix operation.
 			# set any level that has become -1 to 0. (why though??).
 			# reduce the level by 1 for signaling cells -- call it `static_levels`. (why??).
 			static_levels = np.zeros(self.net.levels.shape)
@@ -244,26 +276,36 @@ class QSNetworkSimulator:
 			plot.imshow(log[time], vmin=0, vmax=10)
 			plot.colorbar()
 
+		# store outputs?
+		if save_outputs:
+			_ = print("saving plots...") if self.verbose else None
+			# save progression.
+			plot.tight_layout()
+			plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
 
-		_ = print("saving plots...") if self.verbose else None
-		# save progression.
-		plot.tight_layout()
-		plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
+			# make animations from saved plots.
+			animation.save_animation(
+				imgs_l = [log[time] for time in range(1, obs_duration+1)], 
+				save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
+			)
+		else:
+			_ = print("done running. not saving.") if self.verbose else None
 
-		# make animations from saved plots.
-		animation.save_animation(
-			imgs_l = [log[time] for time in range(1, obs_duration+1)], 
-			save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
-		)
+
+		return log
 
 
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
 		cells="00100.00000.01101.00010.01000"
 	),
-	obs_duration = 24,
+	obs_duration = 10,
 	signaling_frac = 1,
 	verbose = True
 )
 
-simulator.run_qs_simulation()
+log = simulator.run_qs_simulation(
+	save_outputs = False
+)
+print(log.keys())
+simulator.get_edge_matrix(log)
