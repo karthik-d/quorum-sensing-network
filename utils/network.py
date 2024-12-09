@@ -29,6 +29,7 @@ def get_graph(adjacency_matrix, hub_nodes=[]):
 
 def plot_graph(agr, savepath=None):
 	# savepath=None returns as Bytes object.
+	agr.graph_attr['dpi'] = '100'
 	agr.layout(prog='sfdp')
 	agr_bytes = agr.draw(savepath, format="png")
 	return agr_bytes

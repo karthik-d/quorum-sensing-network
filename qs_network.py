@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pathlib
+import math
 
 from matplotlib import pyplot as plot
 from scipy import signal
@@ -224,14 +225,11 @@ class QSNetworkSimulator:
 		plot.clf()
 		plot.figure(figsize=(12, 12))
 
-		# plot initial.
+		# save initial.
 		init_network = np.sum([
 			self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 		], axis=0) 
-		plot.subplot(5, 5, 1)
-		plot.title(f"time=0")
-		plot.imshow(init_network, vmin=0, vmax=10)
-		plot.colorbar()
+		log[0] = init_network
 
 		for time in range(1, obs_duration+1):
 
@@ -278,27 +276,11 @@ class QSNetworkSimulator:
 			], axis=0) 
 
 
+		# optionally, save time evolution outputs.
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
-
-			# # plot the logged matrix.
-			# plot.subplot(5, 5, time+1)
-			# plot.title(f"time={time}")
-			# plot.imshow(log[time], vmin=0, vmax=10)
-			# plot.colorbar()
-
-			# # save progression.
-			# plot.tight_layout()
-			# plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
-
-			# # make animations from saved plots.
-			# animation.save_animation(
-			# 	imgs_l = [log[time] for time in range(1, obs_duration+1)], 
-			# 	save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
-			# )
-
 			self.save_outputs(log, obs_duration, os.path.join(
-				".", f"{datetime.now().strftime("%m%d%Y%H:%M:%S")}_dur-{obs_duration}_prob-{self.signaling_frac}))"
+				".", f"{datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_prob-{self.signaling_frac}"
 			))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
@@ -315,11 +297,12 @@ class QSNetworkSimulator:
 		# plot the logged matrix.
 		imgs_l = []
 		graphs_l = []
-		for time in range(1, obs_duration+1):
+		subplot_dim = math.ceil((obs_duration+1)**0.5)
+		for time in range(obs_duration+1):  # to plot time=0 as well.
 			imgs_l.append(log[time])
 
 			# plot each time step.
-			plot.subplot(self.net.size, self.net.size, time)
+			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
 			plot.imshow(log[time], vmin=0, vmax=10)
 			plot.colorbar()
@@ -354,7 +337,8 @@ class QSNetworkSimulator:
 
 
 def make_random_cell_array(shape):
-	cells = np.random.choice([0, 1], size=shape, p=[3./4, 1./4])
+	cells = np.random.choice([0, 1], size=shape, p=[4./5, 1./5])
+	print(cells.sum()/(shape[0]*shape[1]))
 	return ".".join(["".join(map(str, row)) for row in cells])
 
 
@@ -367,14 +351,15 @@ def make_random_cell_array(shape):
 # 	verbose = True
 # )
 
-cell_area_dim = 30
+cell_area_dim = 40
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ))
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
 		size = cell_area_dim,
 		cells = cell_posn_encoding
 	),
-	obs_duration = 10,
+	# set as (perfect_sq - 1) for good formatting.
+	obs_duration = 15,
 	signaling_frac = 1,
 	verbose = True
 )

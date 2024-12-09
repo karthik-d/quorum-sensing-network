@@ -24,7 +24,7 @@ def save_animation(imgs_l, save_path):
 
 	# make animation.
 	animation_fig = animation.FuncAnimation(fig, update, frames=len(imgs_l), interval=500, blit=True, repeat_delay=50)
-	animation_fig.save(save_path)
+	animation_fig.save(save_path, dpi=100)
 
 
 def img_bytes2array(fig_bytes):
