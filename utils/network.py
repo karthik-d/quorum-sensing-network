@@ -5,23 +5,14 @@ import networkx as nx
 import numpy as np
 
 
-def get_graph_object(adjacency_matrix):
-    rows, cols = np.where(adjacency_matrix == 1)
-    edges = zip(rows.tolist(), cols.tolist())
-    gr = nx.Graph()
-    gr.add_edges_from(edges)
-    return gr
-
-
-def plot_graph_with_labels(adjacency_matrix, savepath, hub_nodes=[], labels=None):
-	# TODO: fix labeling key-error issue.
-
-	gr = get_graph_object(adjacency_matrix)
-	fig = plot.figure()
-	# nx.draw(gr, node_size=50, labels=labels, with_labels=True)
-	# nx.draw(gr, node_size=10, with_labels=False)
+def get_graph(adjacency_matrix, hub_nodes=[]):
+	rows, cols = np.where(adjacency_matrix == 1)
+	edges = zip(rows.tolist(), cols.tolist())
+	gr = nx.Graph()
+	gr.add_edges_from(edges)
+	
+	# make AGraph; set attributes for hub nodes.
 	agr = to_agraph(gr)
-
 	for i, node in enumerate(agr.iternodes()):
 		node.attr['label'] = f"C{str(node)}"
 		node.attr['style'] = 'filled'
@@ -33,8 +24,12 @@ def plot_graph_with_labels(adjacency_matrix, savepath, hub_nodes=[], labels=None
 			node.attr['color'] = 'green'
 			node.attr['fillcolor'] = 'green'
 			node.attr['shape'] = 'ellipse'
+	return agr
 
+
+def plot_graph(agr, savepath=None):
+	# savepath=None returns as Bytes object.
 	agr.layout(prog='sfdp')
-	agr.draw(savepath)
-	return fig
+	agr_bytes = agr.draw(savepath, format="png")
+	return agr_bytes
 

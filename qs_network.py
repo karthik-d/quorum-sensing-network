@@ -1,6 +1,10 @@
 import numpy as np
+import os
+import pathlib
+
 from matplotlib import pyplot as plot
 from scipy import signal
+from datetime import datetime
 
 
 from utils import animation
@@ -117,7 +121,7 @@ class QSNetworkSimulator:
 		return hub_cells
 
 
-	def get_edge_matrix(self, simulation_log, hub_cell_thresh=5, time_step=None):
+	def get_edge_matrix(self, simulation_log, time_step=None):
 		
 		# use the last time step by default.
 		time_step = max(simulation_log.keys()) if time_step is None else time_step
@@ -273,29 +277,80 @@ class QSNetworkSimulator:
 				self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 			], axis=0) 
 
-			# plot the logged matrix.
-			plot.subplot(5, 5, time+1)
-			plot.title(f"time={time}")
-			plot.imshow(log[time], vmin=0, vmax=10)
-			plot.colorbar()
 
-		# store outputs?
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
-			# save progression.
-			plot.tight_layout()
-			plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
 
-			# make animations from saved plots.
-			animation.save_animation(
-				imgs_l = [log[time] for time in range(1, obs_duration+1)], 
-				save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
-			)
+			# # plot the logged matrix.
+			# plot.subplot(5, 5, time+1)
+			# plot.title(f"time={time}")
+			# plot.imshow(log[time], vmin=0, vmax=10)
+			# plot.colorbar()
+
+			# # save progression.
+			# plot.tight_layout()
+			# plot.savefig(f"levels_duration-{obs_duration}_select-{self.signaling_frac}.png", dpi=100)
+
+			# # make animations from saved plots.
+			# animation.save_animation(
+			# 	imgs_l = [log[time] for time in range(1, obs_duration+1)], 
+			# 	save_path = f"levels_duration-{obs_duration}_select-{self.signaling_frac}.gif"
+			# )
+
+			self.save_outputs(log, obs_duration, os.path.join(
+				".", f"{datetime.now().strftime("%m%d%Y%H:%M:%S")}_dur-{obs_duration}_prob-{self.signaling_frac}))"
+			))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
 
 		return log
+	
+
+	def save_outputs(self, log, obs_duration, savedir):
+		pathlib.Path(savedir).mkdir(
+			exist_ok=False, parents=True
+		)
+
+		# plot the logged matrix.
+		imgs_l = []
+		graphs_l = []
+		for time in range(1, obs_duration+1):
+			imgs_l.append(log[time])
+
+			# plot each time step.
+			plot.subplot(self.net.size, self.net.size, time)
+			plot.title(f"time={time}")
+			plot.imshow(log[time], vmin=0, vmax=10)
+			plot.colorbar()
+
+			# make graphs at each time step.
+			edge_matrix = self.get_edge_matrix(log, time_step=time)
+			hub_cells = self.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+			_ = print(f"no. of hubs at t={time}: {sum(hub_cells)}") if self.verbose else None
+
+			# draw and save as np objects.
+			agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
+			agr_bytes = network.plot_graph(agr, savepath=None) 
+			graphs_l.append(animation.img_bytes2array(agr_bytes))
+
+	
+		# save progression.
+		plot.tight_layout()
+		plot.savefig(os.path.join(savedir, f"cells_time-evolution.png"), dpi=100)
+
+		# make animations from saved plots.
+		animation.save_animation(
+			imgs_l = imgs_l,
+			save_path = os.path.join(savedir, f"cells_time-evolution.gif")
+		)
+
+		# save graphs as an animation.
+		animation.save_animation(
+			imgs_l = graphs_l,
+			save_path = os.path.join(savedir, f"graph_time-evolution.gif")
+		)
+
 
 
 def make_random_cell_array(shape):
@@ -325,17 +380,17 @@ simulator = QSNetworkSimulator(
 )
 
 log = simulator.run_qs_simulation(
-	save_outputs = False
+	save_outputs = True
 )
 
-edge_matrix = simulator.get_edge_matrix(log)
-hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
-print(f"No. of Hubs: {sum(hub_cells)}")
+# edge_matrix = simulator.get_edge_matrix(log)
+# hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+# print(f"No. of Hubs: {sum(hub_cells)}")
 
-cell_labels = {i: f"C{i+1}" for i in range(edge_matrix.shape[0])}
-network.plot_graph_with_labels(
-	edge_matrix, 
-	savepath = 'check.png', 
-	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
-	labels = cell_labels
-)
+# cell_labels = {i: f"C{i+1}" for i in range(edge_matrix.shape[0])}
+# network.plot_graph_with_labels(
+# 	edge_matrix, 
+# 	savepath = 'check.png', 
+# 	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+# 	labels = cell_labels
+# )
