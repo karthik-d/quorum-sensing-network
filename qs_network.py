@@ -358,7 +358,7 @@ class QSNetworkSimulator:
 
 		# save graphs as an animation.
 		animation.save_animation(
-			data = graphs_l,
+			data = [graphs_l],
 			save_path = os.path.join(savedir, f"graph_time-evolution.gif")
 		)
 
