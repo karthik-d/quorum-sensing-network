@@ -87,7 +87,7 @@ class QSNetworkSimulator:
 
 	def __init__(
 		self, qs_net, obs_duration=10, signaling_interval=1, 
-		level_update_thresh=3, signaling_frac=1,
+		level_update_thresh=3, signaling_frac=1, seeding_frac=0.1,
 		verbose=False
 	):
 		""" parameters:
@@ -103,6 +103,7 @@ class QSNetworkSimulator:
 		self.signaling_interval = signaling_interval
 		self.level_update_thresh = level_update_thresh
 		self.signaling_frac = signaling_frac
+		self.seeding_frac = seeding_frac
 		self.verbose = verbose
 
 		# initialize simulator by seeding network and running one step.
@@ -280,7 +281,7 @@ class QSNetworkSimulator:
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
 			self.save_outputs(log, obs_duration, os.path.join(
-				".", f"{datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_prob-{self.signaling_frac}"
+				"./outputs", f"{datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_seed-{self.seeding_frac}"
 			))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
@@ -328,6 +329,14 @@ class QSNetworkSimulator:
 			save_path = os.path.join(savedir, f"cells_time-evolution.gif")
 		)
 
+		# save final graph.
+		fig = plot.figure()
+		ax = plot.gca()
+		# set the initial image.
+		im = ax.imshow(graphs_l[-1], vmin=0, vmax=10)
+		ax.set_title(f"time={obs_duration}")
+		plot.savefig(os.path.join(savedir, f"graph_final.png"), dpi=100)
+
 		# save graphs as an animation.
 		animation.save_animation(
 			imgs_l = graphs_l,
@@ -336,8 +345,8 @@ class QSNetworkSimulator:
 
 
 
-def make_random_cell_array(shape):
-	cells = np.random.choice([0, 1], size=shape, p=[4./5, 1./5])
+def make_random_cell_array(shape, seeding_frac):
+	cells = np.random.choice([0, 1], size=shape, p=[1-seeding_frac, seeding_frac])
 	print(cells.sum()/(shape[0]*shape[1]))
 	return ".".join(["".join(map(str, row)) for row in cells])
 
@@ -351,8 +360,9 @@ def make_random_cell_array(shape):
 # 	verbose = True
 # )
 
-cell_area_dim = 40
-cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ))
+cell_seeding_frac = 1/6
+cell_area_dim = 50
+cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(
 		size = cell_area_dim,
@@ -361,6 +371,7 @@ simulator = QSNetworkSimulator(
 	# set as (perfect_sq - 1) for good formatting.
 	obs_duration = 15,
 	signaling_frac = 1,
+	seeding_frac = cell_seeding_frac,
 	verbose = True
 )
 
