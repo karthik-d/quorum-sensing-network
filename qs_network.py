@@ -51,7 +51,7 @@ class QSNetwork:
 		
 		# levels of signaling at each posn in area, per level.
 		self.levels = np.zeros((self.domain[-1]-self.domain[0]+2, self.size, self.size))
-		# set the first 2D matrix to cell positions -- initial level is 1 at the cells?
+		# set the first 2D matrix to cell positions -- initial level is 1 at all the cells.
 		self.levels[self.domain[0]] = self.cells.copy()
 
 		# define how current level defines the next level for "cell".
@@ -112,7 +112,7 @@ class QSNetworkSimulator:
 
 	def _convolve_with_neighborhood(self, curr_signal):
 		return signal.convolve2d(
-			self.net.cells, self.net.get_neighborhood_kernel(curr_signal), 
+			self.net.levels[curr_signal], self.net.get_neighborhood_kernel(curr_signal), 
 			mode='same', boundary='fill', fillvalue=0)
 	
 
@@ -397,7 +397,7 @@ sim_config = dict(
 )
 
 
-cell_seeding_frac = 1/6
+cell_seeding_frac = 1/25
 cell_area_dim = 50
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
 simulator = QSNetworkSimulator(
@@ -406,7 +406,7 @@ simulator = QSNetworkSimulator(
 		cells = cell_posn_encoding
 	),
 	# set as (perfect_sq - 1) for good formatting.
-	obs_duration = 8,
+	obs_duration = 15,
 	signaling_frac = 1,
 	seeding_frac = cell_seeding_frac,
 	verbose = True
