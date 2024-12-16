@@ -215,6 +215,9 @@ class QSNetworkSimulator:
 
 
 	def run_qs_simulation(self, obs_duration=None, signaling_interval=None, save_outputs=False):
+		"""
+		driver to run simulation with all set parameters
+		"""
 
 		# override simulator defaults if args passed.
 		obs_duration = self.obs_duration if obs_duration is None else obs_duration
@@ -222,15 +225,16 @@ class QSNetworkSimulator:
 
 		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
 		# run simulation.
-		log = dict()
+		log = dict(cloud=dict(), levels=dict())
 		plot.clf()
 		plot.figure(figsize=(12, 12))
 
 		# save initial.
-		init_network = np.sum([
+		init_levels = np.sum([
 			self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 		], axis=0) 
-		log[0] = init_network
+		log.get("levels")[0] = init_levels
+		log.get("cloud")[0] = self._convolve_with_neighborhood(curr_signal=1)
 
 		for time in range(1, obs_duration+1):
 
@@ -272,9 +276,10 @@ class QSNetworkSimulator:
 			
 			# log observation.
 			# NOTE: (cell_response_map + 1) is essentially `aiDistance`.
-			log[time] = np.sum([
+			log.get("levels")[time] = np.sum([
 				self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 			], axis=0) 
+			log.get("cloud")[time] = signal_cloud.copy()
 
 
 		# optionally, save time evolution outputs.
@@ -296,20 +301,31 @@ class QSNetworkSimulator:
 		)
 
 		# plot the logged matrix.
-		imgs_l = []
+		levels_l = []
+		clouds_l = []
 		graphs_l = []
 		subplot_dim = math.ceil((obs_duration+1)**0.5)
-		for time in range(obs_duration+1):  # to plot time=0 as well.
-			imgs_l.append(log[time])
+		plot_figures = {}
+		for time in range(obs_duration+1):	# to include plot of time=0.
+			levels_l.append(log["levels"][time])
+			clouds_l.append(log["cloud"][time])
 
-			# plot each time step.
+			# plot each time step of `levels`.
+			plot.figure(1)
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
-			plot.imshow(log[time], vmin=0, vmax=10)
+			plot.imshow(log["levels"][time], vmin=0, vmax=10)
+			plot.colorbar()
+
+			# plot each time step of `cloud`.
+			plot.figure(2)
+			plot.subplot(subplot_dim, subplot_dim, time+1)
+			plot.title(f"time={time}")
+			plot.imshow(log["cloud"][time], vmin=0, vmax=10)
 			plot.colorbar()
 
 			# make graphs at each time step.
-			edge_matrix = self.get_edge_matrix(log, time_step=time)
+			edge_matrix = self.get_edge_matrix(log["levels"], time_step=time)
 			hub_cells = self.find_hub_cells(edge_matrix, hub_cell_thresh=5)
 			_ = print(f"no. of hubs at t={time}: {sum(hub_cells)}") if self.verbose else None
 
@@ -320,13 +336,21 @@ class QSNetworkSimulator:
 
 	
 		# save progression.
+		plot.figure(1)
 		plot.tight_layout()
-		plot.savefig(os.path.join(savedir, f"cells_time-evolution.png"), dpi=100)
+		plot.savefig(os.path.join(savedir, f"levels_time-evolution.png"), dpi=100)
+
+		plot.figure(2)
+		plot.tight_layout()
+		plot.savefig(os.path.join(savedir, f"cloud_time-evolution.png"), dpi=100)
 
 		# make animations from saved plots.
 		animation.save_animation(
-			imgs_l = imgs_l,
-			save_path = os.path.join(savedir, f"cells_time-evolution.gif")
+			data = [
+				levels_l,
+				clouds_l
+			],
+			save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif")
 		)
 
 		# save final graph.
@@ -339,7 +363,7 @@ class QSNetworkSimulator:
 
 		# save graphs as an animation.
 		animation.save_animation(
-			imgs_l = graphs_l,
+			data = graphs_l,
 			save_path = os.path.join(savedir, f"graph_time-evolution.gif")
 		)
 
@@ -360,7 +384,25 @@ def make_random_cell_array(shape, seeding_frac):
 # 	verbose = True
 # )
 
-cell_seeding_frac = 1/6
+
+# TODO: use this config format.
+sim_config = dict(
+
+	# network params.
+	cell_seeding_frac = 1/12,
+	cell_area_dim = 50,
+	cell_posn_encoding = make_random_cell_array,   # pass the seeding function or an encoding string.
+
+	# simulator params.
+	obs_duration = 15,
+	signaling_frac = 1,
+
+	# other params 
+	verbose = True
+)
+
+
+cell_seeding_frac = 1/12
 cell_area_dim = 50
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
 simulator = QSNetworkSimulator(
