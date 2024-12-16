@@ -226,8 +226,6 @@ class QSNetworkSimulator:
 		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
 		# run simulation.
 		log = dict(cloud=dict(), levels=dict())
-		plot.clf()
-		plot.figure(figsize=(12, 12))
 
 		# save initial.
 		init_levels = np.sum([
@@ -286,7 +284,8 @@ class QSNetworkSimulator:
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
 			self.save_outputs(log, obs_duration, os.path.join(
-				"./outputs", f"{datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_seed-{self.seeding_frac}"
+				"./outputs", f"{
+					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_seed-{round(self.seeding_frac, 4)}"
 			))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
@@ -305,20 +304,19 @@ class QSNetworkSimulator:
 		clouds_l = []
 		graphs_l = []
 		subplot_dim = math.ceil((obs_duration+1)**0.5)
-		plot_figures = {}
 		for time in range(obs_duration+1):	# to include plot of time=0.
 			levels_l.append(log["levels"][time])
 			clouds_l.append(log["cloud"][time])
 
 			# plot each time step of `levels`.
-			plot.figure(1)
+			plot.figure(1, figsize=(15, 15))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
 			plot.imshow(log["levels"][time], vmin=0, vmax=10)
 			plot.colorbar()
 
 			# plot each time step of `cloud`.
-			plot.figure(2)
+			plot.figure(2, figsize=(15, 15))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
 			plot.imshow(log["cloud"][time], vmin=0, vmax=10)
@@ -337,11 +335,9 @@ class QSNetworkSimulator:
 	
 		# save progression.
 		plot.figure(1)
-		plot.tight_layout()
 		plot.savefig(os.path.join(savedir, f"levels_time-evolution.png"), dpi=100)
 
 		plot.figure(2)
-		plot.tight_layout()
 		plot.savefig(os.path.join(savedir, f"cloud_time-evolution.png"), dpi=100)
 
 		# make animations from saved plots.
@@ -354,11 +350,10 @@ class QSNetworkSimulator:
 		)
 
 		# save final graph.
-		fig = plot.figure()
-		ax = plot.gca()
+		plot.figure(3, figsize=(15, 15))
+		plot.clf()
 		# set the initial image.
-		im = ax.imshow(graphs_l[-1], vmin=0, vmax=10)
-		ax.set_title(f"time={obs_duration}")
+		plot.imshow(graphs_l[-1], vmin=0, vmax=10)
 		plot.savefig(os.path.join(savedir, f"graph_final.png"), dpi=100)
 
 		# save graphs as an animation.
@@ -402,7 +397,7 @@ sim_config = dict(
 )
 
 
-cell_seeding_frac = 1/12
+cell_seeding_frac = 1/6
 cell_area_dim = 50
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
 simulator = QSNetworkSimulator(
@@ -411,7 +406,7 @@ simulator = QSNetworkSimulator(
 		cells = cell_posn_encoding
 	),
 	# set as (perfect_sq - 1) for good formatting.
-	obs_duration = 15,
+	obs_duration = 8,
 	signaling_frac = 1,
 	seeding_frac = cell_seeding_frac,
 	verbose = True
