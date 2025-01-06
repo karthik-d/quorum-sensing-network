@@ -19,8 +19,12 @@ class QSNetwork:
 	def __init__(
 		self, size=5, cell_density=0.2, domain_range=(1, 10),
 		cells='00000.00100.01110.01100.00000',
+
+		# with negative feedback.
 		cell_response_mapping=[1, 3, 5, 7, 6, 5, 4, 3, 2, 1],
-		conc_response_mapping=[3, 5, 7, 9, 8, 7, 6, 5, 4, 3]
+
+		# no negative feedback.
+		# cell_response_mapping=[1, 2, 3, 4, 5, 6, 7, 7, 7, 7],
 	):
 		""" parameters:
 		- size: determines the dimension of the square cell matrix.
@@ -36,6 +40,7 @@ class QSNetwork:
 		self.domain = np.array(range(*domain_range))
 
 		# initialize the network.
+		conc_response_mapping=[x+2 for x in cell_response_mapping]
 		self.init_net(cells, cell_response_mapping, conc_response_mapping)
 	
 
@@ -157,12 +162,12 @@ class QSNetworkSimulator:
 		signal_cloud = self._convolve_with_neighborhood(curr_signal=1)
 
 		# run a single step of simulation.
-		self.net.levels = self.step_simulation(signal_cloud)
+		self.net.levels = self.update_signal_levels(signal_cloud, cells_to_update=self.net.cells.copy())
 
 
-	def step_simulation(self, signal_cloud, levels=None, thresh=3):
+	def update_signal_levels(self, signal_cloud, cells_to_update, levels=None, thresh=3):
 		"""
-		INPUTS: signal_cloud, levels (use from net if None), thresh (for level updation).
+		INPUTS: signal_cloud, cells_to_update, levels (use from net if None), thresh (for level updation).
 		OUTPUTS: updated levels.
 		> updates `levels` of the network based on current `signal_cloud`.
 		> does NOT mutate any instance members.
@@ -176,8 +181,18 @@ class QSNetworkSimulator:
 		updated_levels = levels.copy()
 
 		# update-routine for cells whose current level is 1.
-		cellposn_idx_l = np.where(levels[self.net.domain[0]]==1)
-		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		# select only cells that should have signals updated.
+		print(len(np.where(levels[self.net.domain[0]]==1)[0]), end=" --> ")
+		cellposn_idx_l = list(zip(*[ 
+			(i, j)
+			for i, j in zip(*np.where(levels[self.net.domain[0]]==1))
+			if cells_to_update[i, j]
+		]))
+		if cellposn_idx_l:
+			print(len(cellposn_idx_l[0]))
+		else:
+			print("nah")
+		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]] if cellposn_idx_l else []
 		for i, perceived_signal in enumerate(perceived_signals_l):
 			# if the signal at this cell OVER (min+thresh) --> increase cell's level by 1.
 			if perceived_signal > self.net.domain[0] + thresh:
@@ -185,19 +200,39 @@ class QSNetworkSimulator:
 				updated_levels[self.net.domain[0], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
 		# update-routine for cells whose current level is 10.
-		cellposn_idx_l = np.where(levels[self.net.domain[-1]]==1)
-		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+		print(len(np.where(levels[self.net.domain[-1]]==1)[0]))
+		print(cells_to_update.sum())
+		cellposn_idx_l = list(zip(*[ 
+			(i, j)
+			for i, j in zip(*np.where(levels[self.net.domain[-1]]==1))
+			if cells_to_update[i, j]
+		]))
+		if cellposn_idx_l:
+			print(len(cellposn_idx_l[0]))
+		else:
+			print("nah")
+		perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]] if cellposn_idx_l else []
 		for i, perceived_signal in enumerate(perceived_signals_l):
 			# if the signal at this cell UNDER (max+thresh) --> decrease cell's level by 1.
 			if perceived_signal < self.net.domain[-1] + thresh:
 				updated_levels[self.net.domain[-1] - 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 				updated_levels[self.net.domain[-1], cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
+		print("---")
 
 		# update-routine for cells at all other levels.
 		for my_val in self.net.domain[1:-1]:
 			
-			cellposn_idx_l = np.where(levels[my_val]==1)
-			perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]]
+			print(len(np.where(levels[my_val]==1)[0]), end=" --> ")
+			cellposn_idx_l = list(zip(*[ 
+				(i, j)
+				for i, j in zip(*np.where(levels[my_val]==1))
+				if cells_to_update[i, j]
+			]))
+			if cellposn_idx_l:
+				print(len(cellposn_idx_l[0]))
+			else:
+				print("nah")
+			perceived_signals_l = signal_cloud[cellposn_idx_l[0], cellposn_idx_l[1]] if cellposn_idx_l else []
 			for i, perceived_signal in enumerate(perceived_signals_l):
 				
 				# if the signal at this cell UNDER (curr+thresh) --> decrease cell's level by 1.
@@ -210,21 +245,24 @@ class QSNetworkSimulator:
 					updated_levels[my_val + 1, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 1
 					updated_levels[my_val, cellposn_idx_l[0][i], cellposn_idx_l[1][i]] = 0
 
+			# print("---")
 		# return the updated levels matrix.
 		return updated_levels.copy()
 
 
 	def run_qs_simulation(self, obs_duration=None, signaling_interval=None, save_outputs=False):
 		"""
-		driver to run simulation with all set parameters
+		driver to run simulation with all set parameters.
 		"""
 
+		# -- arg processing --
 		# override simulator defaults if args passed.
 		obs_duration = self.obs_duration if obs_duration is None else obs_duration
 		signaling_interval = self.signaling_interval if signaling_interval is None else signaling_interval
+		# -----
 
+		# -- run simulation --
 		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
-		# run simulation.
 		log = dict(cloud=dict(), levels=dict())
 
 		# save initial.
@@ -240,16 +278,17 @@ class QSNetworkSimulator:
 			if time % signaling_interval != 0:
 				continue
 
-			# == signaling routine ==
+			# -- signaling routine --
 
-			# select the signaling cells.
-			# NOTE: this is where the probability-based selection of signaling cells would go.
+			# select the signaling cells at random.
 			num_cells = self.net.cells.sum()
-			# signaling_cells = self.net.cells.copy()
-			signaling_cells = np.zeros(self.net.cells.shape)
-			signaling_cells[*list(zip(*rand_gen.choice(
+			responding_cells = np.zeros(self.net.cells.shape)
+			responding_cells[*list(zip(*rand_gen.choice(
 				list(zip(*np.nonzero(self.net.cells))), int(self.signaling_frac*num_cells), replace=False
 			)))] = 1
+			print(num_cells)
+			print(responding_cells.sum())
+			print("---")
 			
 			# generate signal cloud.
 			signal_cloud = np.sum([
@@ -257,23 +296,27 @@ class QSNetworkSimulator:
 			], axis=0) 
 
 			# optimization TODO: vectorize the for-loop using `apply_along_axis` and reshaping the inner 2D matrices in the function.
-			# optimization TODO: can also simply replicate `signaling_cells` are perform a matrix operation.
-			# set any level that has become -1 to 0. (why though??).
-			# reduce the level by 1 for signaling cells -- call it `static_levels`. (why??).
+			# optimization TODO: can also simply replicate `responding_cells` are perform a matrix operation.
+			# `static_levels` defines levels of all cells that won't update in this time step.
 			static_levels = np.zeros(self.net.levels.shape)
 			for domain in self.net.domain:
-				static_levels[domain] = self.net.levels[domain] - signaling_cells
+				static_levels[domain] = self.net.levels[domain] - responding_cells
 				static_levels[domain][np.where(static_levels[domain]==-1)] = 0
-
-			# `dynamic_levels` simply recovers `levels`, but has +1 wherever levels were 0 at a signaling cell position.
-			# (rationale unclear??)
+			
+			# `dynamic_levels` defines levels of all cells that will update in this time step.
 			dynamic_levels = self.net.levels - static_levels
-			# use signaling_cloud and static_levels to run a simulation step.
-			dynamic_levels = self.step_simulation(signal_cloud, levels=dynamic_levels)
-			self.net.levels = dynamic_levels + static_levels
+
+			print(dynamic_levels.sum(), static_levels.sum(), self.net.levels.sum())
+			print("===")
+			# dynamic_levels = self.update_signal_levels(
+			# 	signal_cloud, cells_to_update=responding_cells, levels=dynamic_levels)
+			# self.net.levels = dynamic_levels + static_levels
+			self.net.levels = self.update_signal_levels(
+				signal_cloud, cells_to_update=responding_cells, levels=self.net.levels
+			)
 			
 			# log observation.
-			# NOTE: (cell_response_map + 1) is essentially `aiDistance`.
+			# NOTE: (cell_response_map[x] + 1) is essentially `aiDistance`.
 			log.get("levels")[time] = np.sum([
 				self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 			], axis=0) 
@@ -284,9 +327,10 @@ class QSNetworkSimulator:
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
 			self.save_outputs(log, obs_duration, os.path.join(
-				"./outputs", f"{
-					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{self.net.size}_seed-{round(self.seeding_frac, 4)}"
-			))
+				"./outputs", f"""{
+					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
+						self.net.size}_select-{round(self.signaling_frac, 2)}_seed-{
+							round(self.seeding_frac, 4)}"""))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
@@ -309,14 +353,14 @@ class QSNetworkSimulator:
 			clouds_l.append(log["cloud"][time])
 
 			# plot each time step of `levels`.
-			plot.figure(1, figsize=(15, 15))
+			plot.figure(1, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
 			plot.imshow(log["levels"][time], vmin=0, vmax=10)
 			plot.colorbar()
 
 			# plot each time step of `cloud`.
-			plot.figure(2, figsize=(15, 15))
+			plot.figure(2, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"time={time}")
 			plot.imshow(log["cloud"][time], vmin=0, vmax=10)
@@ -350,7 +394,7 @@ class QSNetworkSimulator:
 		)
 
 		# save final graph.
-		plot.figure(3, figsize=(15, 15))
+		plot.figure(3, figsize=(30, 30))
 		plot.clf()
 		# set the initial image.
 		plot.imshow(graphs_l[-1], vmin=0, vmax=10)
@@ -384,7 +428,7 @@ def make_random_cell_array(shape, seeding_frac):
 sim_config = dict(
 
 	# network params.
-	cell_seeding_frac = 1/12,
+	cell_seeding_frac = 1/10,
 	cell_area_dim = 50,
 	cell_posn_encoding = make_random_cell_array,   # pass the seeding function or an encoding string.
 
@@ -397,7 +441,7 @@ sim_config = dict(
 )
 
 
-cell_seeding_frac = 1/25
+cell_seeding_frac = 1/30
 cell_area_dim = 50
 cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
 simulator = QSNetworkSimulator(
@@ -406,8 +450,8 @@ simulator = QSNetworkSimulator(
 		cells = cell_posn_encoding
 	),
 	# set as (perfect_sq - 1) for good formatting.
-	obs_duration = 15,
-	signaling_frac = 1,
+	obs_duration = 99,
+	signaling_frac = 0.25,
 	seeding_frac = cell_seeding_frac,
 	verbose = True
 )
