@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pathlib
 import math
+import json
 
 from matplotlib import pyplot as plot
 from scipy import signal
@@ -16,7 +17,7 @@ rand_gen = np.random.default_rng()
 
 class QSNetwork:
 
-	def __init__(self, **kwargs):
+	def __init__(self, config):
 		""" parameters:
 		- cell_area_dim: determines the dimension of the square cell matrix.
 		- cell_density: determines ...
@@ -24,6 +25,7 @@ class QSNetwork:
 		- negative_feedback: use negative feedback?
 		"""
 
+		kwargs = config.copy()
 		self.size = kwargs.get('cell_area_dim', (5, 5)) 
 		self.cell_density = kwargs.get('cell_density', 0.2) 
 
@@ -33,7 +35,8 @@ class QSNetwork:
 		self.domain = np.array(range(*domain_range))
 
 		# next levels for each corresponding current level (these levels are drawn from `domain`).
-		if kwargs.get('negative_feedback'):
+		self.has_negative_feedback = kwargs.get('negative_feedback')
+		if self.has_negative_feedback:
 			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 3, 5, 7, 6, 5, 4, 3, 2, 1])
 		else:
 			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 2, 3, 4, 5, 6, 7, 7, 7, 7]), 
@@ -91,7 +94,7 @@ class QSNetwork:
 
 class QSNetworkSimulator:
 
-	def __init__(self, qs_net, **kwargs):
+	def __init__(self, qs_net, config):
 		""" parameters:
 		- qs_net: the network to simulate; a QSNetwork instance.
 		- obs_duration: total simulation length.
@@ -100,6 +103,8 @@ class QSNetworkSimulator:
 		- verbose: boolean to indicate if simulation comments should be displayed.
 		"""
 		
+		kwargs = config.copy()
+		self.config = config.copy()
 		self.net = qs_net 
 		self.obs_duration = kwargs.get("obs_duration", 10)
 		self.signaling_interval = kwargs.get("signaling_interval", 1)
@@ -300,11 +305,11 @@ class QSNetworkSimulator:
 		# optionally, save time evolution outputs.
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
-			self.save_outputs(log, obs_duration, os.path.join(
+			self.save_outputs(log, obs_duration, self.config, os.path.join(
 				"./outputs", f"""{
 					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
-						'x'.join(self.net.size)}_select-{round(self.signaling_frac, 2)}_seed-{
-							round(self.seeding_frac, 4)}"""))
+						'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
+							round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}"""))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
@@ -312,7 +317,7 @@ class QSNetworkSimulator:
 		return log
 	
 
-	def save_outputs(self, log, obs_duration, savedir):
+	def save_outputs(self, log, obs_duration, config, savedir):
 		pathlib.Path(savedir).mkdir(
 			exist_ok=False, parents=True
 		)
@@ -380,6 +385,10 @@ class QSNetworkSimulator:
 			save_path = os.path.join(savedir, f"graph_time-evolution.gif")
 		)
 
+		# save configs.
+		with open(os.path.join(savedir, "config.json"), 'w') as f:
+			json.dump(json.dumps(config), f)
+
 
 
 def make_random_cell_array(cell_area_dim, cell_seeding_frac, **kwargs):
@@ -399,14 +408,13 @@ def make_random_cell_array(cell_area_dim, cell_seeding_frac, **kwargs):
 # )
 
 simulation_config = dict(
-
 	# network params.
-	cell_seeding_frac = 1/30,
+	cell_seeding_frac = 1/20,
 	cell_area_dim = (50, 50),
 	negative_feedback = True,
 
 	# simulator params.
-	obs_duration = 15,		# set as (perfect_sq - 1) for good formatting.
+	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
 	signaling_frac = 1,
 
 	# other params 
@@ -417,21 +425,20 @@ simulation_config.update(dict(
 	cell_posn_encoding = make_random_cell_array(**simulation_config)))
 	
 simulator = QSNetworkSimulator(
-	qs_net = QSNetwork(**simulation_config),
-	**simulation_config
-)
+	qs_net = QSNetwork(simulation_config),
+	config = simulation_config)
 
 log = simulator.run_qs_simulation(
-	save_outputs = False
+	save_outputs = True
 )
 
-edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
-hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
-print(f"No. of Hubs: {sum(hub_cells)}")
+# edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
+# hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+# print(f"No. of Hubs: {sum(hub_cells)}")
 
-graph = network.get_graph(
-	edge_matrix, 
-	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
-	node_posns = node_posns
-)
-network.plot_graph(graph, savepath = 'check.png')
+# graph = network.get_graph(
+# 	edge_matrix, 
+# 	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+# 	node_posns = node_posns
+# )
+# network.plot_graph(graph, savepath = 'check.png')
