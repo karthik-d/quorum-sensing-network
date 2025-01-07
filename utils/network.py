@@ -20,7 +20,7 @@ def get_graph(adjacency_matrix, hub_nodes=[], node_posns=None):
 	agr.graph_attr['size'] = 100
 	agr.graph_attr['ratio'] = 1
 	for i, node in enumerate(agr.iternodes()):
-		node.attr['label'] = f"C{i+1}"
+		node.attr['label'] = f"C{i+1}" 
 		node.attr['style'] = 'filled'
 		node.attr['width'], node.attr['height'] = 1.5, 1.5
 		node.attr['fontsize'] = 80

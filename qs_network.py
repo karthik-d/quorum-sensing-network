@@ -16,46 +16,47 @@ rand_gen = np.random.default_rng()
 
 class QSNetwork:
 
-	def __init__(
-		self, size=5, cell_density=0.2, domain_range=(1, 10),
-		cells='00000.00100.01110.01100.00000',
-
-		# with negative feedback.
-		cell_response_mapping=[1, 3, 5, 7, 6, 5, 4, 3, 2, 1],
-
-		# no negative feedback.
-		# cell_response_mapping=[1, 2, 3, 4, 5, 6, 7, 7, 7, 7],
-	):
+	def __init__(self, **kwargs):
 		""" parameters:
-		- size: determines the dimension of the square cell matrix.
+		- cell_area_dim: determines the dimension of the square cell matrix.
 		- cell_density: determines ...
-		- cells: a binary encoding of cell positions.
-		- response_mapping: next levels for each corresponding current level (these levels are drawn from `domain`).
+		- cell_posn_encoding: a binary encoding of cell positions.
+		- negative_feedback: use negative feedback?
 		"""
 
-		self.size = size 
-		self.cell_density = cell_density
+		self.size = kwargs.get('cell_area_dim', (5, 5)) 
+		self.cell_density = kwargs.get('cell_density', 0.2) 
 
-		domain_range = (domain_range[0], domain_range[-1]+1) # adjust to include the last value.
+		# adjust to include the last value.
+		domain_range_raw = kwargs.get('domain_range', (1, 10))
+		domain_range = (domain_range_raw[0], domain_range_raw[-1]+1) 
 		self.domain = np.array(range(*domain_range))
 
-		# initialize the network.
+		# next levels for each corresponding current level (these levels are drawn from `domain`).
+		if kwargs.get('negative_feedback'):
+			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 3, 5, 7, 6, 5, 4, 3, 2, 1])
+		else:
+			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 2, 3, 4, 5, 6, 7, 7, 7, 7]), 
 		conc_response_mapping=[x+2 for x in cell_response_mapping]
-		self.init_net(cells, cell_response_mapping, conc_response_mapping)
+		
+		# initialize the network.
+		self.init_net(
+			kwargs.get('cell_posn_encoding', '00000.00100.01110.01100.00000'), 
+			cell_response_mapping, conc_response_mapping)
 	
 
 	def init_net(self, cells, cell_response_mapping, conc_response_mapping):
 	
 		# indicator matrix denoting positions of "active" cells.
 		self.cells = np.array([list(map(int, list(row_posns))) for row_posns in cells.split('.')])
-		assert self.cells.shape == (self.size, self.size), f"cell positions must match area dim = {self.size}."
+		assert self.cells.shape==self.size, f"cell positions must match area dim = {self.size}."
 
 		## NOTE: `levels` is always indexed through the values of domains. 
 		## so it has an additional unused element at idx=0.
 		## and it is initialized to have len(domain)+1 size along its first dimension.
 		
 		# levels of signaling at each posn in area, per level.
-		self.levels = np.zeros((self.domain[-1]-self.domain[0]+2, self.size, self.size))
+		self.levels = np.zeros((self.domain[-1]-self.domain[0]+2, ) + self.size)
 		# set the first 2D matrix to cell positions -- initial level is 1 at all the cells.
 		self.levels[self.domain[0]] = self.cells.copy()
 
@@ -80,8 +81,8 @@ class QSNetwork:
 
 		next_signal = self.conc_response_map.get(curr_signal)
 		return np.array([
-			[max([0, next_signal - abs(x) - abs(y)]) for x in range(-self.size, self.size+1)]
-			for y in range(-self.size, self.size+1)
+			[max([0, next_signal - abs(x) - abs(y)]) for x in range(-self.size[0], self.size[0]+1)]
+			for y in range(-self.size[1], self.size[1]+1)
 		])
 
 
@@ -90,11 +91,7 @@ class QSNetwork:
 
 class QSNetworkSimulator:
 
-	def __init__(
-		self, qs_net, obs_duration=10, signaling_interval=1, 
-		level_update_thresh=3, signaling_frac=1, seeding_frac=0.1,
-		verbose=False
-	):
+	def __init__(self, qs_net, **kwargs):
 		""" parameters:
 		- qs_net: the network to simulate; a QSNetwork instance.
 		- obs_duration: total simulation length.
@@ -104,12 +101,12 @@ class QSNetworkSimulator:
 		"""
 		
 		self.net = qs_net 
-		self.obs_duration = obs_duration
-		self.signaling_interval = signaling_interval
-		self.level_update_thresh = level_update_thresh
-		self.signaling_frac = signaling_frac
-		self.seeding_frac = seeding_frac
-		self.verbose = verbose
+		self.obs_duration = kwargs.get("obs_duration", 10)
+		self.signaling_interval = kwargs.get("signaling_interval", 1)
+		self.level_update_thresh = kwargs.get("level_update_thresh", 3)
+		self.signaling_frac = kwargs.get("signaling_frac", 1)
+		self.seeding_frac = kwargs.get("seeding_frac", 0.1)
+		self.verbose = kwargs.get("verbose", False)
 
 		# initialize simulator by seeding network and running one step.
 		self.init_simulation()
@@ -306,7 +303,7 @@ class QSNetworkSimulator:
 			self.save_outputs(log, obs_duration, os.path.join(
 				"./outputs", f"""{
 					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
-						self.net.size}_select-{round(self.signaling_frac, 2)}_seed-{
+						'x'.join(self.net.size)}_select-{round(self.signaling_frac, 2)}_seed-{
 							round(self.seeding_frac, 4)}"""))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
@@ -385,9 +382,10 @@ class QSNetworkSimulator:
 
 
 
-def make_random_cell_array(shape, seeding_frac):
-	cells = np.random.choice([0, 1], size=shape, p=[1-seeding_frac, seeding_frac])
-	print("actual seeding fraction:", cells.sum()/(shape[0]*shape[1]))
+def make_random_cell_array(cell_area_dim, cell_seeding_frac, **kwargs):
+	# ignore extra kwargs.
+	cells = np.random.choice([0, 1], size=cell_area_dim, p=[1-cell_seeding_frac, cell_seeding_frac])
+	print("actual seeding fraction:", cells.sum()/np.prod(cell_area_dim))
 	return ".".join(["".join(map(str, row)) for row in cells])
 
 
@@ -400,37 +398,27 @@ def make_random_cell_array(shape, seeding_frac):
 # 	verbose = True
 # )
 
-
-# TODO: use this config format.
-sim_config = dict(
+simulation_config = dict(
 
 	# network params.
-	cell_seeding_frac = 1/10,
-	cell_area_dim = 50,
-	cell_posn_encoding = make_random_cell_array,   # pass the seeding function or an encoding string.
+	cell_seeding_frac = 1/30,
+	cell_area_dim = (50, 50),
+	negative_feedback = True,
 
 	# simulator params.
-	obs_duration = 15,
+	obs_duration = 15,		# set as (perfect_sq - 1) for good formatting.
 	signaling_frac = 1,
 
 	# other params 
 	verbose = True
 )
-
-
-cell_seeding_frac = 1/30
-cell_area_dim = 50
-cell_posn_encoding = make_random_cell_array(shape=(cell_area_dim, cell_area_dim, ), seeding_frac=cell_seeding_frac)
+# randomly seed cells.
+simulation_config.update(dict(
+	cell_posn_encoding = make_random_cell_array(**simulation_config)))
+	
 simulator = QSNetworkSimulator(
-	qs_net = QSNetwork(
-		size = cell_area_dim,
-		cells = cell_posn_encoding
-	),
-	# set as (perfect_sq - 1) for good formatting.
-	obs_duration = 2,
-	signaling_frac = 0.55,
-	seeding_frac = cell_seeding_frac,
-	verbose = True
+	qs_net = QSNetwork(**simulation_config),
+	**simulation_config
 )
 
 log = simulator.run_qs_simulation(
