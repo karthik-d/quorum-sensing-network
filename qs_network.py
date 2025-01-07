@@ -128,7 +128,13 @@ class QSNetworkSimulator:
 		return hub_cells
 
 
-	def get_edge_matrix(self, simulation_log, time_step=None):
+	def get_network_graph(self, simulation_log, time_step=None):
+		"""
+		Returns: 
+		- Edge matrix of constructed graph - 2D, undirected.
+		- List of index positions of cells (nodes) on plate.
+		Note: Nodes occur in the same relative order in the edge matrix and index positions list.
+		"""
 		
 		# use the last time step by default.
 		time_step = max(simulation_log.keys()) if time_step is None else time_step
@@ -137,7 +143,9 @@ class QSNetworkSimulator:
 		num_cells = self.net.cells.sum()
 		cellposn_idx_l = np.where(self.net.cells==1)
 		edge_matrix = np.zeros((num_cells, num_cells, ))
-		
+
+		assert len(cellposn_idx_l[0]) == num_cells, "[ERROR] number of cells must match size of node positions."
+
 		for i in range(num_cells):
 			# the threshold is basically how far this level has "influence" 
 			# (directly translates, since this is Manhattan distance).
@@ -150,8 +158,8 @@ class QSNetworkSimulator:
 						abs(cellposn_idx_l[1][i] - cellposn_idx_l[1][j])
 					)
 					edge_matrix[i, j] += 1 if (dist<=max_dist) else 0
-		
-		return edge_matrix
+		print(cellposn_idx_l)
+		return edge_matrix, list(zip(*cellposn_idx_l))
 
 
 	def init_simulation(self):
@@ -338,7 +346,7 @@ class QSNetworkSimulator:
 			plot.colorbar()
 
 			# make graphs at each time step.
-			edge_matrix = self.get_edge_matrix(log["levels"], time_step=time)
+			edge_matrix, node_posns = self.get_network_graph(log["levels"], time_step=time)
 			hub_cells = self.find_hub_cells(edge_matrix, hub_cell_thresh=5)
 			_ = print(f"no. of hubs at t={time}: {sum(hub_cells)}") if self.verbose else None
 
@@ -421,24 +429,23 @@ simulator = QSNetworkSimulator(
 		cells = cell_posn_encoding
 	),
 	# set as (perfect_sq - 1) for good formatting.
-	obs_duration = 99,
+	obs_duration = 2,
 	signaling_frac = 0.55,
 	seeding_frac = cell_seeding_frac,
 	verbose = True
 )
 
 log = simulator.run_qs_simulation(
-	save_outputs = True
+	save_outputs = False
 )
 
-# edge_matrix = simulator.get_edge_matrix(log)
-# hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
-# print(f"No. of Hubs: {sum(hub_cells)}")
+edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
+hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+print(f"No. of Hubs: {sum(hub_cells)}")
 
-# cell_labels = {i: f"C{i+1}" for i in range(edge_matrix.shape[0])}
-# network.plot_graph_with_labels(
-# 	edge_matrix, 
-# 	savepath = 'check.png', 
-# 	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
-# 	labels = cell_labels
-# )
+graph = network.get_graph(
+	edge_matrix, 
+	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+	node_posns = node_posns
+)
+network.plot_graph(graph, savepath = 'check.png')
