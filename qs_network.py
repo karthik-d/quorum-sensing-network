@@ -148,17 +148,15 @@ class QSNetworkSimulator:
 
 		for i in range(num_cells):
 			# the threshold is basically how far this level has "influence" 
-			# (directly translates, since this is Manhattan distance).
+			# (directly translates, since level dissipates directly with Manhattan distance).
 			max_dist = graph[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
-
 			for j in range(num_cells):
 				if i!=j: 
-					# manhattan distance.
 					dist = abs(cellposn_idx_l[0][i] - cellposn_idx_l[0][j]) + (
 						abs(cellposn_idx_l[1][i] - cellposn_idx_l[1][j])
-					)
-					edge_matrix[i, j] += 1 if (dist<=max_dist) else 0
-		print(cellposn_idx_l)
+					)	# manhattan distance.
+					edge_matrix[i, j] = 1 if (dist<=max_dist) else 0
+		
 		return edge_matrix, list(zip(*cellposn_idx_l))
 
 

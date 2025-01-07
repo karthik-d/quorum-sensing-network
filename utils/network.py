@@ -10,17 +10,21 @@ def get_graph(adjacency_matrix, hub_nodes=[], node_posns=None):
 	use node posns to position nodes, if supplied; else, use auto-layouting.
 	"""
 
-	print(node_posns)
 	rows, cols = np.where(adjacency_matrix == 1)
 	edges = zip(rows.tolist(), cols.tolist())
-	gr = nx.Graph()
+	gr = nx.DiGraph()
 	gr.add_edges_from(edges)
 	
 	# make AGraph; set attributes for hub nodes.
 	agr = to_agraph(gr)
+	print(agr.directed)
+	agr.graph_attr['size'] = 100
+	agr.graph_attr['ratio'] = 1
 	for i, node in enumerate(agr.iternodes()):
 		node.attr['label'] = f"C{str(node)}"
 		node.attr['style'] = 'filled'
+		node.attr['width'], node.attr['height'] = 2, 2
+		node.attr['fontsize'] = 80
 		if int(str(node)) in hub_nodes:
 			node.attr['color'] = 'red'
 			node.attr['fillcolor'] = 'red'
