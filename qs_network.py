@@ -11,6 +11,7 @@ from datetime import datetime
 
 from utils import animation
 from utils import network
+from utils import seeding
 
 rand_gen = np.random.default_rng()
 
@@ -391,13 +392,6 @@ class QSNetworkSimulator:
 
 
 
-def make_random_cell_array(cell_area_dim, cell_seeding_frac, **kwargs):
-	# ignore extra kwargs.
-	cells = np.random.choice([0, 1], size=cell_area_dim, p=[1-cell_seeding_frac, cell_seeding_frac])
-	print("actual seeding fraction:", cells.sum()/np.prod(cell_area_dim))
-	return ".".join(["".join(map(str, row)) for row in cells])
-
-
 # simulator = QSNetworkSimulator(
 # 	qs_net = QSNetwork(
 # 		cells="00100.00000.01101.00010.01000"
@@ -409,9 +403,12 @@ def make_random_cell_array(cell_area_dim, cell_seeding_frac, **kwargs):
 
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 1/20,
-	cell_area_dim = (50, 50),
+	cell_seeding_frac = 0.02,
+	cell_area_dim = (100, 50),
 	negative_feedback = True,
+	# params for graded seeding; set to `None` if using uniform seeding.
+	seeding_transition_frac = 0.01,
+	n_seeding_transitions = 4,
 
 	# simulator params.
 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
@@ -421,9 +418,15 @@ simulation_config = dict(
 	verbose = True
 )
 # randomly seed cells.
+# simulation_config.update(dict(
+# 	cell_posn_encoding = seeding.uniform_density_array(**simulation_config)))
 simulation_config.update(dict(
-	cell_posn_encoding = make_random_cell_array(**simulation_config)))
+	cell_posn_encoding = seeding.graded_density_array(**simulation_config)
+))
 	
+# print(seeding.graded_density_array(**simulation_config))
+# exit()
+
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(simulation_config),
 	config = simulation_config)
