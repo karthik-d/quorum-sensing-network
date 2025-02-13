@@ -353,7 +353,12 @@ class QSNetworkSimulator:
 
 			# draw and save as np objects.
 			agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
-			agr_bytes = network.plot_graph(agr, savepath=None) 
+			agr = graph = network.get_graph(
+				edge_matrix, 
+				hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+				node_posns = node_posns
+			)
+			agr_bytes = network.plot_graph(agr, savepath=None)
 			graphs_l.append(animation.img_bytes2array(agr_bytes))
 
 	
@@ -404,11 +409,11 @@ class QSNetworkSimulator:
 simulation_config = dict(
 	# network params.
 	cell_seeding_frac = 0.02,
-	cell_area_dim = (100, 50),
+	cell_area_dim = (96, 50),
 	negative_feedback = True,
 	# params for graded seeding; set to `None` if using uniform seeding.
-	seeding_transition_frac = 0.01,
-	n_seeding_transitions = 4,
+	seeding_transition_frac = 0.005,
+	n_seeding_transitions = 7,
 
 	# simulator params.
 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
@@ -445,3 +450,18 @@ log = simulator.run_qs_simulation(
 # 	node_posns = node_posns
 # )
 # network.plot_graph(graph, savepath = 'check.png')
+
+
+
+# =======
+
+### previous graphing logic.
+# make graphs at each time step.
+# edge_matrix, node_posns = self.get_network_graph(log["levels"], time_step=time)
+# hub_cells = self.find_hub_cells(edge_matrix, hub_cell_thresh=5)
+# _ = print(f"no. of hubs at t={time}: {sum(hub_cells)}") if self.verbose else None
+
+# # draw and save as np objects.
+# agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
+# agr_bytes = network.plot_graph(agr, savepath=None) 
+# graphs_l.append(animation.img_bytes2array(agr_bytes))
