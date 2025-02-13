@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH -t 3:00:00
+#SBATCH -t 1:00:00
 #SBATCH -J graded
 #SBATCH --mail-type=ALL
 #SBATCH --output="slurm-%j.out"
