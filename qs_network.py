@@ -326,24 +326,37 @@ class QSNetworkSimulator:
 		# plot the logged matrix.
 		levels_l = []
 		clouds_l = []
+		delta_clouds_l = []
 		graphs_l = []
 		subplot_dim = math.ceil((obs_duration+1)**0.5)
 		for time in range(obs_duration+1):	# to include plot of time=0.
 			levels_l.append(log["levels"][time])
 			clouds_l.append(log["cloud"][time])
 
+			# compute and save how the cloud changed in this time step.
+			cloud_delta = (log["cloud"][time] - log["cloud"][time-1]) if (
+				time>0) else np.zeros(log["cloud"][time].shape)
+			delta_clouds_l.append(cloud_delta)
+
 			# plot each time step of `levels`.
 			plot.figure(1, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
-			plot.title(f"time={time}")
+			plot.title(f"levels; time={time}")
 			plot.imshow(log["levels"][time], vmin=0, vmax=10)
 			plot.colorbar()
 
 			# plot each time step of `cloud`.
 			plot.figure(2, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
-			plot.title(f"time={time}")
+			plot.title(f"cloud; time={time}")
 			plot.imshow(log["cloud"][time], vmin=0, vmax=10)
+			plot.colorbar()
+
+			# plot each delta of `cloud`.
+			plot.figure(3, figsize=(30, 30))
+			plot.subplot(subplot_dim, subplot_dim, time+1)
+			plot.title(f"cloud delta; time={time}")
+			plot.imshow(cloud_delta, vmin=0, vmax=10)
 			plot.colorbar()
 
 			# make graphs at each time step.
@@ -369,11 +382,15 @@ class QSNetworkSimulator:
 		plot.figure(2)
 		plot.savefig(os.path.join(savedir, f"cloud_time-evolution.png"), dpi=100)
 
+		plot.figure(3)
+		plot.savefig(os.path.join(savedir, f"cloud-deltas_time-evolution.png"), dpi=100)
+
 		# make animations from saved plots.
 		animation.save_animation(
 			data = [
 				levels_l,
-				clouds_l
+				clouds_l,
+				delta_clouds_l,
 			],
 			save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif")
 		)
