@@ -12,6 +12,7 @@ from datetime import datetime
 from utils import animation
 from utils import network
 from utils import seeding
+from utils import utils
 
 rand_gen = np.random.default_rng()
 
@@ -27,7 +28,7 @@ class QSNetwork:
 		"""
 
 		kwargs = config.copy()
-		self.size = kwargs.get('cell_area_dim', (5, 5)) 
+		self.size = tuple(kwargs.get('cell_area_dim', (5, 5)))
 		self.cell_density = kwargs.get('cell_density', 0.2) 
 
 		# adjust to include the last value.
@@ -53,7 +54,7 @@ class QSNetwork:
 	
 		# indicator matrix denoting positions of "active" cells.
 		self.cells = np.array([list(map(int, list(row_posns))) for row_posns in cells.split('.')])
-		assert self.cells.shape==self.size, f"cell positions must match area dim = {self.size}."
+		assert all(x==y for x, y in zip(self.cells.shape, self.size)), f"cell positions must match area dim = {self.size}."
 
 		## NOTE: `levels` is always indexed through the values of domains. 
 		## so it has an additional unused element at idx=0.
@@ -434,13 +435,17 @@ simulation_config = dict(
 	cell_area_dim = (50, 50),
 	negative_feedback = True,
 
+	# set simulation id to load seeding from; None for random.
+	# seeding_src = None,
+	seeding_src = "02152025033708_size-50x50_select-1_seed-0.1",
+
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = None,
 	n_seeding_transitions = None,
 
 	# simulator params.
 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 1,
+	signaling_frac = 0.5,
 
 	# other params 
 	verbose = True
@@ -470,15 +475,21 @@ simulation_config = dict(
 # Cell seeding options.
 # -----
 
-## 1. Randomly seed cells.
-seeding_func = seeding.graded_density_array if (
-	simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
-simulation_config.update(dict(
-	cell_posn_encoding = seeding_func(**simulation_config)
-))
-
-## 2. Load seeding from parameter file (specify simulation id).
-
+if simulation_config.get('seeding_src') is not None:
+	## 1. Load seeding and related params from parameter file (using simulation id).
+	config = utils.get_config_of_simulation(**simulation_config)
+	# update seeding params based on source.
+	simulation_config.update({k: config[k] for k in [
+		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
+		'seeding_transition_frac', 'n_seeding_transitions'
+	]})
+else:
+	## 2. Randomly seed cells.
+	seeding_func = seeding.graded_density_array if (
+		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
+	simulation_config.update(dict(
+		cell_posn_encoding = seeding_func(**simulation_config)
+	))
 
 
 # -----
