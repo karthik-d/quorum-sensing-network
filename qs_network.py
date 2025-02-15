@@ -393,10 +393,14 @@ class QSNetworkSimulator:
 
 		# save configs.
 		with open(os.path.join(savedir, "config.json"), 'w') as f:
-			json.dump(json.dumps(config), f)
+			json.dump(json.dumps(config, indent='\t'), f)
 
 
+# -----
+# Template run parameters.
+# -----
 
+## 1. Basic 5x5 array.
 # simulator = QSNetworkSimulator(
 # 	qs_net = QSNetwork(
 # 		cells="00100.00000.01101.00010.01000"
@@ -406,14 +410,16 @@ class QSNetworkSimulator:
 # 	verbose = True
 # )
 
+## 2. Constant seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.02,
-	cell_area_dim = (96, 50),
+	cell_seeding_frac = 0.0667,
+	cell_area_dim = (50, 50),
 	negative_feedback = True,
+
 	# params for graded seeding; set to `None` if using uniform seeding.
-	seeding_transition_frac = 0.005,
-	n_seeding_transitions = 7,
+	seeding_transition_frac = None,
+	n_seeding_transitions = None,
 
 	# simulator params.
 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
@@ -422,23 +428,52 @@ simulation_config = dict(
 	# other params 
 	verbose = True
 )
-# randomly seed cells.
-# simulation_config.update(dict(
-# 	cell_posn_encoding = seeding.uniform_density_array(**simulation_config)))
-simulation_config.update(dict(
-	cell_posn_encoding = seeding.graded_density_array(**simulation_config)
-))
-	
-# print(seeding.graded_density_array(**simulation_config))
-# exit()
 
+## 3. Graded seeding.
+# simulation_config = dict(
+# 	# network params.
+# 	cell_seeding_frac = 0.02,
+# 	cell_area_dim = (96, 50),
+# 	negative_feedback = True,
+
+# 	# params for graded seeding; set to `None` if using uniform seeding.
+# 	seeding_transition_frac = 0.005,
+# 	n_seeding_transitions = 7,
+
+# 	# simulator params.
+# 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
+# 	signaling_frac = 1,
+
+# 	# other params 
+# 	verbose = True
+# )
+
+
+# -----
+# Cell seeding options.
+# -----
+
+## 1. Randomly seed cells.
+seeding_func = seeding.graded_density_array if (
+	simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
+simulation_config.update(dict(
+	cell_posn_encoding = seeding_func(**simulation_config)
+))
+
+## 2. Load seeding from parameter file (specify simulation id).
+
+
+
+# -----
+# Run simulation.
+# -----
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(simulation_config),
 	config = simulation_config)
-
 log = simulator.run_qs_simulation(
 	save_outputs = True
 )
+
 
 # edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
 # hub_cells = QSNetworkSimulator.find_hub_cells(edge_matrix, hub_cell_thresh=5)
@@ -454,7 +489,6 @@ log = simulator.run_qs_simulation(
 
 
 # =======
-
 ### previous graphing logic.
 # make graphs at each time step.
 # edge_matrix, node_posns = self.get_network_graph(log["levels"], time_step=time)
