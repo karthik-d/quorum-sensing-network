@@ -145,17 +145,17 @@ class QSNetworkSimulator:
 		time_step = max(simulation_log.keys()) if time_step is None else time_step
 		graph = simulation_log[time_step]
 
-		num_cells = self.net.cells.sum()
+		n_cells = self.net.cells.sum()
 		cellposn_idx_l = np.where(self.net.cells==1)
-		edge_matrix = np.zeros((num_cells, num_cells, ))
+		edge_matrix = np.zeros((n_cells, n_cells, ))
 
-		assert len(cellposn_idx_l[0]) == num_cells, "[ERROR] number of cells must match size of node positions."
+		assert len(cellposn_idx_l[0]) == n_cells, "[ERROR] number of cells must match size of node positions."
 
-		for i in range(num_cells):
+		for i in range(n_cells):
 			# the threshold is basically how far this level has "influence" 
 			# (directly translates, since level dissipates directly with Manhattan distance).
 			max_dist = graph[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
-			for j in range(num_cells):
+			for j in range(n_cells):
 				if i!=j: 
 					dist = abs(cellposn_idx_l[0][i] - cellposn_idx_l[0][j]) + (
 						abs(cellposn_idx_l[1][i] - cellposn_idx_l[1][j])
@@ -267,21 +267,18 @@ class QSNetworkSimulator:
 
 		# if fixed_signalers is True, then pre-select signaling subsets.
 		# shuffle the list and select cells with overlap.
-		signaling_sets = []
-		n_cells = self.net.cells.sum()
-		n_cells_per_set = int(n_cells*self.signaling_frac)
-		# overlap between subsets to have common signalers.
-		n_overlaps = int(0.5*n_cells_per_set)   # overlapping half the set; change if required.
-		all_cell_posns = rand_gen.permutation(list(zip(*np.nonzero(self.net.cells))))
-		for i in range(0, n_cells-n_overlaps, n_cells_per_set-n_overlaps):
-			responding_cells = np.zeros(self.net.cells.shape)
-			responding_cells[*list(zip(*all_cell_posns[i:i+n_cells_per_set]))] = 1
-			signaling_sets.append(responding_cells)
-			print(i, i+n_cells_per_set, responding_cells.sum())
-			print(len(list(zip(*all_cell_posns[i:i+n_cells]))[0]))
-		print(len(signaling_sets))
-		print(all_cell_posns.shape, n_cells)
-		exit()
+		if self.fixed_signalers:
+			signaling_set_idx = 0
+			signaling_sets = []
+			n_cells = self.net.cells.sum()
+			n_cells_per_set = int(n_cells*self.signaling_frac)
+			# overlap between subsets to have common signalers.
+			n_overlaps = int(0.5*n_cells_per_set)   # overlapping half the set; change if required.
+			all_cell_posns = rand_gen.permutation(list(zip(*np.nonzero(self.net.cells))))
+			for i in range(0, n_cells-n_overlaps, n_cells_per_set-n_overlaps):
+				responding_cells = np.zeros(self.net.cells.shape)
+				responding_cells[*list(zip(*all_cell_posns[i:i+n_cells_per_set]))] = 1
+				signaling_sets.append(responding_cells)
 
 		for time in range(1, obs_duration+1):
 
@@ -291,12 +288,16 @@ class QSNetworkSimulator:
 
 			# -- signaling routine --
 
-			# select the signaling cells at random.
-			num_cells = self.net.cells.sum()
-			responding_cells = np.zeros(self.net.cells.shape)
-			responding_cells[*list(zip(*rand_gen.choice(
-				list(zip(*np.nonzero(self.net.cells))), int(self.signaling_frac*num_cells), replace=False
-			)))] = 1
+			# alternate within fixed_signalers OR select the signaling cells at random.
+			if self.fixed_signalers:
+				responding_cells = signaling_sets[signaling_set_idx]
+				signaling_set_idx = (signaling_set_idx+1)%len(signaling_sets)
+			else:
+				n_cells = self.net.cells.sum()
+				responding_cells = np.zeros(self.net.cells.shape)
+				responding_cells[*list(zip(*rand_gen.choice(
+					list(zip(*np.nonzero(self.net.cells))), int(self.signaling_frac*n_cells), replace=False
+				)))] = 1
 			
 			# generate signal cloud.
 			signal_cloud = np.sum([
