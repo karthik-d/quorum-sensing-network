@@ -112,6 +112,7 @@ class QSNetworkSimulator:
 		self.signaling_interval = kwargs.get("signaling_interval", 1)
 		self.level_update_thresh = kwargs.get("level_update_thresh", 3)
 		self.signaling_frac = kwargs.get("signaling_frac", 1)
+		self.fixed_signalers = kwargs.get('fixed_signalers', False)
 		self.seeding_frac = kwargs.get("cell_seeding_frac", 0.1)
 		self.verbose = kwargs.get("verbose", False)
 
@@ -263,6 +264,24 @@ class QSNetworkSimulator:
 		], axis=0) 
 		log.get("levels")[0] = init_levels
 		log.get("cloud")[0] = self._convolve_with_neighborhood(curr_signal=1)
+
+		# if fixed_signalers is True, then pre-select signaling subsets.
+		# shuffle the list and select cells with overlap.
+		signaling_sets = []
+		n_cells = self.net.cells.sum()
+		n_cells_per_set = int(n_cells*self.signaling_frac)
+		# overlap between subsets to have common signalers.
+		n_overlaps = int(0.5*n_cells_per_set)   # overlapping half the set; change if required.
+		all_cell_posns = rand_gen.permutation(list(zip(*np.nonzero(self.net.cells))))
+		for i in range(0, n_cells-n_overlaps, n_cells_per_set-n_overlaps):
+			responding_cells = np.zeros(self.net.cells.shape)
+			responding_cells[*list(zip(*all_cell_posns[i:i+n_cells_per_set]))] = 1
+			signaling_sets.append(responding_cells)
+			print(i, i+n_cells_per_set, responding_cells.sum())
+			print(len(list(zip(*all_cell_posns[i:i+n_cells]))[0]))
+		print(len(signaling_sets))
+		print(all_cell_posns.shape, n_cells)
+		exit()
 
 		for time in range(1, obs_duration+1):
 
@@ -418,7 +437,7 @@ class QSNetworkSimulator:
 # Template run parameters.
 # -----
 
-## 1. Basic 5x5 array.
+## 1. basic 5x5 array.
 # simulator = QSNetworkSimulator(
 # 	qs_net = QSNetwork(
 # 		cells="00100.00000.01101.00010.01000"
@@ -428,7 +447,7 @@ class QSNetworkSimulator:
 # 	verbose = True
 # )
 
-## 2. Constant seeding.
+## 2. constant seeding.
 simulation_config = dict(
 	# network params.
 	cell_seeding_frac = 0.0333,
@@ -436,8 +455,8 @@ simulation_config = dict(
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
-	# seeding_src = None,
-	seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	seeding_src = None,
+	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
 	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
@@ -448,11 +467,15 @@ simulation_config = dict(
 	obs_duration = 99,		# set as (perfect_sq - 1) for good formatting.
 	signaling_frac = 0.5,
 
+	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
+	# during updation, a set is chosen cyclically to respond.
+	fixed_signalers = False,
+
 	# other params 
 	verbose = True
 )
 
-## 3. Graded seeding.
+## 3. graded seeding.
 # simulation_config = dict(
 # 	# network params.
 # 	cell_seeding_frac = 0.02,
@@ -473,7 +496,7 @@ simulation_config = dict(
 
 
 # -----
-# Cell seeding options.
+# cell seeding options.
 # -----
 
 if simulation_config.get('seeding_src') is not None:
@@ -494,7 +517,7 @@ else:
 
 
 # -----
-# Run simulation.
+# run simulation.
 # -----
 simulator = QSNetworkSimulator(
 	qs_net = QSNetwork(simulation_config),
