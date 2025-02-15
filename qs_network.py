@@ -112,7 +112,7 @@ class QSNetworkSimulator:
 		self.signaling_interval = kwargs.get("signaling_interval", 1)
 		self.level_update_thresh = kwargs.get("level_update_thresh", 3)
 		self.signaling_frac = kwargs.get("signaling_frac", 1)
-		self.seeding_frac = kwargs.get("seeding_frac", 0.1)
+		self.seeding_frac = kwargs.get("cell_seeding_frac", 0.1)
 		self.verbose = kwargs.get("verbose", False)
 
 		# initialize simulator by seeding network and running one step.
@@ -431,20 +431,21 @@ class QSNetworkSimulator:
 ## 2. Constant seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.0667,
+	cell_seeding_frac = 0.0333,
 	cell_area_dim = (50, 50),
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
 	# seeding_src = None,
-	seeding_src = "02152025033708_size-50x50_select-1_seed-0.1",
+	seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = None,
 	n_seeding_transitions = None,
 
 	# simulator params.
-	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
+	obs_duration = 99,		# set as (perfect_sq - 1) for good formatting.
 	signaling_frac = 0.5,
 
 	# other params 
