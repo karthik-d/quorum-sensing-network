@@ -279,15 +279,13 @@ class QSNetworkSimulator:
 				responding_cells = np.zeros(self.net.cells.shape)
 				responding_cells[*list(zip(*all_cell_posns[i:i+n_cells_per_set]))] = 1
 				signaling_sets.append(responding_cells)
-
+			
 		for time in range(1, obs_duration+1):
-
 			# decide whether or not to signal.
 			if time % signaling_interval != 0:
 				continue
 
 			# -- signaling routine --
-
 			# alternate within fixed_signalers OR select the signaling cells at random.
 			if self.fixed_signalers:
 				responding_cells = signaling_sets[signaling_set_idx]
@@ -331,10 +329,10 @@ class QSNetworkSimulator:
 				"./outputs", f"""{
 					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
 						'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
-							round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}"""))
+							round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
+								'_fixedsig' if self.fixed_signalers else ''}"""))
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
-
 
 		return log
 	
@@ -456,9 +454,9 @@ simulation_config = dict(
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
-	seeding_src = None,
+	# seeding_src = None,
 	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
-	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
+	seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = None,
@@ -470,7 +468,7 @@ simulation_config = dict(
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
-	fixed_signalers = False,
+	fixed_signalers = True,
 
 	# other params 
 	verbose = True
