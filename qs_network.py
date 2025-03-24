@@ -139,11 +139,12 @@ class QSNetworkSimulator:
 		- Edge matrix of constructed graph - 2D, undirected.
 		- List of index positions of cells (nodes) on plate.
 		Note: Nodes occur in the same relative order in the edge matrix and index positions list.
+		Note: The edge matrix is asymmetric since the graph will be directed.
 		"""
 		
 		# use the last time step by default.
 		time_step = max(simulation_log.keys()) if time_step is None else time_step
-		graph = simulation_log[time_step]
+		cell_levels = simulation_log[time_step]
 
 		n_cells = self.net.cells.sum()
 		cellposn_idx_l = np.where(self.net.cells==1)
@@ -154,7 +155,7 @@ class QSNetworkSimulator:
 		for i in range(n_cells):
 			# the threshold is basically how far this level has "influence" 
 			# (directly translates, since level dissipates directly with Manhattan distance).
-			max_dist = graph[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
+			max_dist = cell_levels[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
 			for j in range(n_cells):
 				if i!=j: 
 					dist = abs(cellposn_idx_l[0][i] - cellposn_idx_l[0][j]) + (
@@ -162,7 +163,7 @@ class QSNetworkSimulator:
 					)	# manhattan distance.
 					edge_matrix[i, j] = 1 if (dist<=max_dist) else 0
 		
-		return edge_matrix, list(zip(*cellposn_idx_l))
+		return edge_matrix.astype(int), list(zip(*cellposn_idx_l))
 
 
 	def init_simulation(self):
@@ -346,7 +347,8 @@ class QSNetworkSimulator:
 		levels_l = []
 		clouds_l = []
 		delta_clouds_l = []
-		graphs_l = []
+		graph_imgs_l = []
+		graph_matrices_l = []
 		subplot_dim = math.ceil((obs_duration+1)**0.5)
 		for time in range(obs_duration+1):	# to include plot of time=0.
 			levels_l.append(log["levels"][time])
@@ -391,9 +393,17 @@ class QSNetworkSimulator:
 				node_posns = node_posns
 			)
 			agr_bytes = network.plot_graph(agr, savepath=None)
-			graphs_l.append(animation.img_bytes2array(agr_bytes))
+			graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
+			graph_matrices_l.append(edge_matrix)
 
 	
+		# save final graph as edge matrix.
+		pd.DataFrame(graph_matrices_l[-1].astype(int), 
+			index=[f"C{i+1}" for i in range(graph_matrices_l[-1].shape[0])],
+			columns=[f"C{i+1}" for i in range(graph_matrices_l[-1].shape[0])]).to_csv(
+				os.path.join(savedir, f"graph_final.csv"), 
+				index=True, header=True, sep=',')
+
 		# save progression.
 		plot.figure(1)
 		plot.savefig(os.path.join(savedir, f"levels_time-evolution.png"), dpi=100)
@@ -418,12 +428,12 @@ class QSNetworkSimulator:
 		plot.figure(3, figsize=(30, 30))
 		plot.clf()
 		# set the initial image.
-		plot.imshow(graphs_l[-1], vmin=0, vmax=10)
+		plot.imshow(graph_imgs_l[-1], vmin=0, vmax=10)
 		plot.savefig(os.path.join(savedir, f"graph_final.png"), dpi=100)
 
 		# save graphs as an animation.
 		animation.save_animation(
-			data = [graphs_l],
+			data = [graph_imgs_l],
 			save_path = os.path.join(savedir, f"graph_time-evolution.gif")
 		)
 
@@ -454,21 +464,22 @@ simulation_config = dict(
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
+	# seeding-related config values will be overwritten upon load. 
 	# seeding_src = None,
-	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
-	seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
+	seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = None,
 	n_seeding_transitions = None,
 
 	# simulator params.
-	obs_duration = 99,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.5,
+	obs_duration = 35,		# set as (perfect_sq - 1) for good formatting.
+	signaling_frac = 0.4,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
-	fixed_signalers = True,
+	fixed_signalers = False,
 
 	# other params 
 	verbose = True
@@ -549,4 +560,4 @@ log = simulator.run_qs_simulation(
 # # draw and save as np objects.
 # agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
 # agr_bytes = network.plot_graph(agr, savepath=None) 
-# graphs_l.append(animation.img_bytes2array(agr_bytes))
+# graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
