@@ -16,7 +16,9 @@ def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=
 	node_posns = np.array(node_posns)
 	nodetable = pd.DataFrame(dict(
 		x=node_posns[:, 0],
-		y=node_posns[:, 1]
+		y=node_posns[:, 1],
+		indegree=np.sum(adjacency_matrix!=0, axis=0),    # non-zero col entries.
+		outdegree=np.sum(adjacency_matrix!=0, axis=1)	 # non-zero row entries.
 	), index=[f"C{i+1}" for i in range(adjacency_matrix.shape[0])])
 
 	adjacency_df = pd.DataFrame(adjacency_matrix.astype(int), 
@@ -26,17 +28,21 @@ def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=
 	sources_l = []
 	targets_l = []
 	weights_l = []
+	distances_l = []
 	xs_l, ys_l = [], []
-	for col in adjacency_df.columns:
-		target_nodes = adjacency_df.index[adjacency_df[col]==1]
+	for i, col in enumerate(adjacency_df.columns):
+		print(adjacency_matrix[np.where(adjacency_matrix[i] != 0)])
+		target_nodes = adjacency_df.index[adjacency_df[col] != 0]
 		targets_l.extend(list(target_nodes))
 		sources_l.extend([col]*len(target_nodes))
 		weights_l.extend([1]*len(target_nodes))
+		distances_l.extend(adjacency_matrix[i][np.where(adjacency_matrix[i]!=0)])
 
 	edgetable = pd.DataFrame(dict(
 		source=sources_l,
 		target=targets_l,
-		weight=weights_l))
+		weight=weights_l,
+		distance=distances_l))
 
 	ret = (edgetable, nodetable)
 	ret = ret + ((adjacency_df,) if return_adjacency_df else tuple())
@@ -49,7 +55,7 @@ def get_graph(adjacency_matrix, hub_nodes=[], node_posns=None):
 	use node posns to position nodes, if supplied; else, use auto-layouting.
 	"""
 
-	rows, cols = np.where(adjacency_matrix == 1)
+	rows, cols = np.where(adjacency_matrix != 0)
 	edges = zip(rows.tolist(), cols.tolist())
 	gr = nx.DiGraph()
 	gr.add_edges_from(edges)
