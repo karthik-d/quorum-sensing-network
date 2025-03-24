@@ -31,7 +31,6 @@ def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=
 	distances_l = []
 	xs_l, ys_l = [], []
 	for i, col in enumerate(adjacency_df.columns):
-		print(adjacency_matrix[np.where(adjacency_matrix[i] != 0)])
 		target_nodes = adjacency_df.index[adjacency_df[col] != 0]
 		targets_l.extend(list(target_nodes))
 		sources_l.extend([col]*len(target_nodes))

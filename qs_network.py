@@ -328,19 +328,19 @@ class QSNetworkSimulator:
 		# optionally, save time evolution outputs.
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
-			self.save_outputs(log, obs_duration, self.config, os.path.join(
-				"./outputs", f"""{
-					datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
-						'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
-							round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
-								'_fixedsig' if self.fixed_signalers else ''}"""))
+			self.save_outputs(log, obs_duration, self.config, f"""{
+				datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
+					'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
+						round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
+							'_fixedsig' if self.fixed_signalers else ''}""")
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
 		return log
 	
 
-	def save_outputs(self, log, obs_duration, config, savedir):
+	def save_outputs(self, log, obs_duration, config, sim_id):
+		savedir = os.path.join("./outputs", sim_id)
 		pathlib.Path(savedir).mkdir(
 			exist_ok=False, parents=True
 		)
@@ -401,13 +401,13 @@ class QSNetworkSimulator:
 				# save final graph as edge matrix, and get tables for cytoscape.
 				edgetable, nodetable, adjacency_df = network.get_cytoscape_tables(edge_matrix, node_posns, True)
 				adjacency_df.to_csv(
-					os.path.join(savedir, f"graph_final_adj.csv"), 
+					os.path.join(savedir, f"{sim_id}_adj.csv"), 
 					index=True, header=True, sep=',')
 				edgetable.to_csv(
-					os.path.join(savedir, f"graph_final_edgetable.csv"), 
+					os.path.join(savedir, f"{sim_id}_edgetable.csv"), 
 					index=False, header=True, sep=',')
 				nodetable.to_csv(
-					os.path.join(savedir, f"graph_final_nodetable.csv"), 
+					os.path.join(savedir, f"{sim_id}_nodetable.csv"), 
 					index=True, header=True, sep=',')
 
 		# save progression.
@@ -471,8 +471,10 @@ simulation_config = dict(
 
 	# set simulation id to load seeding from; None for random.
 	# seeding-related config values will be overwritten upon load. 
-	# seeding_src = None,
-	seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	seeding_src = None,
+	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
@@ -481,7 +483,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 35,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.4,
+	signaling_frac = 1,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
