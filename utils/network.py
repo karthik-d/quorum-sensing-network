@@ -5,6 +5,43 @@ import networkx as nx
 import numpy as np
 
 
+def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=False):
+	"""
+	OUTPUT: (edgetable, nodetable, [adjacency_df]).
+	`node_posns` are included as `x` and `y` columns in the output nodetable.
+	edge weights are just set to 1 for now.
+	"""
+
+	nodetable = pd.DataFrame(dict(
+		x=node_posns[0],
+		y=node_posns[1]
+	), index=[f"C{i+1}" for i in range(adjacency_matrix.shape[0])])
+
+	adjacency_df = pd.DataFrame(adjacency_matrix.astype(int), 
+		index=nodetable.index,
+		columns=nodetable.index)
+
+	sources_l = []
+	targets_l = []
+	weights_l = []
+	xs_l, ys_l = [], []
+	for i, col in adjacency_df.columns:
+		target_nodes = df.index[df[col]==1]
+		targets_l.extend(list(target_nodes))
+		sources_l.extend([col]*len(target_nodes))
+		weights_l.extend([1]*len(target_nodes))
+
+	edgetable_df = pd.DataFrame(dict(
+		source=sources_l,
+		target=targets_l,
+		weight=weights_l))
+
+	ret = (edgetable, nodetable)
+	ret = ret + ((adjacency_df,) if return_adjacency_df else tuple())
+	return ret
+	
+
+
 def get_graph(adjacency_matrix, hub_nodes=[], node_posns=None):
 	"""
 	use node posns to position nodes, if supplied; else, use auto-layouting.

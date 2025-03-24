@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import os
 import pathlib
 import math
@@ -155,6 +156,7 @@ class QSNetworkSimulator:
 		for i in range(n_cells):
 			# the threshold is basically how far this level has "influence" 
 			# (directly translates, since level dissipates directly with Manhattan distance).
+			# if there is a node from i to j, 1 is placed at position (i, j).
 			max_dist = cell_levels[cellposn_idx_l[0][i], cellposn_idx_l[1][i]]
 			for j in range(n_cells):
 				if i!=j: 
@@ -348,7 +350,6 @@ class QSNetworkSimulator:
 		clouds_l = []
 		delta_clouds_l = []
 		graph_imgs_l = []
-		graph_matrices_l = []
 		subplot_dim = math.ceil((obs_duration+1)**0.5)
 		for time in range(obs_duration+1):	# to include plot of time=0.
 			levels_l.append(log["levels"][time])
@@ -394,15 +395,20 @@ class QSNetworkSimulator:
 			)
 			agr_bytes = network.plot_graph(agr, savepath=None)
 			graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
-			graph_matrices_l.append(edge_matrix)
 
-	
-		# save final graph as edge matrix.
-		pd.DataFrame(graph_matrices_l[-1].astype(int), 
-			index=[f"C{i+1}" for i in range(graph_matrices_l[-1].shape[0])],
-			columns=[f"C{i+1}" for i in range(graph_matrices_l[-1].shape[0])]).to_csv(
-				os.path.join(savedir, f"graph_final.csv"), 
-				index=True, header=True, sep=',')
+			# run in last time step only.
+			if time == obs_duration:
+				# save final graph as edge matrix, and get tables for cytoscape.
+				edgetable, nodetable, adjacency_df = network.get_cytoscape_tables(edge_matrix, node_posns, True)
+				adjacency_df.to_csv(
+					os.path.join(savedir, f"graph_final_adj.csv"), 
+					index=True, header=True, sep=',')
+				edgetable_df.to_csv(
+					os.path.join(savedir, f"graph_final_edgetable.csv"), 
+					index=True, header=True, sep=',')
+				nodetable_df.to_csv(
+					os.path.join(savedir, f"graph_final_nodetable.csv"), 
+					index=True, header=True, sep=',')
 
 		# save progression.
 		plot.figure(1)
