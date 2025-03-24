@@ -4,14 +4,38 @@ import numpy as np
 import matplotlib.pyplot as plot 
 
 
-simulation_id = "03242025054229_size-50x50_select-1_seed-0.0667"
+# for 50x50.
+# simulation_id = "02152025042853_size-50x50_select-1_seed-0.0333"  	# 3.33% - base.
+# simulation_id = "03242025054236_size-50x50_select-1_seed-0.0333"  	# 3.33% - base.
+# simulation_id = "02152025033708_size-50x50_select-1_seed-0.0667"	 	# 6.67% - base.
+# simulation_id = "03242025054229_size-50x50_select-1_seed-0.0667" 		# 6.67% - base.
+
+## for 100x100.
+simulation_id = "03242025061244_size-100x100_select-1_seed-0.025"			# 2.50% - base.
+# simulation_id = "03242025062513_size-100x100_select-0.4_seed-0.025"		# 2.50 - 0.4f.
+# simulation_id = "03242025063109_size-100x100_select-0.3_seed-0.025"		# 2.50 - 0.3f.
+# simulation_id = "03242025062438_size-100x100_select-0.2_seed-0.025"		# 2.50 - 0.2f.
+# simulation_id = "03242025060053_size-100x100_select-1_seed-0.0333"		# 3.33% - base.
+# simulation_id = "03242025061908_size-100x100_select-0.4_seed-0.0333"		# 3.33 - 0.4f.
+# simulation_id = ""		# 3.33 - 0.3f.
+# simulation_id = "03242025061850_size-100x100_select-0.2_seed-0.0333"		# 3.33 - 0.2f.
+# simulation_id = "03242025060107_size-100x100_select-1_seed-0.0667"		# 6.67% - base.	
+# simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0.4f.	
+# simulation_id = "03242025061947_size-100x100_select-0.3_seed-0.0667"		# 6.67 - 0.3f.	
+# simulation_id = "03242025061955_size-100x100_select-0.2_seed-0.0667"		# 6.67 - 0.2f.	
+
+# read data file.
 nodetable_df = pd.read_csv(os.path.join("./outputs", simulation_id, f"{simulation_id}_nodetable.csv"),
 	index_col=0)
 
-# plotting params.
-bin_size = 8
 
-plot.figure(figsize=(10, 4))
+# input plotting params.
+bin_size = 2
+
+# computed plotting params.
+np.arange(min_val, max_val + bin_width, bin_width)
+
+plot.figure(figsize=(20, 10))
 # plot 1: histogram of out-degrees.
 ax = plot.subplot(1, 3, 1)
 plot.hist(nodetable_df["outdegree"], bins=bin_size)
