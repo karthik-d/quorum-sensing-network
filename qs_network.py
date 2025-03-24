@@ -403,10 +403,10 @@ class QSNetworkSimulator:
 				adjacency_df.to_csv(
 					os.path.join(savedir, f"graph_final_adj.csv"), 
 					index=True, header=True, sep=',')
-				edgetable_df.to_csv(
+				edgetable.to_csv(
 					os.path.join(savedir, f"graph_final_edgetable.csv"), 
-					index=True, header=True, sep=',')
-				nodetable_df.to_csv(
+					index=False, header=True, sep=',')
+				nodetable.to_csv(
 					os.path.join(savedir, f"graph_final_nodetable.csv"), 
 					index=True, header=True, sep=',')
 

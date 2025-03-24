@@ -3,6 +3,7 @@ from networkx.drawing.nx_agraph import graphviz_layout, to_agraph
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 
 def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=False):
@@ -12,9 +13,10 @@ def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=
 	edge weights are just set to 1 for now.
 	"""
 
+	node_posns = np.array(node_posns)
 	nodetable = pd.DataFrame(dict(
-		x=node_posns[0],
-		y=node_posns[1]
+		x=node_posns[:, 0],
+		y=node_posns[:, 1]
 	), index=[f"C{i+1}" for i in range(adjacency_matrix.shape[0])])
 
 	adjacency_df = pd.DataFrame(adjacency_matrix.astype(int), 
@@ -25,13 +27,13 @@ def get_cytoscape_tables(adjacency_matrix, node_posns=None, return_adjacency_df=
 	targets_l = []
 	weights_l = []
 	xs_l, ys_l = [], []
-	for i, col in adjacency_df.columns:
-		target_nodes = df.index[df[col]==1]
+	for col in adjacency_df.columns:
+		target_nodes = adjacency_df.index[adjacency_df[col]==1]
 		targets_l.extend(list(target_nodes))
 		sources_l.extend([col]*len(target_nodes))
 		weights_l.extend([1]*len(target_nodes))
 
-	edgetable_df = pd.DataFrame(dict(
+	edgetable = pd.DataFrame(dict(
 		source=sources_l,
 		target=targets_l,
 		weight=weights_l))
