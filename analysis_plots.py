@@ -20,7 +20,7 @@ from utils import utils
 
 # simulation_id = "03242025060053_size-100x100_select-1_seed-0.0333"		# 3.33% - base.
 # simulation_id = "03242025061908_size-100x100_select-0.4_seed-0.0333"		# 3.33 - 0.4f.
-# simulation_id = ""		# 3.33 - 0.3f.
+# simulation_id = "03242025064846_size-100x100_select-0.3_seed-0.0333"		# 3.33 - 0.3f.
 # simulation_id = "03242025061850_size-100x100_select-0.2_seed-0.0333"		# 3.33 - 0.2f.
 
 # simulation_id = "03242025060107_size-100x100_select-1_seed-0.0667"		# 6.67% - base.	
@@ -29,9 +29,15 @@ from utils import utils
 # simulation_id = "03242025061955_size-100x100_select-0.2_seed-0.0667"		# 6.67 - 0.2f.
 
 ## for 150x150.
-# simulation_id = "03242025065647_size-150x150_select-1_seed-0.025"		# 2.50 - base.
-simulation_id = "03242025065738_size-150x150_select-1_seed-0.0333"		# 3.33 - base.
-# simulation_id = ""		# 6.67 - base.
+# simulation_id = "03242025065647_size-150x150_select-1_seed-0.025"			# 2.50 - base.
+# simulation_id = "03242025075315_size-150x150_select-0.4_seed-0.025"		# 2.50 - 0.4f.
+# simulation_id = "03242025075319_size-150x150_select-0.3_seed-0.025"		# 2.50 - 0.3f.
+# simulation_id = "03242025075344_size-150x150_select-0.2_seed-0.025"		# 2.50 - 0.2f.
+
+# simulation_id = "03242025065738_size-150x150_select-1_seed-0.0333"		# 3.33 - base.
+# simulation_id = ""		# 3.33 - 0.4f.
+
+# simulation_id = "03242025065720_size-150x150_select-1_seed-0.0667"		# 6.67 - base.
 
 
 # read data file.

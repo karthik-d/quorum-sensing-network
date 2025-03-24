@@ -481,8 +481,13 @@ simulation_config = dict(
 
 	## for 100x100.
 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
-	seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
+	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
 	# seeding_src = "03242025060107_size-100x100_select-1_seed-0.0667",	# 6.67%
+
+	## for 150x150.
+	# simulation_id = "03242025065647_size-150x150_select-1_seed-0.025",	# 2.50%
+	# simulation_id = "03242025065738_size-150x150_select-1_seed-0.0333",	# 3.33%
+	simulation_id = "03242025065720_size-150x150_select-1_seed-0.0667",	# 6.67%
 
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = None,
@@ -490,7 +495,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.3,
+	signaling_frac = 0.2,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
