@@ -24,7 +24,7 @@ from utils import utils
 # simulation_id = "03242025061850_size-100x100_select-0.2_seed-0.0333"		# 3.33 - 0.2f.
 
 # simulation_id = "03242025060107_size-100x100_select-1_seed-0.0667"		# 6.67% - base.	
-# simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0.4f.	
+simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0.4f.	
 # simulation_id = "03242025061947_size-100x100_select-0.3_seed-0.0667"		# 6.67 - 0.3f.	
 # simulation_id = "03242025061955_size-100x100_select-0.2_seed-0.0667"		# 6.67 - 0.2f.
 
@@ -68,6 +68,7 @@ plot.ylabel("frequency")
 ax = plot.subplot(1, 3, 3)
 data = nodetable_df["outdegree"]
 counts, bins = np.histogram(data, bins=utils.get_nbins_hist(data, bin_size))
+print(len(bins), max(data), min(data))
 bin_centers = (bins[:-1] + bins[1:]) / 2
 plot.scatter(bin_centers, counts)
 plot.xlabel("outgoing nodes")
