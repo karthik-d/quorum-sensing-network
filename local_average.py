@@ -39,7 +39,7 @@ levels_l = [
 # 	print(np.sum(levels!=0)/1e4)
 	# print(slide_window(levels))
 
-
+n_cells_l = []
 # 10% -- 7, 8.
 plot.figure(figsize=(8, 8))
 levels = pd.read_csv(levels_l[0], header=None).to_numpy()
@@ -49,7 +49,8 @@ for idx, r in enumerate(range(6, 12)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {np.mean(n_cells).round(2)}")
+	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac10_sliding.png")
 
@@ -61,7 +62,8 @@ for idx, r in enumerate(range(12, 18)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {np.mean(n_cells).round(2)}")
+	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac3_sliding.png")
 
@@ -73,10 +75,48 @@ for idx, r in enumerate(range(14, 20)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {np.mean(n_cells).round(2)}")
+	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac2_sliding.png")
 
 # for cloud_file in levels_l:
 	# levels = pd.read_csv(level_file, header=None).to_numpy()
 	# print(levels)
+
+
+plot.figure(figsize=(8, 8))
+levels = pd.read_csv(clouds_l[0], header=None).to_numpy()
+for idx, r in enumerate(range(6, 12)):
+	mean, stdev, n_cells = slide_window(levels, r=r)
+	ax = plot.subplot(2, 3, idx+1)
+	ax.scatter(mean, stdev, s=0.8)
+	ax.set_xlabel("mean signal")
+	ax.set_ylabel("std dev. signal")
+	ax.set_title(f"avg. cells per window = {round(n_cells_l[0], 2)}")
+plot.tight_layout()
+plot.savefig("frac10_CLOUD.png")
+
+plot.figure(figsize=(8, 8))
+levels = pd.read_csv(clouds_l[1], header=None).to_numpy()
+for idx, r in enumerate(range(12, 18)):
+	mean, stdev, n_cells = slide_window(levels, r=r)
+	ax = plot.subplot(2, 3, idx+1)
+	ax.scatter(mean, stdev, s=0.8)
+	ax.set_xlabel("mean signal")
+	ax.set_ylabel("std dev. signal")
+	ax.set_title(f"avg. cells per window = {round(n_cells_l[1], 2)}")
+plot.tight_layout()
+plot.savefig("frac3_CLOUD.png")
+
+plot.figure(figsize=(8, 8))
+levels = pd.read_csv(clouds_l[2], header=None).to_numpy()
+for idx, r in enumerate(range(14, 20)):
+	mean, stdev, n_cells = slide_window(levels, r=r)
+	ax = plot.subplot(2, 3, idx+1)
+	ax.scatter(mean, stdev, s=0.8)
+	ax.set_xlabel("mean signal")
+	ax.set_ylabel("std dev. signal")
+	ax.set_title(f"avg. cells per window = {round(n_cells_l[2], 2)}")
+plot.tight_layout()
+plot.savefig("frac2_CLOUD.png")
