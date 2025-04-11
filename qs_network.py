@@ -387,14 +387,14 @@ class QSNetworkSimulator:
 			_ = print(f"no. of hubs at t={time}: {sum(hub_cells)}") if self.verbose else None
 
 			# draw and save as np objects.
-			agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
-			agr = graph = network.get_graph(
-				edge_matrix, 
-				hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
-				node_posns = node_posns
-			)
-			agr_bytes = network.plot_graph(agr, savepath=None)
-			graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
+			# agr = network.get_graph(edge_matrix, hub_nodes = np.where(np.array(hub_cells)==1)[0])
+			# agr = graph = network.get_graph(
+			# 	edge_matrix, 
+			# 	hub_nodes = np.where(np.array(hub_cells)==1)[0],   # returns tuple of list of indices; unpack.
+			# 	node_posns = node_posns
+			# )
+			# agr_bytes = network.plot_graph(agr, savepath=None)
+			# graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
 
 			# run in last time step only.
 			# if time == obs_duration:
@@ -435,11 +435,11 @@ class QSNetworkSimulator:
 		pd.DataFrame(clouds_l[-1]).to_csv(os.path.join(savedir, f"{sim_id}_clouds_final.csv"), header=False, index=False)
 		
 		# save final graph.
-		plot.figure(3, figsize=(30, 30))
-		plot.clf()
-		# set the initial image.
-		plot.imshow(graph_imgs_l[-1], vmin=0, vmax=10)
-		plot.savefig(os.path.join(savedir, f"{sim_id}_graph_final.png"), dpi=100)
+		# plot.figure(3, figsize=(30, 30))
+		# plot.clf()
+		# # set the initial image.
+		# plot.imshow(graph_imgs_l[-1], vmin=0, vmax=10)
+		# plot.savefig(os.path.join(savedir, f"{sim_id}_graph_final.png"), dpi=100)
 
 		# save graphs as an animation.
 		# animation.save_animation(
@@ -593,7 +593,7 @@ simulation_config = dict(
 # cell seeding options.
 # -----
 
-for density in [0.01, 0.025, 0.04, 0.055, 0.07, 0.085, 0.1, 0.115, 0.13, 0.145]:
+for density in [0.025, 0.04, 0.055, 0.07, 0.085, 0.1, 0.115, 0.13, 0.145]:
 	print(density)
 	for trial_id in range(3):
 		print(trial_id)
