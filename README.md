@@ -1,6 +1,6 @@
 # Quorum Sensing and Network Formation
 
-Agent-based quorum sensing model for coordination for immune cell pro-inflammatory response.
+Agent-based quorum sensing model for coordination for macrophage trimodal pro-inflammatory response.
 
 - Mathematica notebooks with incremental code.
 - Object-oriented implementation in Python.
