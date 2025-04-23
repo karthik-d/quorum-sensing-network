@@ -2,6 +2,6 @@
 
 Agent-based quorum sensing model to analyze the coordination of macrophages in their trimodal pro-inflammatory response.
 
-- Mathematica notebooks with incremental code.
+- Mathematica notebooks.
 - Object-oriented implementation in Python.
 - Python scripts for downstream analysis.
