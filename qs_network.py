@@ -263,7 +263,8 @@ class QSNetworkSimulator:
 
 		# -- run simulation --
 		_ = print(f"simulating {obs_duration} time steps ...") if self.verbose else None
-		log = dict(cloud=dict(), levels=dict())
+		log = dict(cloud=np.zeros(((obs_duration+1,) + self.net.size)), 
+			levels=np.zeros(((obs_duration+1,) + self.net.size)))
 
 		# save initial.
 		init_levels = np.sum([
@@ -333,7 +334,7 @@ class QSNetworkSimulator:
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
 			self.save_outputs(log, obs_duration, self.config, 
-				save_cytoscape_assets, save_animations, subexp_op_subdir,
+				save_cytoscape_assets, save_animations, save_log, subexp_op_subdir,
 				f"""{
 				datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
 					'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
@@ -349,15 +350,16 @@ class QSNetworkSimulator:
 		save_cytoscape_assets, save_animations, save_log, subexp_op_subdir, 
 		sim_id):
 		
-		savedir = os.path.join("./outputs", (subexp_op_subdir if subexp_op_subdir is not None else ''))
+		savedir = os.path.join("./outputs", (subexp_op_subdir if subexp_op_subdir is not None else ''),
+			f"{sim_id}")
 		pathlib.Path(savedir).mkdir(
 			exist_ok=True, parents=True
 		)
 
 		# save the entire log.
 		if save_log:
-			np.save(log["cloud"], os.path.join(savedir, f"{sim_id}_all-clouds.npy"))
-			np.save(log["levels"], os.path.join(savedir, f"{sim_id}_all-levels.npy"))
+			np.save(os.path.join(savedir, f"{sim_id}_clouds_all.npy"), log["cloud"])
+			np.save(os.path.join(savedir, f"{sim_id}_levels_all.npy"), log["levels"])
 
 		# plot the logged matrix.
 		levels_l = []
@@ -474,12 +476,12 @@ class QSNetworkSimulator:
 simulation_config = dict(
 	# network params.
 	cell_seeding_frac = 0.1,
-	cell_area_dim = (50, 50),
+	cell_area_dim = (100, 100),
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
 	# seeding related config values will be overwritten upon load. 
-	seeding_src = None,
+	# seeding_src = None,
 
 	## for 50x50.
 	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
@@ -491,6 +493,11 @@ simulation_config = dict(
 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
 	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
 	# seeding_src = "03242025060107_size-100x100_select-1_seed-0.0667",	# 6.67%
+	seeding_src = "05292025172550_size-100x100_select-1_seed-0.1",	# 10%
+	# seeding_src = "05292025172613_size-100x100_select-1_seed-0.125",	# 12.5%
+	# seeding_src = "05292025172604_size-100x100_select-1_seed-0.15",	# 15%
+	# seeding_src = "05292025172633_size-100x100_select-1_seed-0.175",	# 17.5%
+	# seeding_src = "05292025172642_size-100x100_select-1_seed-0.2",	# 20%
 
 	## for 150x150.
 	# seeding_src = "03242025065647_size-150x150_select-1_seed-0.025",	# 2.50%
@@ -503,7 +510,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 1,
+	signaling_frac = 0.4,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
