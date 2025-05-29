@@ -246,9 +246,13 @@ class QSNetworkSimulator:
 		return updated_levels.copy()
 
 
-	def run_qs_simulation(self, obs_duration=None, signaling_interval=None, save_outputs=False):
+	def run_qs_simulation(self, obs_duration=None, signaling_interval=None, 
+		save_outputs=False, save_cytoscape_assets=False, save_animations=False, 
+		save_log=True, subexp_op_subdir=None):
 		"""
 		driver to run simulation with all set parameters.
+		- save_log: saves `levels` and `clouds` as twp separate npy files. each is (n_timesteps, length, width).
+		- subexp_op_subdir: save outputs into a subdirectory. useful for isolated subexperiments.
 		"""
 
 		# -- arg processing --
@@ -328,7 +332,9 @@ class QSNetworkSimulator:
 		# optionally, save time evolution outputs.
 		if save_outputs:
 			_ = print("saving plots...") if self.verbose else None
-			self.save_outputs(log, obs_duration, self.config, f"""{
+			self.save_outputs(log, obs_duration, self.config, 
+				save_cytoscape_assets, save_animations, subexp_op_subdir,
+				f"""{
 				datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
 					'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
 						round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
@@ -339,11 +345,19 @@ class QSNetworkSimulator:
 		return log
 	
 
-	def save_outputs(self, log, obs_duration, config, sim_id):
-		savedir = os.path.join("./outputs", "subexp")
+	def save_outputs(self, log, obs_duration, config, 
+		save_cytoscape_assets, save_animations, save_log, subexp_op_subdir, 
+		sim_id):
+		
+		savedir = os.path.join("./outputs", (subexp_op_subdir if subexp_op_subdir is not None else ''))
 		pathlib.Path(savedir).mkdir(
 			exist_ok=True, parents=True
 		)
+
+		# save the entire log.
+		if save_log:
+			np.save(log["cloud"], os.path.join(savedir, f"{sim_id}_all-clouds.npy"))
+			np.save(log["levels"], os.path.join(savedir, f"{sim_id}_all-levels.npy"))
 
 		# plot the logged matrix.
 		levels_l = []
@@ -396,19 +410,19 @@ class QSNetworkSimulator:
 			# agr_bytes = network.plot_graph(agr, savepath=None)
 			# graph_imgs_l.append(animation.img_bytes2array(agr_bytes))
 
-			# run in last time step only.
-			# if time == obs_duration:
-			# 	# save final graph as edge matrix, and get tables for cytoscape.
-			# 	edgetable, nodetable, adjacency_df = network.get_cytoscape_tables(edge_matrix, node_posns, True)
-			# 	adjacency_df.to_csv(
-			# 		os.path.join(savedir, f"{sim_id}_adj.csv"), 
-			# 		index=True, header=True, sep=',')
-			# 	edgetable.to_csv(
-			# 		os.path.join(savedir, f"{sim_id}_edgetable.csv"), 
-			# 		index=False, header=True, sep=',')
-			# 	nodetable.to_csv(
-			# 		os.path.join(savedir, f"{sim_id}_nodetable.csv"), 
-			# 		index=True, header=True, sep=',')
+			# run in last time step only, and if assets need to be stored.
+			if time==obs_duration and save_cytoscape_assets:
+				# save final graph as edge matrix, and get tables for cytoscape.
+				edgetable, nodetable, adjacency_df = network.get_cytoscape_tables(edge_matrix, node_posns, True)
+				adjacency_df.to_csv(
+					os.path.join(savedir, f"{sim_id}_adj_final.csv"), 
+					index=True, header=True, sep=',')
+				edgetable.to_csv(
+					os.path.join(savedir, f"{sim_id}_edgetable_final.csv"), 
+					index=False, header=True, sep=',')
+				nodetable.to_csv(
+					os.path.join(savedir, f"{sim_id}_nodetable_final.csv"), 
+					index=True, header=True, sep=',')
 
 		# save progression.
 		plot.figure(1)
@@ -421,31 +435,21 @@ class QSNetworkSimulator:
 		plot.savefig(os.path.join(savedir, f"{sim_id}_cloud-deltas_time-evolution.png"), dpi=100)
 
 		# make animations from saved plots.
-		# animation.save_animation(
-		# 	data = [
-		# 		levels_l,
-		# 		clouds_l,
-		# 		delta_clouds_l,
-		# 	],
-		# 	save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif")
-		# )
+		if save_animations:
+			animation.save_animation(
+				data = [
+					levels_l,
+					clouds_l,
+					delta_clouds_l,
+				],
+				save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif")
+			)
 
 		# save final levels and clouds as matrices.
-		pd.DataFrame(levels_l[-1]).to_csv(os.path.join(savedir, f"{sim_id}_levels_final.csv"), header=False, index=False)
-		pd.DataFrame(clouds_l[-1]).to_csv(os.path.join(savedir, f"{sim_id}_clouds_final.csv"), header=False, index=False)
-		
-		# save final graph.
-		# plot.figure(3, figsize=(30, 30))
-		# plot.clf()
-		# # set the initial image.
-		# plot.imshow(graph_imgs_l[-1], vmin=0, vmax=10)
-		# plot.savefig(os.path.join(savedir, f"{sim_id}_graph_final.png"), dpi=100)
-
-		# save graphs as an animation.
-		# animation.save_animation(
-		# 	data = [graph_imgs_l],
-		# 	save_path = os.path.join(savedir, f"graph_time-evolution.gif")
-		# )
+		pd.DataFrame(levels_l[-1]).to_csv(os.path.join(savedir, f"{sim_id}_levels_final.csv"), 
+			header=False, index=False)
+		pd.DataFrame(clouds_l[-1]).to_csv(os.path.join(savedir, f"{sim_id}_clouds_final.csv"), 
+			header=False, index=False)
 
 		# save configs.
 		with open(os.path.join(savedir, "config.json"), 'w') as f:
@@ -475,7 +479,7 @@ simulation_config = dict(
 
 	# set simulation id to load seeding from; None for random.
 	# seeding related config values will be overwritten upon load. 
-	# seeding_src = None,
+	seeding_src = None,
 
 	## for 50x50.
 	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
@@ -486,7 +490,7 @@ simulation_config = dict(
 	## for 100x100.
 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
 	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
-	seeding_src = "03242025060107_size-100x100_select-1_seed-0.0667",	# 6.67%
+	# seeding_src = "03242025060107_size-100x100_select-1_seed-0.0667",	# 6.67%
 
 	## for 150x150.
 	# seeding_src = "03242025065647_size-150x150_select-1_seed-0.025",	# 2.50%
@@ -499,7 +503,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.3,
+	signaling_frac = 1,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
@@ -529,36 +533,39 @@ simulation_config = dict(
 # )
 
 
-# # -----
-# # cell seeding options.
-# # -----
+# -----
+# cell seeding options.
+# -----
 
-# if simulation_config.get('seeding_src') is not None:
-# 	## 1. Load seeding and related params from parameter file (using simulation id).
-# 	config = utils.get_config_of_simulation(**simulation_config)
-# 	# update seeding params based on source.
-# 	simulation_config.update({k: config[k] for k in [
-# 		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
-# 		'seeding_transition_frac', 'n_seeding_transitions'
-# 	]})
-# else:
-# 	## 2. Randomly seed cells.
-# 	seeding_func = seeding.graded_density_array if (
-# 		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
-# 	simulation_config.update(dict(
-# 		cell_posn_encoding = seeding_func(**simulation_config)
-# 	))
+if simulation_config.get('seeding_src') is not None:
+	## 1. Load seeding and related params from parameter file (using simulation id).
+	config = utils.get_config_of_simulation(**simulation_config)
+	# update seeding params based on source.
+	simulation_config.update({k: config[k] for k in [
+		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
+		'seeding_transition_frac', 'n_seeding_transitions'
+	]})
+else:
+	## 2. Randomly seed cells.
+	seeding_func = seeding.graded_density_array if (
+		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
+	simulation_config.update(dict(
+		cell_posn_encoding = seeding_func(**simulation_config)
+	))
 
 
-# # -----
-# # run simulation.
-# # -----
-# simulator = QSNetworkSimulator(
-# 	qs_net = QSNetwork(simulation_config),
-# 	config = simulation_config)
-# log = simulator.run_qs_simulation(
-# 	save_outputs = True
-# )
+# -----
+# run simulation.
+# -----
+simulator = QSNetworkSimulator(
+	qs_net = QSNetwork(simulation_config),
+	config = simulation_config)
+log = simulator.run_qs_simulation(
+	save_outputs = True,
+	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
+	save_animations = False,		# saves GIFs if True.
+	save_log = True
+)
 
 
 # edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
@@ -593,17 +600,21 @@ simulation_config = dict(
 # cell seeding options.
 # -----
 
-for density in [0.025, 0.04, 0.055, 0.07, 0.085, 0.1, 0.115, 0.13, 0.145]:
-	print(density)
-	for trial_id in range(3):
-		print(trial_id)
-		simulation_config["cell_seeding_frac"] = density
-		simulation_config.update(dict(
-			cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
-		))
-		simulator = QSNetworkSimulator(
-			qs_net = QSNetwork(simulation_config),
-			config = simulation_config)
-		log = simulator.run_qs_simulation(
-			save_outputs = True
-		)
+# for density in [0.025, 0.04, 0.055, 0.07, 0.085, 0.1, 0.115, 0.13, 0.145]:
+# 	print(density)
+# 	for trial_id in range(3):
+# 		print(trial_id)
+# 		simulation_config["cell_seeding_frac"] = density
+# 		simulation_config.update(dict(
+# 			cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
+# 		))
+# 		simulator = QSNetworkSimulator(
+# 			qs_net = QSNetwork(simulation_config),
+# 			config = simulation_config)
+# 		log = simulator.run_qs_simulation(
+# 			save_outputs = True,
+#			save_cytoscape_assets = False,
+#			save_animations = False,
+#			save_log = False,
+#			subexp_op_subdir = 'subexp',
+# 		)

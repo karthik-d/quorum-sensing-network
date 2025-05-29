@@ -5,12 +5,13 @@ import matplotlib.pyplot as plot
 
 from utils import utils
 
-
+"""
 # for 50x50.
 # simulation_id = "02152025042853_size-50x50_select-1_seed-0.0333"  	# 3.33% - base.
 # simulation_id = "03242025054236_size-50x50_select-1_seed-0.0333"  	# 3.33% - base.
 # simulation_id = "02152025033708_size-50x50_select-1_seed-0.0667"	 	# 6.67% - base.
 # simulation_id = "03242025054229_size-50x50_select-1_seed-0.0667" 		# 6.67% - base.
+"""
 
 ## for 100x100.
 # simulation_id = "03242025061244_size-100x100_select-1_seed-0.025"			# 2.50% - base.
@@ -24,10 +25,11 @@ from utils import utils
 # simulation_id = "03242025061850_size-100x100_select-0.2_seed-0.0333"		# 3.33 - 0.2f.
 
 # simulation_id = "03242025060107_size-100x100_select-1_seed-0.0667"		# 6.67% - base.	
-simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0.4f.	
+# simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0.4f.	
 # simulation_id = "03242025061947_size-100x100_select-0.3_seed-0.0667"		# 6.67 - 0.3f.	
 # simulation_id = "03242025061955_size-100x100_select-0.2_seed-0.0667"		# 6.67 - 0.2f.
 
+"""
 ## for 150x150.
 # simulation_id = "03242025065647_size-150x150_select-1_seed-0.025"			# 2.50 - base.
 # simulation_id = "03242025075315_size-150x150_select-0.4_seed-0.025"		# 2.50 - 0.4f.
@@ -38,7 +40,7 @@ simulation_id = "03242025062007_size-100x100_select-0.4_seed-0.0667"		# 6.67 - 0
 # simulation_id = ""		# 3.33 - 0.4f.
 
 # simulation_id = "03242025065720_size-150x150_select-1_seed-0.0667"		# 6.67 - base.
-
+"""
 
 # read data file.
 nodetable_df = pd.read_csv(os.path.join("./outputs", simulation_id, f"{simulation_id}_nodetable.csv"),
