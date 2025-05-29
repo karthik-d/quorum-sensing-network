@@ -7,7 +7,10 @@ def compute_density():
 	return None 
 
 
-def slide_window(mat, r=10):
+def _old_slide_window(mat, r=10):
+	"""
+	previous method, sliding a constant window over the entire array
+	"""
 	windows = np.lib.stride_tricks.sliding_window_view(mat, window_shape=(r, r))
 	means_l = []
 	stdevs_l = []
@@ -21,6 +24,26 @@ def slide_window(mat, r=10):
 			stdevs_l.append(np.std(vals))
 	return means_l, stdevs_l, n_cells_l
 
+
+def slide_window(mat, neighbor_thresh=10):
+	"""
+	go cell-to-cell and find neighbors, instead of sliding the window everywhere
+	- neighbor_thresh: how far another cell can be to be considered a neighbor.
+	"""
+	# locate positions of cells.
+	cell_posns = np.nonzero(mat)
+	r = neighbor_thresh  # shorthand.
+	x_max, y_max = [dim-1 for dim in mat.shape]
+	for posn_x, posn_y in zip(*cell_posns):
+		# get window -- region of interest.
+		window = mat[max(0, posn_x-r):min(x_max, posn_x+r), 
+			max(0, posn_y-r):min(y_max, posn_y+r)]
+		vals = window[np.nonzero(window)].flatten()
+		# store stats.
+		n_cells_l.append(len(vals))
+		means_l.append(np.mean(vals))
+		stdevs_l.append(np.std(vals))
+	return means_l, stdevs_l, n_cells_l
 
 clouds_l = [
 	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064544_size-100x100_select-1_seed-0.1_clouds_final.csv",

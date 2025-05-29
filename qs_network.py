@@ -510,7 +510,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.4,
+	signaling_frac = 0.2,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
