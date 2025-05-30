@@ -1,5 +1,6 @@
 .token
 data/*
 outputs/*
+analysis_outputs/*
 *.out
 

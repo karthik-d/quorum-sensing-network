@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plot
+import matplotlib.patches as patches
 import numpy as np 
 import pandas as pd 
 
@@ -25,49 +26,108 @@ def _old_slide_window(mat, r=10):
 	return means_l, stdevs_l, n_cells_l
 
 
-def slide_window(mat, neighbor_thresh=10):
+def slide_window(mat, ref_mat, neighbor_thresh=10):
 	"""
 	go cell-to-cell and find neighbors, instead of sliding the window everywhere
 	- neighbor_thresh: how far another cell can be to be considered a neighbor.
 	"""
+	assert mat.shape == ref_mat.shape, "matrix and ref. matrix should have the same shape."
+	
+	# stats to collect.
+	means_l = []
+	stdevs_l = []
+	n_cells_l = [] 
 	# locate positions of cells.
-	cell_posns = np.nonzero(mat)
-	r = neighbor_thresh  # shorthand.
+	cell_posns = np.nonzero(ref_mat)
+	# iteration helpers.
+	r = neighbor_thresh		# shorthand.
 	x_max, y_max = [dim-1 for dim in mat.shape]
+	windows_l = []
 	for posn_x, posn_y in zip(*cell_posns):
 		# get window -- region of interest.
-		window = mat[max(0, posn_x-r):min(x_max, posn_x+r), 
-			max(0, posn_y-r):min(y_max, posn_y+r)]
+		top, bottom = max(0, posn_x-r), min(x_max, posn_x+r)	# rows.
+		left, right = max(0, posn_y-r), min(y_max, posn_y+r)	# cols.
+		window = mat[top:bottom+1, left:right+1]
 		vals = window[np.nonzero(window)].flatten()
 		# store stats.
 		n_cells_l.append(len(vals))
 		means_l.append(np.mean(vals))
 		stdevs_l.append(np.std(vals))
+		windows_l.append(((left, top), right-left, bottom-top))
+
+	# # plot the windows for debugging.
+	# plot.figure()
+	# plot.imshow(mat)
+	# for rect_args in windows_l:
+	# 	rect = patches.Rectangle(*rect_args, linewidth=0.5, edgecolor='r', facecolor='none')
+	# 	plot.gca().add_patch(rect)
+	# plot.savefig(f"windows_{neighbor_thresh}.png")
+
+	# return stats.
 	return means_l, stdevs_l, n_cells_l
 
-clouds_l = [
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064544_size-100x100_select-1_seed-0.1_clouds_final.csv",
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064724_size-100x100_select-0.3_seed-0.0333_clouds_final.csv",
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064926_size-100x100_select-0.3_seed-0.025_clouds_final.csv",
-]
 
+# file names of `clouds` file is extrapolated based on these file paths as well.
 levels_l = [
 	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064544_size-100x100_select-1_seed-0.1_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
 ]
 
-# for level_file in levels_l:
-# 	levels = pd.read_csv(level_file, header=None).to_numpy()
-# 	print(np.sum(levels!=0)/1e4)
-	# print(slide_window(levels))
 
+for levels_fpath in levels_l:
+	
+	# infer simulation config.
+	dirpath, fname = os.path.split(levels_fpath)
+	clouds_fpath = os.path.join('_'.join(dirpath, fname.split('_')[:-2]) + '_clouds_final.csv')
+	seeding_density = round(float(fname.split('_')[-3].split(-)[-1]), 4)
+	
+	# read files.
+	levels = pd.read_csv(levels_fpath, header=None).to_numpy()
+	clouds = pd.read_csv(levels_fpath.rstrip('levels_final.csv'))
+	
+	levels_fig = plot.figure(figsize=(8, 8))
+	clouds_fig = plot.figure(figsize=(8, 8))
+	# run sliding window on levels and clouds.
+	neighborhood_range = list(range(2, 8))
+	for idx, r in enumerate(neighborhood_range):
+		
+		# levels.
+		means_l, stdevs_l, n_cells_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
+		plot.figure(levels_fig)
+		ax = plot.subplot(2, len(neighborhood_range//2+1), idx+1)
+		ax.scatter(means_l, stdevs_l, s=0.8)
+		ax.set_xlabel("mean signal")
+		ax.set_ylabel("std dev. signal")
+		ax.set_title(f"avg. cells per window = {round(np.mean(n_cells_l), 2)}")
+		
+		# clouds.
+		means_l, stdevs_l, n_cells_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
+		plot.figure(clouds_fig)
+		ax = plot.subplot(2, len(neighborhood_range//2+1), idx+1)
+		ax.scatter(means_l, stdevs_l, s=0.8)
+		ax.set_xlabel("mean cloud")
+		ax.set_ylabel("std dev. cloud")
+		ax.set_title(f"avg. cells per window = {round(np.mean(n_cells_l), 2)}")
+	
+	# save the figures.
+	plot.figure(levels_fig)
+	plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
+	plot.savefig(os.path.join(
+		'analysis_outputs', f'local-mean-stdev_levels_select-{seeding_density}.png'), dpi=100)
+	plot.figure(clouds_fig)
+	plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
+	plot.savefig(os.path.join(
+		'analysis_outputs', f'local-mean-stdev_cloud_select-{seeding_density}.png'), dpi=100)
+
+exit()
 n_cells_l = []
 # 10% -- 7, 8.
-plot.figure(figsize=(8, 8))
+fig = plot.figure(figsize=(8, 8))
 levels = pd.read_csv(levels_l[0], header=None).to_numpy()
-for idx, r in enumerate(range(6, 12)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+for idx, r in enumerate(range(2, 8)):
+	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
+	plot.figure(fig)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
@@ -77,10 +137,26 @@ for idx, r in enumerate(range(6, 12)):
 plot.tight_layout()
 plot.savefig("frac10_sliding.png")
 
-plot.figure(figsize=(8, 8))
+# TODO: reference cell posns using levels for clouds; they cannot be inferred using the cloud array alone!
+# plot.figure(figsize=(8, 8))
+# clouds = pd.read_csv(clouds_l[0], header=None).to_numpy()
+# for idx, r in enumerate(range(2, 8)):
+# 	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
+# 	ax = plot.subplot(2, 3, idx+1)
+# 	ax.scatter(mean, stdev, s=0.8)
+# 	ax.set_xlabel("mean signal")
+# 	ax.set_ylabel("std dev. signal")
+# 	ax.set_title(f"avg. cells per window = {round(n_cells_l[0], 2)}")
+# plot.tight_layout()
+# plot.savefig("frac10_CLOUD.png")
+
+exit()
+
+fig = plot.figure(figsize=(8, 8))
 levels = pd.read_csv(levels_l[1], header=None).to_numpy()
 for idx, r in enumerate(range(12, 18)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
+	plot.figure(fig)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
@@ -93,7 +169,7 @@ plot.savefig("frac3_sliding.png")
 plot.figure(figsize=(8, 8))
 levels = pd.read_csv(levels_l[2], header=None).to_numpy()
 for idx, r in enumerate(range(14, 20)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
@@ -109,9 +185,9 @@ plot.savefig("frac2_sliding.png")
 
 
 plot.figure(figsize=(8, 8))
-levels = pd.read_csv(clouds_l[0], header=None).to_numpy()
+clouds = pd.read_csv(clouds_l[0], header=None).to_numpy()
 for idx, r in enumerate(range(6, 12)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
@@ -121,9 +197,9 @@ plot.tight_layout()
 plot.savefig("frac10_CLOUD.png")
 
 plot.figure(figsize=(8, 8))
-levels = pd.read_csv(clouds_l[1], header=None).to_numpy()
+clouds = pd.read_csv(clouds_l[1], header=None).to_numpy()
 for idx, r in enumerate(range(12, 18)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
@@ -133,9 +209,9 @@ plot.tight_layout()
 plot.savefig("frac3_CLOUD.png")
 
 plot.figure(figsize=(8, 8))
-levels = pd.read_csv(clouds_l[2], header=None).to_numpy()
+clouds = pd.read_csv(clouds_l[2], header=None).to_numpy()
 for idx, r in enumerate(range(14, 20)):
-	mean, stdev, n_cells = slide_window(levels, r=r)
+	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
 	ax = plot.subplot(2, 3, idx+1)
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
