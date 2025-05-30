@@ -2,6 +2,7 @@ from matplotlib import pyplot as plot
 import matplotlib.patches as patches
 import numpy as np 
 import pandas as pd 
+import os
 
 
 def compute_density():
@@ -47,8 +48,10 @@ def slide_window(mat, ref_mat, neighbor_thresh=10):
 		# get window -- region of interest.
 		top, bottom = max(0, posn_x-r), min(x_max, posn_x+r)	# rows.
 		left, right = max(0, posn_y-r), min(y_max, posn_y+r)	# cols.
-		window = mat[top:bottom+1, left:right+1]
-		vals = window[np.nonzero(window)].flatten()
+		mat_window = mat[top:bottom+1, left:right+1]
+		ref_mat_window = ref_mat[top:bottom+1, left:right+1]
+		# find locations of cells, and pick the values at those positions.
+		vals = mat_window[np.nonzero(ref_mat_window)].flatten()
 		# store stats.
 		n_cells_l.append(len(vals))
 		means_l.append(np.mean(vals))
@@ -69,9 +72,12 @@ def slide_window(mat, ref_mat, neighbor_thresh=10):
 
 # file names of `clouds` file is extrapolated based on these file paths as well.
 levels_l = [
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064544_size-100x100_select-1_seed-0.1_levels_final.csv",
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
-	"/home/kd766/quorum-sensing/outputs/sliding-window/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
+	# add 6.67%.
+	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_final.csv",
 ]
 
 
@@ -79,12 +85,12 @@ for levels_fpath in levels_l:
 	
 	# infer simulation config.
 	dirpath, fname = os.path.split(levels_fpath)
-	clouds_fpath = os.path.join('_'.join(dirpath, fname.split('_')[:-2]) + '_clouds_final.csv')
-	seeding_density = round(float(fname.split('_')[-3].split(-)[-1]), 4)
+	clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_final.csv')
+	seeding_density = round(float(fname.split('_')[-3].split('-')[-1]), 4)
 	
 	# read files.
 	levels = pd.read_csv(levels_fpath, header=None).to_numpy()
-	clouds = pd.read_csv(levels_fpath.rstrip('levels_final.csv'))
+	clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 	
 	levels_fig = plot.figure(figsize=(8, 8))
 	clouds_fig = plot.figure(figsize=(8, 8))
@@ -95,20 +101,20 @@ for levels_fpath in levels_l:
 		# levels.
 		means_l, stdevs_l, n_cells_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 		plot.figure(levels_fig)
-		ax = plot.subplot(2, len(neighborhood_range//2+1), idx+1)
+		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(means_l, stdevs_l, s=0.8)
 		ax.set_xlabel("mean signal")
 		ax.set_ylabel("std dev. signal")
-		ax.set_title(f"avg. cells per window = {round(np.mean(n_cells_l), 2)}")
+		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 		
 		# clouds.
 		means_l, stdevs_l, n_cells_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 		plot.figure(clouds_fig)
-		ax = plot.subplot(2, len(neighborhood_range//2+1), idx+1)
+		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(means_l, stdevs_l, s=0.8)
 		ax.set_xlabel("mean cloud")
 		ax.set_ylabel("std dev. cloud")
-		ax.set_title(f"avg. cells per window = {round(np.mean(n_cells_l), 2)}")
+		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 	
 	# save the figures.
 	plot.figure(levels_fig)
@@ -132,7 +138,7 @@ for idx, r in enumerate(range(2, 8)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
 	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac10_sliding.png")
@@ -146,7 +152,7 @@ plot.savefig("frac10_sliding.png")
 # 	ax.scatter(mean, stdev, s=0.8)
 # 	ax.set_xlabel("mean signal")
 # 	ax.set_ylabel("std dev. signal")
-# 	ax.set_title(f"avg. cells per window = {round(n_cells_l[0], 2)}")
+# 	ax.set_title(f"avg. cells / window = {round(n_cells_l[0], 2)}")
 # plot.tight_layout()
 # plot.savefig("frac10_CLOUD.png")
 
@@ -161,7 +167,7 @@ for idx, r in enumerate(range(12, 18)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
 	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac3_sliding.png")
@@ -174,7 +180,7 @@ for idx, r in enumerate(range(14, 20)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(np.mean(n_cells), 2)}")
+	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
 	n_cells_l.append(np.mean(n_cells))
 plot.tight_layout()
 plot.savefig("frac2_sliding.png")
@@ -192,7 +198,7 @@ for idx, r in enumerate(range(6, 12)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(n_cells_l[0], 2)}")
+	ax.set_title(f"avg. cells / window = {round(n_cells_l[0], 2)}")
 plot.tight_layout()
 plot.savefig("frac10_CLOUD.png")
 
@@ -204,7 +210,7 @@ for idx, r in enumerate(range(12, 18)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(n_cells_l[1], 2)}")
+	ax.set_title(f"avg. cells / window = {round(n_cells_l[1], 2)}")
 plot.tight_layout()
 plot.savefig("frac3_CLOUD.png")
 
@@ -216,6 +222,6 @@ for idx, r in enumerate(range(14, 20)):
 	ax.scatter(mean, stdev, s=0.8)
 	ax.set_xlabel("mean signal")
 	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells per window = {round(n_cells_l[2], 2)}")
+	ax.set_title(f"avg. cells / window = {round(n_cells_l[2], 2)}")
 plot.tight_layout()
 plot.savefig("frac2_CLOUD.png")
