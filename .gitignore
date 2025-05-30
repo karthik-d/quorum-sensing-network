@@ -2,5 +2,6 @@
 data/*
 outputs/*
 analysis_outputs/*
+dumps/*
 *.out
 

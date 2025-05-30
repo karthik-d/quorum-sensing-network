@@ -32,7 +32,7 @@ def slide_window(mat, ref_mat, neighbor_thresh=10):
 	go cell-to-cell and find neighbors, instead of sliding the window everywhere
 	- neighbor_thresh: how far another cell can be to be considered a neighbor.
 	"""
-	assert mat.shape == ref_mat.shape, "matrix and ref. matrix should have the same shape."
+	assert mat.shape==ref_mat.shape, "matrix and ref. matrix should have the same shape."
 	
 	# stats to collect.
 	means_l = []
@@ -74,13 +74,14 @@ def slide_window(mat, ref_mat, neighbor_thresh=10):
 levels_l = [
 	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
-	# add 6.67%.
+	"/home/kd766/quorum-sensing/outputs/05292025212917_size-100x100_select-1_seed-0.0667/05292025212917_size-100x100_select-1_seed-0.0667_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_final.csv",
 ]
 
-
+# set the reqd. cells per window range -- window size will be scaled based on dennsity.
+reqd_cells_per_win_range = list(range(4, 19, 2))
 for levels_fpath in levels_l:
 	
 	# infer simulation config.
@@ -91,11 +92,17 @@ for levels_fpath in levels_l:
 	# read files.
 	levels = pd.read_csv(levels_fpath, header=None).to_numpy()
 	clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
+
+	# compute window/neighborhood size range.
+	neighborhood_range = [
+		int(((cells_per_win/seeding_density)**0.5)//2)
+		for cells_per_win in reqd_cells_per_win_range
+	]
+	print(neighborhood_range)
 	
-	levels_fig = plot.figure(figsize=(8, 8))
-	clouds_fig = plot.figure(figsize=(8, 8))
 	# run sliding window on levels and clouds.
-	neighborhood_range = list(range(2, 8))
+	levels_fig = plot.figure(figsize=(16, 8))
+	clouds_fig = plot.figure(figsize=(16, 8))
 	for idx, r in enumerate(neighborhood_range):
 		
 		# levels.
