@@ -475,7 +475,7 @@ class QSNetworkSimulator:
 ## 2. constant seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.0667,
+	cell_seeding_frac = 0.275,
 	cell_area_dim = (100, 100),
 	negative_feedback = True,
 
@@ -510,7 +510,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 1,
+	signaling_frac = 0.3,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.

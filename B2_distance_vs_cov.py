@@ -14,19 +14,13 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 	tree = KDTree(cell_posns)
 
 	# include the cell itself at index 0.
-	dists, indices = tree.query(cell_posns, k=n_neighbors+1)  
-	print(dists.shape)
-	print(indices.shape)
-	print(n_neighbors)
-	print(len(cell_posns))
+	dists, indices = tree.query(cell_posns, k=n_neighbors+1) 
 
 	# collect stats for all neighborhoods.
 	covs_l = []
 	mean_dists_l = []
 	for i in range(len(cell_posns)):
 		# exclude self.
-		print(indices[i][1:])
-		print(cell_posns[indices[i][1:]])
 		neighbor_signals = mat[cell_posns[indices[i][1:]]] 
 		# compute stats.
 		mu = np.mean(neighbor_signals)
@@ -40,15 +34,6 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 	return (covs_l, mean_dists_l)
 
 
-# # make plot.
-# plot.scatter(mean_dists, covs, alpha=0.5, s=10)
-# plot.xlabel('mean cell–cell distance (plate units)')
-# plot.ylabel('coefficient of variation')
-# plot.title('CoV vs. cell–cell distance')
-# plot.grid(True)
-# plot.savefig("check.png")
-
-
 # file names of `clouds` file is extrapolated based on these file paths as well.
 levels_l = [
 	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
@@ -57,6 +42,8 @@ levels_l = [
 	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/05292025180030_size-100x100_select-0.3_seed-0.175/05292025180030_size-100x100_select-0.3_seed-0.175_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/05292025180015_size-100x100_select-0.3_seed-0.2/05292025180015_size-100x100_select-0.3_seed-0.2_levels_final.csv",
 ]
 
 # set the reqd. cells per window range -- window size will be scaled based on dennsity.
@@ -73,21 +60,15 @@ for levels_fpath in levels_l:
 	clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 
 	# compute window/neighborhood size range.
-	neighborhood_range = [
-		int(((cells_per_win/seeding_density)**0.5)//2)
-		for cells_per_win in reqd_cells_per_win_range
-	]
-	print(neighborhood_range)
+	neighborhood_range = [x for x in range(4, 12, 1)]
 	
 	# run sliding window on levels and clouds.
-	levels_fig = plot.figure(figsize=(16, 8))
-	clouds_fig = plot.figure(figsize=(16, 8))
+	levels_fig = plot.figure(figsize=(16, 12))
+	clouds_fig = plot.figure(figsize=(16, 12))
 	for idx, r in enumerate(neighborhood_range):
 		
 		# levels.
 		covs_l, mean_dists_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
-		print(covs_l)
-		print(mean_dists_l)
 		plot.figure(levels_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(mean_dists_l, covs_l, s=0.8)
@@ -97,8 +78,6 @@ for levels_fpath in levels_l:
 		
 		# clouds.
 		covs_l, mean_dists_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
-		print(covs_l)
-		print(mean_dists_l)
 		plot.figure(clouds_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(mean_dists_l, covs_l, s=0.8)
@@ -110,10 +89,10 @@ for levels_fpath in levels_l:
 	plot.figure(levels_fig)
 	plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-cov-dist_levels_select-{seeding_density}.png'), dpi=100)
+		'analysis_outputs', f'local-cov-dist_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 	plot.figure(clouds_fig)
 	plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-cov-dist_cloud_select-{seeding_density}.png'), dpi=100)
+		'analysis_outputs', f'local-cov-dist_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 	
-	break
+	# break
