@@ -509,8 +509,8 @@ simulation_config = dict(
 	n_seeding_transitions = None,
 
 	# simulator params.
-	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.3,
+	obs_duration = 35,		# set as (perfect_sq - 1) for good formatting.
+	signaling_frac = 0.8,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
@@ -544,35 +544,35 @@ simulation_config = dict(
 # cell seeding options.
 # -----
 
-if simulation_config.get('seeding_src') is not None:
-	## 1. Load seeding and related params from parameter file (using simulation id).
-	config = utils.get_config_of_simulation(**simulation_config)
-	# update seeding params based on source.
-	simulation_config.update({k: config[k] for k in [
-		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
-		'seeding_transition_frac', 'n_seeding_transitions'
-	]})
-else:
-	## 2. Randomly seed cells.
-	seeding_func = seeding.graded_density_array if (
-		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
-	simulation_config.update(dict(
-		cell_posn_encoding = seeding_func(**simulation_config)
-	))
+# if simulation_config.get('seeding_src') is not None:
+# 	## 1. Load seeding and related params from parameter file (using simulation id).
+# 	config = utils.get_config_of_simulation(**simulation_config)
+# 	# update seeding params based on source.
+# 	simulation_config.update({k: config[k] for k in [
+# 		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
+# 		'seeding_transition_frac', 'n_seeding_transitions'
+# 	]})
+# else:
+# 	## 2. Randomly seed cells.
+# 	seeding_func = seeding.graded_density_array if (
+# 		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
+# 	simulation_config.update(dict(
+# 		cell_posn_encoding = seeding_func(**simulation_config)
+# 	))
 
 
 # -----
 # run simulation.
 # -----
-simulator = QSNetworkSimulator(
-	qs_net = QSNetwork(simulation_config),
-	config = simulation_config)
-log = simulator.run_qs_simulation(
-	save_outputs = True,
-	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
-	save_animations = False,		# saves GIFs if True.
-	save_log = True
-)
+# simulator = QSNetworkSimulator(
+# 	qs_net = QSNetwork(simulation_config),
+# 	config = simulation_config)
+# log = simulator.run_qs_simulation(
+# 	save_outputs = True,
+# 	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
+# 	save_animations = False,		# saves GIFs if True.
+# 	save_log = True
+# )
 
 
 # edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
@@ -607,21 +607,26 @@ log = simulator.run_qs_simulation(
 # cell seeding options.
 # -----
 
-# for density in [0.025, 0.04, 0.055, 0.07, 0.085, 0.1, 0.115, 0.13, 0.145]:
-# 	print(density)
-# 	for trial_id in range(3):
-# 		print(trial_id)
-# 		simulation_config["cell_seeding_frac"] = density
-# 		simulation_config.update(dict(
-# 			cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
-# 		))
-# 		simulator = QSNetworkSimulator(
-# 			qs_net = QSNetwork(simulation_config),
-# 			config = simulation_config)
-# 		log = simulator.run_qs_simulation(
-# 			save_outputs = True,
-#			save_cytoscape_assets = False,
-#			save_animations = False,
-#			save_log = False,
-#			subexp_op_subdir = 'subexp',
-# 		)
+# array([22. , 20.5, 19. , 17.5, 16. , 14.5, 13. , 11.5, 10. ,  8.5,  7. ,
+        # 5.5,  4. ,  2.5])
+# densities = np.arange(22, 2.4, -1.5)
+# for density in densities:
+
+density = 19/100
+print(density)
+for trial_id in range(5):
+	print(trial_id)
+	simulation_config["cell_seeding_frac"] = density
+	simulation_config.update(dict(
+		cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
+	))
+	simulator = QSNetworkSimulator(
+		qs_net = QSNetwork(simulation_config),
+		config = simulation_config)
+	log = simulator.run_qs_simulation(
+		save_outputs = True,
+		save_cytoscape_assets = False,
+		save_animations = False,
+		save_log = False,
+		subexp_op_subdir = 'subexp',
+	)
