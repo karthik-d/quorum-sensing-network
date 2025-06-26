@@ -102,6 +102,10 @@ levels_l = [
 	"/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_final.csv",
 ]
 
+
+# select some density to overlay on a single plot.
+
+
 # set the reqd. cells per window range -- window size will be scaled based on dennsity.
 reqd_cells_per_win_range = list(range(4, 19, 2))
 for levels_fpath in levels_l:
@@ -152,102 +156,3 @@ for levels_fpath in levels_l:
 	plot.savefig(os.path.join(
 		'analysis_outputs', f'local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 
-exit()
-n_cells_l = []
-# 10% -- 7, 8.
-fig = plot.figure(figsize=(8, 8))
-levels = pd.read_csv(levels_l[0], header=None).to_numpy()
-for idx, r in enumerate(range(2, 8)):
-	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
-	plot.figure(fig)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
-	n_cells_l.append(np.mean(n_cells))
-plot.tight_layout()
-plot.savefig("frac10_sliding.png")
-
-# TODO: reference cell posns using levels for clouds; they cannot be inferred using the cloud array alone!
-# plot.figure(figsize=(8, 8))
-# clouds = pd.read_csv(clouds_l[0], header=None).to_numpy()
-# for idx, r in enumerate(range(2, 8)):
-# 	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
-# 	ax = plot.subplot(2, 3, idx+1)
-# 	ax.scatter(mean, stdev, s=0.8)
-# 	ax.set_xlabel("mean signal")
-# 	ax.set_ylabel("std dev. signal")
-# 	ax.set_title(f"avg. cells / window = {round(n_cells_l[0], 2)}")
-# plot.tight_layout()
-# plot.savefig("frac10_CLOUD.png")
-
-exit()
-
-fig = plot.figure(figsize=(8, 8))
-levels = pd.read_csv(levels_l[1], header=None).to_numpy()
-for idx, r in enumerate(range(12, 18)):
-	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
-	plot.figure(fig)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
-	n_cells_l.append(np.mean(n_cells))
-plot.tight_layout()
-plot.savefig("frac3_sliding.png")
-
-plot.figure(figsize=(8, 8))
-levels = pd.read_csv(levels_l[2], header=None).to_numpy()
-for idx, r in enumerate(range(14, 20)):
-	mean, stdev, n_cells = slide_window(levels, neighbor_thresh=r)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(np.mean(n_cells), 2)}")
-	n_cells_l.append(np.mean(n_cells))
-plot.tight_layout()
-plot.savefig("frac2_sliding.png")
-
-# for cloud_file in levels_l:
-	# levels = pd.read_csv(level_file, header=None).to_numpy()
-	# print(levels)
-
-
-plot.figure(figsize=(8, 8))
-clouds = pd.read_csv(clouds_l[0], header=None).to_numpy()
-for idx, r in enumerate(range(6, 12)):
-	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(n_cells_l[0], 2)}")
-plot.tight_layout()
-plot.savefig("frac10_CLOUD.png")
-
-plot.figure(figsize=(8, 8))
-clouds = pd.read_csv(clouds_l[1], header=None).to_numpy()
-for idx, r in enumerate(range(12, 18)):
-	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(n_cells_l[1], 2)}")
-plot.tight_layout()
-plot.savefig("frac3_CLOUD.png")
-
-plot.figure(figsize=(8, 8))
-clouds = pd.read_csv(clouds_l[2], header=None).to_numpy()
-for idx, r in enumerate(range(14, 20)):
-	mean, stdev, n_cells = slide_window(clouds, neighbor_thresh=r)
-	ax = plot.subplot(2, 3, idx+1)
-	ax.scatter(mean, stdev, s=0.8)
-	ax.set_xlabel("mean signal")
-	ax.set_ylabel("std dev. signal")
-	ax.set_title(f"avg. cells / window = {round(n_cells_l[2], 2)}")
-plot.tight_layout()
-plot.savefig("frac2_CLOUD.png")

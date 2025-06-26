@@ -58,7 +58,7 @@ for idx, (cloud_file, level_file) in enumerate(zip(
 
 	plot.figure(clouds_fig)
 	ax = plot.subplot(9, 10, idx+1)
-	ax.hist(cloud.flatten(), bins=8)
+	ax.hist(cloud.flatten(), bins=12)
 	ax.set_title(f"density = {round(density, 4)}")
 	ax.set_yscale('log')
 
