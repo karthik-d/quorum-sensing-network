@@ -104,16 +104,19 @@ levels_l = [
 
 
 # select some density to overlay on a single plot.
+# strings must match how they occur in the filename.
+cloud_overlay_densities_l = ["0.025", "0.0333", "0.0667", "0.1", "0.125", "0.15", "0.175", "0.225", "0.275"]
 
-
-# set the reqd. cells per window range -- window size will be scaled based on dennsity.
+# set the reqd. cells per window range -- window size will be scaled based on density.
+cloud_overlay_fig = plot.figure(figsize=(16, 12))
 reqd_cells_per_win_range = list(range(4, 19, 2))
 for levels_fpath in levels_l:
 	
 	# infer simulation config.
 	dirpath, fname = os.path.split(levels_fpath)
 	clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_final.csv')
-	seeding_density = round(float(fname.split('_')[-3].split('-')[-1]), 4)
+	seeding_density_str = fname.split('_')[-3].split('-')[-1]
+	seeding_density = round(float(seeding_density_str), 4)
 	
 	# read files.
 	levels = pd.read_csv(levels_fpath, header=None).to_numpy()
@@ -126,6 +129,7 @@ for levels_fpath in levels_l:
 	# run sliding window on levels and clouds.
 	levels_fig = plot.figure(figsize=(16, 12))
 	clouds_fig = plot.figure(figsize=(16, 12))
+	cloud_overlay_idx = 0
 	for idx, r in enumerate(neighborhood_range):
 		
 		# levels.
@@ -145,6 +149,16 @@ for levels_fpath in levels_l:
 		ax.set_xlabel("mean cloud")
 		ax.set_ylabel("std dev. cloud")
 		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+
+		# [clouds] add plot to overlay figure, if in list.
+		if seeding_density_str in cloud_overlay_densities_l:
+			plot.figure(cloud_overlay_fig)
+			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax.scatter(means_l, stdevs_l, s=0.8, label=seeding_density_str,
+				alpha=0.5)
+			ax.set_xlabel("mean cloud")
+			ax.set_ylabel("std dev. cloud")
+			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 	
 	# save the figures.
 	plot.figure(levels_fig)
@@ -156,3 +170,9 @@ for levels_fpath in levels_l:
 	plot.savefig(os.path.join(
 		'analysis_outputs', f'local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 
+# save cloud overlay figure.
+plot.figure(cloud_overlay_fig)
+plot.legend()
+plot.suptitle("cloud intensities overlayed for select densities")
+plot.savefig(os.path.join(
+	'analysis_outputs', f'local-mean-stdev_clouds_overlay'), dpi=100)
