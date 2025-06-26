@@ -10,18 +10,24 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 	assert mat.shape==ref_mat.shape, "matrix and ref. matrix should have the same shape."
 
 	# construct a KD tree of cell positions.
-	cell_posns = np.nonzero(ref_mat)
+	cell_posns = np.array(tuple(zip(*np.nonzero(ref_mat))))
 	tree = KDTree(cell_posns)
 
 	# include the cell itself at index 0.
-	dists, indices = tree.query(positions, k=n_neighbors+1)  
+	dists, indices = tree.query(cell_posns, k=n_neighbors+1)  
+	print(dists.shape)
+	print(indices.shape)
+	print(n_neighbors)
+	print(len(cell_posns))
 
 	# collect stats for all neighborhoods.
 	covs_l = []
 	mean_dists_l = []
-	for i in range(len(positions)):
+	for i in range(len(cell_posns)):
 		# exclude self.
-		neighbor_signals = mat[indices[i][1:]] 
+		print(indices[i][1:])
+		print(cell_posns[indices[i][1:]])
+		neighbor_signals = mat[cell_posns[indices[i][1:]]] 
 		# compute stats.
 		mu = np.mean(neighbor_signals)
 		sigma = np.std(neighbor_signals)
@@ -79,19 +85,23 @@ for levels_fpath in levels_l:
 	for idx, r in enumerate(neighborhood_range):
 		
 		# levels.
-		covs_l, mean_dists_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
+		covs_l, mean_dists_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
+		print(covs_l)
+		print(mean_dists_l)
 		plot.figure(levels_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		ax.scatter(means_l, stdevs_l, s=0.8)
+		ax.scatter(mean_dists_l, covs_l, s=0.8)
 		ax.set_xlabel("mean cell–cell distance (plate units)")
 		ax.set_ylabel("CoV(signal)")
 		ax.set_title(f"# neighbors = {r}")
 		
 		# clouds.
-		covs_l, mean_dists_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
+		covs_l, mean_dists_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
+		print(covs_l)
+		print(mean_dists_l)
 		plot.figure(clouds_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		ax.scatter(means_l, stdevs_l, s=0.8)
+		ax.scatter(mean_dists_l, covs_l, s=0.8)
 		ax.set_xlabel("mean cell–cell distance (plate units)")
 		ax.set_ylabel("CoV(cloud)")
 		ax.set_title(f"# neighbors = {r}")
