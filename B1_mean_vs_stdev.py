@@ -5,10 +5,6 @@ import pandas as pd
 import os
 
 
-def compute_density():
-	return None 
-
-
 def _old_slide_window(mat, r=10):
 	"""
 	previous method, sliding a constant window over the entire array
