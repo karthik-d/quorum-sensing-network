@@ -475,13 +475,13 @@ class QSNetworkSimulator:
 ## 2. constant seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.03,
+	cell_seeding_frac = 0.0667,
 	cell_area_dim = (100, 100),
 	negative_feedback = True,
 
 	# set simulation id to load seeding from; None for random.
 	# seeding related config values will be overwritten upon load. 
-	seeding_src = None,
+	# seeding_src = None,
 
 	## for 50x50.
 	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
@@ -492,7 +492,7 @@ simulation_config = dict(
 	## for 100x100.
 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
 	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
-	# seeding_src = "03242025060107_size-100x100_select-1_seed-0.0667",	# 6.67%
+	seeding_src = "05292025212917_size-100x100_select-1_seed-0.0667",	# 6.67%
 	# seeding_src = "05292025172550_size-100x100_select-1_seed-0.1",	# 10%
 	# seeding_src = "05292025172613_size-100x100_select-1_seed-0.125",	# 12.5%
 	# seeding_src = "05292025172604_size-100x100_select-1_seed-0.15",	# 15%
@@ -510,7 +510,7 @@ simulation_config = dict(
 
 	# simulator params.
 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.8,
+	signaling_frac = 0.3,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 	# during updation, a set is chosen cyclically to respond.
