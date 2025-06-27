@@ -88,20 +88,25 @@ levels_l = [
 	"/home/kd766/quorum-sensing/outputs/06262025215938_size-100x100_select-0.3_seed-0.025/06262025215938_size-100x100_select-0.3_seed-0.025_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/06262025220039_size-100x100_select-0.3_seed-0.0333/06262025220039_size-100x100_select-0.3_seed-0.0333_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/06262025220139_size-100x100_select-0.3_seed-0.0667/06262025220139_size-100x100_select-0.3_seed-0.0667_levels_all.npy",
-	# "/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/05292025180030_size-100x100_select-0.3_seed-0.175/05292025180030_size-100x100_select-0.3_seed-0.175_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/05292025180015_size-100x100_select-0.3_seed-0.2/05292025180015_size-100x100_select-0.3_seed-0.2_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/06262025142707_size-100x100_select-0.3_seed-0.225/06262025142707_size-100x100_select-0.3_seed-0.225_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/06262025142751_size-100x100_select-0.3_seed-0.25/06262025142751_size-100x100_select-0.3_seed-0.25_levels_final.csv",
-	# "/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/05292025180030_size-100x100_select-0.3_seed-0.175/05292025180030_size-100x100_select-0.3_seed-0.175_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/05292025180015_size-100x100_select-0.3_seed-0.2/05292025180015_size-100x100_select-0.3_seed-0.2_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/06262025142707_size-100x100_select-0.3_seed-0.225/06262025142707_size-100x100_select-0.3_seed-0.225_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/06262025142751_size-100x100_select-0.3_seed-0.25/06262025142751_size-100x100_select-0.3_seed-0.25_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_all.npy",
 ]
 
 # timepoints at which to analyze each of the above experiments; one set per setup.
 timepoints_mat = [
 	[x for x in range(1, 49, 5)],  	# 0.025
 	[x for x in range(1, 49, 5)],		# 0.033
+	[x for x in range(1, 49, 4)],		# 0.0667
+	[x for x in range(1, 49, 4)],		# 0.0667
+	[x for x in range(1, 49, 4)],		# 0.0667
+	[x for x in range(1, 49, 4)],		# 0.0667
+	[x for x in range(1, 49, 4)],		# 0.0667
 	[x for x in range(1, 49, 4)],		# 0.0667
 ]
 
