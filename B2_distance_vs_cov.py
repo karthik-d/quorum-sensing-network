@@ -76,7 +76,7 @@ for levels_fpath in levels_l:
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(mean_dists_l, covs_l, s=0.8)
 		ax.set_xlabel("mean cell–cell distance (plate units)")
-		ax.set_ylabel("CoV(signal)")
+		ax.set_ylabel("CoV (signal level)")
 		ax.set_title(f"# neighbors = {r}")
 		
 		# clouds.
@@ -85,7 +85,7 @@ for levels_fpath in levels_l:
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
 		ax.scatter(mean_dists_l, covs_l, s=0.8)
 		ax.set_xlabel("mean cell–cell distance (plate units)")
-		ax.set_ylabel("CoV(cloud)")
+		ax.set_ylabel("CoV (cloud intensity)")
 		ax.set_title(f"# neighbors = {r}")
 	
 	# save the figures.
