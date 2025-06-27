@@ -475,7 +475,7 @@ class QSNetworkSimulator:
 ## 2. constant seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.275,
+	cell_seeding_frac = 0.03,
 	cell_area_dim = (100, 100),
 	negative_feedback = True,
 
@@ -509,7 +509,7 @@ simulation_config = dict(
 	n_seeding_transitions = None,
 
 	# simulator params.
-	obs_duration = 35,		# set as (perfect_sq - 1) for good formatting.
+	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
 	signaling_frac = 0.8,
 
 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
@@ -544,35 +544,35 @@ simulation_config = dict(
 # cell seeding options.
 # -----
 
-# if simulation_config.get('seeding_src') is not None:
-# 	## 1. Load seeding and related params from parameter file (using simulation id).
-# 	config = utils.get_config_of_simulation(**simulation_config)
-# 	# update seeding params based on source.
-# 	simulation_config.update({k: config[k] for k in [
-# 		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
-# 		'seeding_transition_frac', 'n_seeding_transitions'
-# 	]})
-# else:
-# 	## 2. Randomly seed cells.
-# 	seeding_func = seeding.graded_density_array if (
-# 		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
-# 	simulation_config.update(dict(
-# 		cell_posn_encoding = seeding_func(**simulation_config)
-# 	))
+if simulation_config.get('seeding_src') is not None:
+	## 1. Load seeding and related params from parameter file (using simulation id).
+	config = utils.get_config_of_simulation(**simulation_config)
+	# update seeding params based on source.
+	simulation_config.update({k: config[k] for k in [
+		'cell_posn_encoding', 'cell_seeding_frac', 'cell_area_dim',
+		'seeding_transition_frac', 'n_seeding_transitions'
+	]})
+else:
+	## 2. Randomly seed cells.
+	seeding_func = seeding.graded_density_array if (
+		simulation_config.get('n_seeding_transitions', False)) else seeding.uniform_density_array
+	simulation_config.update(dict(
+		cell_posn_encoding = seeding_func(**simulation_config)
+	))
 
 
 # -----
 # run simulation.
 # -----
-# simulator = QSNetworkSimulator(
-# 	qs_net = QSNetwork(simulation_config),
-# 	config = simulation_config)
-# log = simulator.run_qs_simulation(
-# 	save_outputs = True,
-# 	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
-# 	save_animations = False,		# saves GIFs if True.
-# 	save_log = True
-# )
+simulator = QSNetworkSimulator(
+	qs_net = QSNetwork(simulation_config),
+	config = simulation_config)
+log = simulator.run_qs_simulation(
+	save_outputs = True,
+	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
+	save_animations = False,		# saves GIFs if True.
+	save_log = True
+)
 
 
 # edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
@@ -612,21 +612,21 @@ simulation_config = dict(
 # densities = np.arange(22, 2.4, -1.5)
 # for density in densities:
 
-density = 19/100
-print(density)
-for trial_id in range(5):
-	print(trial_id)
-	simulation_config["cell_seeding_frac"] = density
-	simulation_config.update(dict(
-		cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
-	))
-	simulator = QSNetworkSimulator(
-		qs_net = QSNetwork(simulation_config),
-		config = simulation_config)
-	log = simulator.run_qs_simulation(
-		save_outputs = True,
-		save_cytoscape_assets = False,
-		save_animations = False,
-		save_log = False,
-		subexp_op_subdir = 'subexp',
-	)
+# density = 19/100
+# print(density)
+# for trial_id in range(5):
+# 	print(trial_id)
+# 	simulation_config["cell_seeding_frac"] = density
+# 	simulation_config.update(dict(
+# 		cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
+# 	))
+# 	simulator = QSNetworkSimulator(
+# 		qs_net = QSNetwork(simulation_config),
+# 		config = simulation_config)
+# 	log = simulator.run_qs_simulation(
+# 		save_outputs = True,
+# 		save_cytoscape_assets = False,
+# 		save_animations = False,
+# 		save_log = False,
+# 		subexp_op_subdir = 'subexp',
+# 	)
