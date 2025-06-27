@@ -90,7 +90,9 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 # file names of `clouds` file is extrapolated based on these file paths as well.
 levels_l = [
 	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/06262025214226_size-100x100_select-0.8_seed-0.03/06262025214226_size-100x100_select-0.8_seed-0.03_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/06262025214211_size-100x100_select-0.8_seed-0.05/06262025214211_size-100x100_select-0.8_seed-0.05_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025212917_size-100x100_select-1_seed-0.0667/05292025212917_size-100x100_select-1_seed-0.0667_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
@@ -102,13 +104,15 @@ levels_l = [
 	"/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_final.csv",
 ]
 
-
 # select some density to overlay on a single plot.
 # strings must match how they occur in the filename.
-cloud_overlay_densities_l = ["0.025", "0.0333", "0.0667", "0.1", "0.125", "0.15", "0.175", "0.225", "0.275"]
+cloud_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", "0.175"]
+levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", "0.175"]
+
 
 # set the reqd. cells per window range -- window size will be scaled based on density.
 cloud_overlay_fig = plot.figure(figsize=(16, 12))
+levels_overlay_fig = plot.figure(figsize=(16, 12))
 reqd_cells_per_win_range = list(range(4, 19, 2))
 for levels_fpath in levels_l:
 	
@@ -140,6 +144,16 @@ for levels_fpath in levels_l:
 		ax.set_xlabel("mean signal")
 		ax.set_ylabel("std dev. signal")
 		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+
+		# [levels] add plot to overlay figure, if in list.
+		if seeding_density_str in levels_overlay_densities_l:
+			plot.figure(levels_overlay_fig)
+			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax.scatter(means_l, stdevs_l, s=0.8, label=seeding_density_str,
+				alpha=0.5)
+			ax.set_xlabel("mean level")
+			ax.set_ylabel("std dev. level")
+			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 		
 		# clouds.
 		means_l, stdevs_l, n_cells_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
@@ -170,9 +184,16 @@ for levels_fpath in levels_l:
 	plot.savefig(os.path.join(
 		'analysis_outputs', f'local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 
+# save levels overlay figure.
+plot.figure(levels_overlay_fig)
+plot.legend()
+plot.suptitle("signal levels overlayed for select densities")
+plot.savefig(os.path.join(
+	'analysis_outputs', f'local-mean-stdev_levels_overlay.png'), dpi=100)
+
 # save cloud overlay figure.
 plot.figure(cloud_overlay_fig)
 plot.legend()
 plot.suptitle("cloud intensities overlayed for select densities")
 plot.savefig(os.path.join(
-	'analysis_outputs', f'local-mean-stdev_clouds_overlay'), dpi=100)
+	'analysis_outputs', f'local-mean-stdev_clouds_overlay.png'), dpi=100)

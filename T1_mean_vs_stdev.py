@@ -85,9 +85,9 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 
 # file names of `clouds` file is extrapolated based on these file paths as well.
 levels_l = [
-	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
-	"/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
-	"/home/kd766/quorum-sensing/outputs/05292025212917_size-100x100_select-1_seed-0.0667/05292025212917_size-100x100_select-1_seed-0.0667_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/06262025215938_size-100x100_select-0.3_seed-0.025/06262025215938_size-100x100_select-0.3_seed-0.025_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/06262025220039_size-100x100_select-0.3_seed-0.0333/06262025220039_size-100x100_select-0.3_seed-0.0333_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/06262025220139_size-100x100_select-0.3_seed-0.0667/06262025220139_size-100x100_select-0.3_seed-0.0667_levels_all.npy",
 	# "/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_final.csv",
 	# "/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_final.csv",
 	# "/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_final.csv",
@@ -100,9 +100,9 @@ levels_l = [
 
 # timepoints at which to analyze each of the above experiments; one set per setup.
 timepoints_l = [
-	[1, 6, 11, 16, 21, 26, 31],  	# 0.025
+	[1, 6, 11, 16, 21, 26, 31, 36],  	# 0.025
 	[1, 6, 11, 16, 21, 26, 31, 36],		# 0.033
-	[1, 4, 7, 10, 13, 16, 19],		# 0.0667
+	[1, 5, 9, 13, 17, 21, 25, 30],		# 0.0667
 ]
 
 # set the reqd. cells per window range -- window size will be scaled based on density.
@@ -112,13 +112,13 @@ for levels_fpath in levels_l:
 	
 	# infer simulation config.
 	dirpath, fname = os.path.split(levels_fpath)
-	clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_final.csv')
+	clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_all.npy')
 	seeding_density_str = fname.split('_')[-3].split('-')[-1]
 	seeding_density = round(float(seeding_density_str), 4)
 	
 	# read files.
-	levels = pd.read_csv(levels_fpath, header=None).to_numpy()
-	clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
+	levels = np.load(levels_fpath)
+	clouds = np.load(clouds_fpath)
 
 	# compute window/neighborhood size range.
 	neighborhood_range = [x for x in range(4, 12, 1)]
@@ -148,15 +148,6 @@ for levels_fpath in levels_l:
 		ax.set_ylabel("std dev. cloud")
 		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 
-		# [clouds] add plot to overlay figure, if in list.
-		if seeding_density_str in cloud_overlay_densities_l:
-			plot.figure(cloud_overlay_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-			ax.scatter(means_l, stdevs_l, s=0.8, label=seeding_density_str,
-				alpha=0.5)
-			ax.set_xlabel("mean cloud")
-			ax.set_ylabel("std dev. cloud")
-			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 	
 	# save the figures.
 	plot.figure(levels_fig)
