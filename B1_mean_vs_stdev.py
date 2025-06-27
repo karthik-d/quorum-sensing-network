@@ -107,13 +107,13 @@ levels_l = [
 # select some density to overlay on a single plot.
 # strings must match how they occur in the filename.
 cloud_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", "0.175"]
-levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", "0.175"]
+levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", 
+	"0.175", "0.2", "0.225", "0.25", "0.275"]
 
 
 # set the reqd. cells per window range -- window size will be scaled based on density.
 cloud_overlay_fig = plot.figure(figsize=(16, 12))
 levels_overlay_fig = plot.figure(figsize=(16, 12))
-reqd_cells_per_win_range = list(range(4, 19, 2))
 for levels_fpath in levels_l:
 	
 	# infer simulation config.

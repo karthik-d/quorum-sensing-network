@@ -61,7 +61,7 @@ def slide_window(mat, ref_mat, neighbor_thresh=10):
 def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 
 	assert mat.shape==ref_mat.shape, "matrix and ref. matrix should have the same shape."
-
+	
 	# construct a KD tree of cell positions.
 	cell_posns = np.array(tuple(zip(*np.nonzero(ref_mat))))
 	tree = KDTree(cell_posns)
@@ -99,16 +99,14 @@ levels_l = [
 ]
 
 # timepoints at which to analyze each of the above experiments; one set per setup.
-timepoints_l = [
-	[1, 6, 11, 16, 21, 26, 31, 36],  	# 0.025
-	[1, 6, 11, 16, 21, 26, 31, 36],		# 0.033
-	[1, 5, 9, 13, 17, 21, 25, 30],		# 0.0667
+timepoints_mat = [
+	[x for x in range(1, 49, 5)],  	# 0.025
+	[x for x in range(1, 49, 5)],		# 0.033
+	[x for x in range(1, 49, 4)],		# 0.0667
 ]
 
 # set the reqd. cells per window range -- window size will be scaled based on density.
-cloud_overlay_fig = plot.figure(figsize=(16, 12))
-reqd_cells_per_win_range = list(range(4, 19, 2))
-for levels_fpath in levels_l:
+for levels_fpath, timepoints_l in zip(levels_l, timepoints_mat):
 	
 	# infer simulation config.
 	dirpath, fname = os.path.split(levels_fpath)
@@ -121,7 +119,7 @@ for levels_fpath in levels_l:
 	clouds = np.load(clouds_fpath)
 
 	# compute window/neighborhood size range.
-	neighborhood_range = [x for x in range(4, 12, 1)]
+	neighborhood_range = [x for x in range(6, 16, 1)]
 	print(neighborhood_range)
 	
 	# run sliding window on levels and clouds.
@@ -131,37 +129,35 @@ for levels_fpath in levels_l:
 	for idx, r in enumerate(neighborhood_range):
 		
 		# levels.
-		means_l, stdevs_l, n_cells_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
 		plot.figure(levels_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		ax.scatter(means_l, stdevs_l, s=0.8)
+		for tpoint in timepoints_l:
+			means_l, stdevs_l, n_cells_l = slide_window_using_tree(
+				mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
+			ax.scatter(means_l, stdevs_l, s=0.8, label=f"t={tpoint}", alpha=0.5)
 		ax.set_xlabel("mean signal")
 		ax.set_ylabel("std dev. signal")
 		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 		
 		# clouds.
-		means_l, stdevs_l, n_cells_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
 		plot.figure(clouds_fig)
 		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		ax.scatter(means_l, stdevs_l, s=0.8)
+		for tpoint in timepoints_l:
+			means_l, stdevs_l, n_cells_l = slide_window_using_tree(
+				mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
+			ax.scatter(means_l, stdevs_l, s=0.8, label=f"t={tpoint}", alpha=0.5)
 		ax.set_xlabel("mean cloud")
 		ax.set_ylabel("std dev. cloud")
 		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
-
 	
 	# save the figures.
 	plot.figure(levels_fig)
+	plot.legend()
 	plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		'analysis_outputs/temporal', f'temporal_local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 	plot.figure(clouds_fig)
+	plot.legend()
 	plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
-
-# save cloud overlay figure.
-plot.figure(cloud_overlay_fig)
-plot.legend()
-plot.suptitle("cloud intensities overlayed for select densities")
-plot.savefig(os.path.join(
-	'analysis_outputs', f'local-mean-stdev_clouds_overlay'), dpi=100)
+		'analysis_outputs/temporal', f'temporal_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
