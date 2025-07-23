@@ -63,27 +63,29 @@ for feedback_str in ['', 'noneg']:
 		level_means_d[density_str] = level_means_d.get(density_str, []) + [np.sum(levels)/n_cells]
 		density_d[density_str] = density
 
-		plot.figure(levels_fig)
-		ax = plot.subplot(*fig_grid_size, idx+1)
-		ax.hist(levels.flatten(), bins=8)
-		ax.set_title(f"density = {round(density, 4)}")
-		ax.set_yscale('log')
+		# plot.figure(levels_fig)
+		# ax = plot.subplot(*fig_grid_size, idx+1)
+		# ax.hist(levels.flatten(), bins=8)
+		# ax.set_title(f"density = {round(density, 4)}")
+		# ax.set_yscale('log')
 
-		plot.figure(clouds_fig)
-		ax = plot.subplot(*fig_grid_size, idx+1)
-		ax.hist(cloud.flatten(), bins=12)
-		ax.set_title(f"density = {round(density, 4)}")
-		ax.set_yscale('log')
+		# plot.figure(clouds_fig)
+		# ax = plot.subplot(*fig_grid_size, idx+1)
+		# ax.hist(cloud.flatten(), bins=12)
+		# ax.set_title(f"density = {round(density, 4)}")
+		# ax.set_yscale('log')
 
-	plot.figure(levels_fig)
-	plot.tight_layout()
-	plot.savefig(os.path.join(
-		f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-mean_levels_hist.png'), dpi=100)
+	# plot.figure(levels_fig)
+	# plot.tight_layout()
+	# plot.savefig(os.path.join(
+	# 	f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-mean_levels_hist.png'), dpi=100)
+	# plot.clf()
 
-	plot.figure(clouds_fig)
-	plot.tight_layout()
-	plot.savefig(os.path.join(
-		f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-mean_clouds_hist.png'), dpi=100)
+	# plot.figure(clouds_fig)
+	# plot.tight_layout()
+	# plot.savefig(os.path.join(
+	# 	f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-mean_clouds_hist.png'), dpi=100)
+	# plot.clf()
 
 
 	# plot levels trend.
@@ -101,6 +103,7 @@ for feedback_str in ['', 'noneg']:
 	plot.ylabel("global mean levels")
 	plot.savefig(os.path.join(
 		f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-density-mean_levels.png'), dpi=100)
+	plot.clf()
 
 
 	# plot clouds trend.
@@ -117,4 +120,5 @@ for feedback_str in ['', 'noneg']:
 	plot.xlabel("cell seeding density")
 	plot.ylabel("global mean cloud")
 	plot.savefig(os.path.join(
-		'analysis_outputs/kdtree', f'kdtree_global-density-mean_clouds.png'), dpi=100)
+		f'analysis_outputs/kdtree/{feedback_str}', f'kdtree_{feedback_str}_global-density-mean_clouds.png'), dpi=100)
+	plot.clf()
