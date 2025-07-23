@@ -1,5 +1,6 @@
 import glob 
 import os
+import math
 import pandas as pd 
 import numpy as np
 from matplotlib import pyplot as plot
@@ -21,7 +22,11 @@ for feedback_str in ['', 'noneg']:
 		"/home/kd766/quorum-sensing/outputs/subexp",
 		f"*/*clouds_final.csv"
 	)))))
-	print(f"Total # trials: {len(levels_l)}")
+
+	n_trials = len(levels_l)
+	print(f"Total # trials: {n_trials}")
+	fig_grid_size = (math.ceil(n_trials**0.5), math.ceil(n_trials**0.5))
+
 
 
 	density_str_l = []
@@ -59,13 +64,13 @@ for feedback_str in ['', 'noneg']:
 		density_d[density_str] = density
 
 		plot.figure(levels_fig)
-		ax = plot.subplot(12, 11, idx+1)
+		ax = plot.subplot(*fig_grid_size, idx+1)
 		ax.hist(levels.flatten(), bins=8)
 		ax.set_title(f"density = {round(density, 4)}")
 		ax.set_yscale('log')
 
 		plot.figure(clouds_fig)
-		ax = plot.subplot(12, 11, idx+1)
+		ax = plot.subplot(*fig_grid_size, idx+1)
 		ax.hist(cloud.flatten(), bins=12)
 		ax.set_title(f"density = {round(density, 4)}")
 		ax.set_yscale('log')

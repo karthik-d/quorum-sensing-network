@@ -84,7 +84,7 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 
 
 # file names of `clouds` file is extrapolated based on these file paths as well.
-levels_l = [
+levels_withneg_l = [
 	"/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/06262025214226_size-100x100_select-0.8_seed-0.03/06262025214226_size-100x100_select-0.8_seed-0.03_levels_final.csv",
 	"/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_final.csv",
@@ -100,6 +100,18 @@ levels_l = [
 	"/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_final.csv",
 ]
 
+levels_noneg_l = [
+	"/home/kd766/quorum-sensing/outputs/07232025152722_size-100x100_select-0.3_seed-0.025_noneg/07232025152722_size-100x100_select-0.3_seed-0.025_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152745_size-100x100_select-0.3_seed-0.0333_noneg/07232025152745_size-100x100_select-0.3_seed-0.0333_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152552_size-100x100_select-0.3_seed-0.0667_noneg/07232025152552_size-100x100_select-0.3_seed-0.0667_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152554_size-100x100_select-0.3_seed-0.1_noneg/07232025152554_size-100x100_select-0.3_seed-0.1_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152556_size-100x100_select-0.3_seed-0.125_noneg/07232025152556_size-100x100_select-0.3_seed-0.125_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152621_size-100x100_select-0.3_seed-0.15_noneg/07232025152621_size-100x100_select-0.3_seed-0.15_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152648_size-100x100_select-0.3_seed-0.175_noneg/07232025152648_size-100x100_select-0.3_seed-0.175_noneg_levels_final.csv",
+	"/home/kd766/quorum-sensing/outputs/07232025152708_size-100x100_select-0.3_seed-0.2_noneg/07232025152708_size-100x100_select-0.3_seed-0.2_noneg_levels_final.csv",
+	
+]
+
 # select some density to overlay on a single plot.
 # strings must match how they occur in the filename.
 cloud_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", "0.175"]
@@ -110,7 +122,7 @@ levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1"
 # set the reqd. cells per window range -- window size will be scaled based on density.
 cloud_overlay_fig = plot.figure(figsize=(16, 12))
 levels_overlay_fig = plot.figure(figsize=(16, 12))
-for levels_fpath in levels_l:
+for levels_fpath in levels_withneg_l:
 	
 	# infer simulation config.
 	dirpath, fname = os.path.split(levels_fpath)
