@@ -16,12 +16,10 @@ for feedback_str in ['', 'noneg']:
 
 	levels_l = np.array(list(filter(filter_func, glob.glob(os.path.join(
 		"/home/kd766/quorum-sensing/outputs/subexp",
-		f"*/*levels_final.csv"
-	)))))
+		f"*/*levels_final.csv")))))
 	clouds_l = np.array(list(filter(filter_func, glob.glob(os.path.join(
 		"/home/kd766/quorum-sensing/outputs/subexp",
-		f"*/*clouds_final.csv"
-	)))))
+		f"*/*clouds_final.csv")))))
 
 	n_trials = len(levels_l)
 	print(f"Total # trials: {n_trials}")
