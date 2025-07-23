@@ -174,22 +174,22 @@ for levels_fpath in levels_l:
 	plot.figure(levels_fig)
 	plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		'analysis_outputs/kdtree', f'kdtree_local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 	plot.figure(clouds_fig)
 	plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
 	plot.savefig(os.path.join(
-		'analysis_outputs', f'local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		'analysis_outputs/kdtree', f'kdtree_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 
 # save levels overlay figure.
 plot.figure(levels_overlay_fig)
 plot.legend()
 plot.suptitle("signal levels overlayed for select densities")
 plot.savefig(os.path.join(
-	'analysis_outputs', f'local-mean-stdev_levels_overlay.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_local-mean-stdev_levels_overlay.png'), dpi=100)
 
 # save cloud overlay figure.
 plot.figure(cloud_overlay_fig)
 plot.legend()
 plot.suptitle("cloud intensities overlayed for select densities")
 plot.savefig(os.path.join(
-	'analysis_outputs', f'local-mean-stdev_clouds_overlay.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_local-mean-stdev_clouds_overlay.png'), dpi=100)

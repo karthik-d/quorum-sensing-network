@@ -42,7 +42,7 @@ class QSNetwork:
 		if self.has_negative_feedback:
 			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 3, 5, 7, 6, 5, 4, 3, 2, 1])
 		else:
-			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 2, 3, 4, 5, 6, 7, 7, 7, 7]), 
+			cell_response_mapping = kwargs.get('cell_response_mapping', [1, 3, 5, 7, 7, 7, 7, 7, 7, 7]) 
 		conc_response_mapping=[x+2 for x in cell_response_mapping]
 		
 		# initialize the network.
@@ -477,7 +477,7 @@ simulation_config = dict(
 	# network params.
 	cell_seeding_frac = 0.0667,
 	cell_area_dim = (100, 100),
-	negative_feedback = True,
+	negative_feedback = False,
 
 	# set simulation id to load seeding from; None for random.
 	# seeding related config values will be overwritten upon load. 
@@ -491,8 +491,8 @@ simulation_config = dict(
 
 	## for 100x100.
 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
-	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
-	seeding_src = "05292025212917_size-100x100_select-1_seed-0.0667",	# 6.67%
+	seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
+	# seeding_src = "05292025212917_size-100x100_select-1_seed-0.0667",	# 6.67%
 	# seeding_src = "05292025172550_size-100x100_select-1_seed-0.1",	# 10%
 	# seeding_src = "05292025172613_size-100x100_select-1_seed-0.125",	# 12.5%
 	# seeding_src = "05292025172604_size-100x100_select-1_seed-0.15",	# 15%
@@ -612,7 +612,7 @@ log = simulator.run_qs_simulation(
 # densities = np.arange(22, 2.4, -1.5)
 # for density in densities:
 
-# density = 19/100
+# density = 29.5/100
 # print(density)
 # for trial_id in range(5):
 # 	print(trial_id)

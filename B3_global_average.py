@@ -65,12 +65,12 @@ for idx, (cloud_file, level_file) in enumerate(zip(
 plot.figure(levels_fig)
 plot.tight_layout()
 plot.savefig(os.path.join(
-	'analysis_outputs', f'global-mean_levels_hist.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_global-mean_levels_hist.png'), dpi=100)
 
 plot.figure(clouds_fig)
 plot.tight_layout()
 plot.savefig(os.path.join(
-	'analysis_outputs', f'global-mean_clouds_hist.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_global-mean_clouds_hist.png'), dpi=100)
 
 
 # plot levels trend.
@@ -87,7 +87,7 @@ for k in level_means_d.keys():
 plot.xlabel("cell seeding density")
 plot.ylabel("global mean levels")
 plot.savefig(os.path.join(
-	'analysis_outputs', f'global-density-mean_levels.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_global-density-mean_levels.png'), dpi=100)
 
 
 # plot clouds trend.
@@ -104,4 +104,4 @@ for k in cloud_means_d.keys():
 plot.xlabel("cell seeding density")
 plot.ylabel("global mean cloud")
 plot.savefig(os.path.join(
-	'analysis_outputs', f'global-density-mean_clouds.png'), dpi=100)
+	'analysis_outputs/kdtree', f'kdtree_global-density-mean_clouds.png'), dpi=100)

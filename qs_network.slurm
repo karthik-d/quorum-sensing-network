@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH -t 1:00:00
-#SBATCH -J f25
+#SBATCH -J 3-3
 #SBATCH --mail-type=ALL
 #SBATCH --output="slurm-%j.out"
 #SBATCH --mem=100G
