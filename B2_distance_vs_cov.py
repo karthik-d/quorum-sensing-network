@@ -97,12 +97,13 @@ for feedback_str in ["", "noneg"]:
 	cloud_overlay_fig = plot.figure(figsize=(16, 12))
 	levels_overlay_fig = plot.figure(figsize=(16, 12))
 	reqd_cells_per_win_range = list(range(4, 19, 2))
+	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
 	for levels_fpath in levels_l:
 		
 		# infer simulation config.
 		dirpath, fname = os.path.split(levels_fpath)
 		clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_final.csv')
-		seeding_density_str = fname.split('_')[-3].split('-')[-1]
+		seeding_density_str = fname.split('_')[3].split('-')[-1]
 		seeding_density = round(float(seeding_density_str), 4)
 		
 		# read files.
@@ -159,13 +160,16 @@ for feedback_str in ["", "noneg"]:
 		plot.figure(levels_fig)
 		plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
 		plot.savefig(os.path.join(
-			f'/kdtree/{feedback_str}', 
+			f'analysis_outputs/kdtree/{feedback_str}', 
 			f'kdtree_{feedback_str}_local-cov-dist_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		plot.close()
+
 		plot.figure(clouds_fig)
 		plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
 		plot.savefig(os.path.join(
-			f'/kdtree/{feedback_str}', 
+			f'analysis_outputs/kdtree/{feedback_str}', 
 			f'kdtree_{feedback_str}_local-cov-dist_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		plot.close()
 		
 
 	# save levels overlay figure.
@@ -173,13 +177,15 @@ for feedback_str in ["", "noneg"]:
 	plot.legend()
 	plot.suptitle("signal levels overlayed for select densities")
 	plot.savefig(os.path.join(
-		f'/kdtree/{feedback_str}', 
+		f'analysis_outputs/kdtree/{feedback_str}', 
 		f'kdtree_{feedback_str}_local-cov-dist_levels_overlay.png'), dpi=100)
+	plot.close()
 
 	# save cloud overlay figure.
 	plot.figure(cloud_overlay_fig)
 	plot.legend()
 	plot.suptitle("cloud intensities overlayed for select densities")
 	plot.savefig(os.path.join(
-		f'/kdtree/{feedback_str}', 
+		f'analysis_outputs/kdtree/{feedback_str}', 
 		f'kdtree_{feedback_str}_local-cov-dist_clouds_overlay.png'), dpi=100)
+	plot.close()
