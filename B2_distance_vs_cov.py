@@ -91,6 +91,10 @@ cloud_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1",
 levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", 
 	"0.175", "0.2", "0.225", "0.25", "0.275"]
 
+cloud_density_vals = [float(x) for x in cloud_overlay_densities_l]
+levels_density_vals = [float(x) for x in levels_overlay_densities_l]
+print(cloud_density_vals)
+
 
 for feedback_str in ["", "noneg"]:
 	# set the reqd. cells per window range -- window size will be scaled based on dennsity.
@@ -98,6 +102,9 @@ for feedback_str in ["", "noneg"]:
 	levels_overlay_fig = plot.figure(figsize=(16, 12))
 	reqd_cells_per_win_range = list(range(4, 19, 2))
 	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
+	
+	cloud_overlay_idx = 0
+	levels_overlay_idx = 0
 	for levels_fpath in levels_l:
 		
 		# infer simulation config.
@@ -116,6 +123,8 @@ for feedback_str in ["", "noneg"]:
 		# run sliding window on levels and clouds.
 		levels_fig = plot.figure(figsize=(16, 12))
 		clouds_fig = plot.figure(figsize=(16, 12))
+		levels_overlayed = False
+		cloud_overlayed = False 
 		for idx, r in enumerate(neighborhood_range):
 			
 			# levels.
@@ -132,10 +141,14 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
 				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				ax.scatter(mean_dists_l, covs_l, s=0.8, label=seeding_density_str, alpha=0.5)
+				levels_overlay = ax.scatter(mean_dists_l, covs_l, s=0.9, cmap='viridis', 
+					c=[levels_density_vals[levels_overlay_idx]]*len(covs_l),
+					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
+					label=seeding_density_str, alpha=0.5)
 				ax.set_xlabel("mean cell–cell distance (plate units)")
 				ax.set_ylabel("CoV (signal level)")
 				ax.set_title(f"# neighbors = {r}")
+				signals_overlayed = True
 			
 			# clouds.
 			# covs_l, mean_dists_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
@@ -151,10 +164,14 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
 				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				ax.scatter(mean_dists_l, covs_l, s=0.8, label=seeding_density_str, alpha=0.5)
+				cloud_overlay = ax.scatter(mean_dists_l, covs_l, s=0.9, cmap='viridis', 
+					c=[cloud_density_vals[cloud_overlay_idx]]*len(covs_l), 
+					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
+					label=seeding_density_str, alpha=0.5)
 				ax.set_xlabel("mean cell–cell distance (plate units)")
 				ax.set_ylabel("CoV (cloud intensity)")
 				ax.set_title(f"# neighbors = {r}")
+				cloud_overlayed = True
 		
 		# save the figures.
 		plot.figure(levels_fig)
@@ -170,11 +187,16 @@ for feedback_str in ["", "noneg"]:
 			f'analysis_outputs/kdtree/{feedback_str}', 
 			f'kdtree_{feedback_str}_local-cov-dist_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 		plot.close()
+
+		# update scatter color index.
+		levels_overlay_idx += 1 if levels_overlayed else 0
+		cloud_overlay_idx += 1 if cloud_overlayed else 0
 		
 
 	# save levels overlay figure.
 	plot.figure(levels_overlay_fig)
-	plot.legend()
+	# plot.legend()
+	plot.colorbar(levels_overlay)
 	plot.suptitle("signal levels overlayed for select densities")
 	plot.savefig(os.path.join(
 		f'analysis_outputs/kdtree/{feedback_str}', 
@@ -183,7 +205,8 @@ for feedback_str in ["", "noneg"]:
 
 	# save cloud overlay figure.
 	plot.figure(cloud_overlay_fig)
-	plot.legend()
+	# plot.legend()
+	plot.colorbar(cloud_overlay)
 	plot.suptitle("cloud intensities overlayed for select densities")
 	plot.savefig(os.path.join(
 		f'analysis_outputs/kdtree/{feedback_str}', 
