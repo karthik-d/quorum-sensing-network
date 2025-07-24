@@ -67,18 +67,32 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 	tree = KDTree(cell_posns)
 	# include the cell itself at index 0.
 	dists, indices = tree.query(cell_posns, k=n_neighbors+1) 
+	# find the enclosing areas on the matrix.
+	window_minmax_coords = [(np.min(np.squeeze(arr), axis=1), np.max(np.squeeze(arr), axis=1)) 
+		for arr in np.split(np.array(cell_posns[indices]), 2, axis=-1)]
 	# collect stats for all neighborhoods.
 	means_l = []
 	stdevs_l = []
-	for i in range(len(cell_posns)):
-		# exclude self.
-		neighbor_signals = mat[cell_posns[indices[i][1:]]] 
-		# compute stats.
-		mu = np.mean(neighbor_signals)
-		sigma = np.std(neighbor_signals)
-		# accumulate stats.
-		means_l.append(mu)
-		stdevs_l.append(sigma)
+	for (min_x, max_x, min_y, max_y) in zip(*(window_minmax_coords[0] + window_minmax_coords[1])):
+		mat_window = mat[min_x:max_x+1, min_y:max_y+1]
+		ref_mat_window = ref_mat[min_x:max_x+1, min_y:max_y+1]
+		# find locations of cells, and pick the values at those positions.
+		# vals = mat_window[np.nonzero(ref_mat_window)].flatten()
+		vals = mat_window.flatten()		# use all posns; not just where cells are.
+		# store stats.
+		means_l.append(np.mean(vals, where=(vals!=0)))		# compute using non-zero values only.
+		stdevs_l.append(np.std(vals, where=(vals!=0)))		# compute using non-zero values only.
+	
+	## older method that simply uses the cell posns.
+	# for i in range(len(cell_posns)):
+	# 	# exclude self.
+	# 	neighbor_signals = mat[cell_posns[indices[i][1:]]] 
+	# 	# compute stats.
+	# 	mu = np.mean(neighbor_signals)
+	# 	sigma = np.std(neighbor_signals)
+	# 	# accumulate stats.
+	# 	means_l.append(mu)
+	# 	stdevs_l.append(sigma)
 
 	return (means_l, stdevs_l, n_neighbors)
 
@@ -147,7 +161,7 @@ for feedback_str in ["", "noneg"]:
 		clouds = np.load(clouds_fpath)
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(6, 16, 1)]
+		neighborhood_range = [x for x in range(4, 37, 4)]
 		print(neighborhood_range)
 		
 		# run sliding window on levels and clouds.
