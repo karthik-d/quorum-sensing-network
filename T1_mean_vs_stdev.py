@@ -84,23 +84,41 @@ def slide_window_using_tree(mat, ref_mat, n_neighbors=10):
 
 
 # file names of `clouds` file is extrapolated based on these file paths as well.
-levels_l = [
-	"/home/kd766/quorum-sensing/outputs/06262025215938_size-100x100_select-0.3_seed-0.025/06262025215938_size-100x100_select-0.3_seed-0.025_levels_all.npy",
-	"/home/kd766/quorum-sensing/outputs/06262025220039_size-100x100_select-0.3_seed-0.0333/06262025220039_size-100x100_select-0.3_seed-0.0333_levels_all.npy",
-	"/home/kd766/quorum-sensing/outputs/06262025220139_size-100x100_select-0.3_seed-0.0667/06262025220139_size-100x100_select-0.3_seed-0.0667_levels_all.npy",
+levels_withneg_l = [
+	# "/home/kd766/quorum-sensing/outputs/04112025064926_size-100x100_select-0.3_seed-0.025/04112025064926_size-100x100_select-0.3_seed-0.025_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/06262025214226_size-100x100_select-0.8_seed-0.03/06262025214226_size-100x100_select-0.8_seed-0.03_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/04112025064724_size-100x100_select-0.3_seed-0.0333/04112025064724_size-100x100_select-0.3_seed-0.0333_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/06262025214211_size-100x100_select-0.8_seed-0.05/06262025214211_size-100x100_select-0.8_seed-0.05_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/05292025212917_size-100x100_select-1_seed-0.0667/05292025212917_size-100x100_select-1_seed-0.0667_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/05292025180028_size-100x100_select-0.3_seed-0.1/05292025180028_size-100x100_select-0.3_seed-0.1_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/05292025180016_size-100x100_select-0.3_seed-0.125/05292025180016_size-100x100_select-0.3_seed-0.125_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/05292025174657_size-100x100_select-0.4_seed-0.15/05292025174657_size-100x100_select-0.4_seed-0.15_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/05292025180030_size-100x100_select-0.3_seed-0.175/05292025180030_size-100x100_select-0.3_seed-0.175_levels_all.npy",
 	"/home/kd766/quorum-sensing/outputs/05292025180015_size-100x100_select-0.3_seed-0.2/05292025180015_size-100x100_select-0.3_seed-0.2_levels_all.npy",
-	# "/home/kd766/quorum-sensing/outputs/06262025142707_size-100x100_select-0.3_seed-0.225/06262025142707_size-100x100_select-0.3_seed-0.225_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/06262025142707_size-100x100_select-0.3_seed-0.225/06262025142707_size-100x100_select-0.3_seed-0.225_levels_all.npy",
 	# "/home/kd766/quorum-sensing/outputs/06262025142751_size-100x100_select-0.3_seed-0.25/06262025142751_size-100x100_select-0.3_seed-0.25_levels_all.npy",
 	# "/home/kd766/quorum-sensing/outputs/06262025142714_size-100x100_select-0.3_seed-0.275/06262025142714_size-100x100_select-0.3_seed-0.275_levels_all.npy",
 ]
 
+levels_noneg_l = [
+	# "/home/kd766/quorum-sensing/outputs/07232025152722_size-100x100_select-0.3_seed-0.025_noneg/07232025152722_size-100x100_select-0.3_seed-0.025_noneg_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/07232025162644_size-100x100_select-0.3_seed-0.03_noneg/07232025162644_size-100x100_select-0.3_seed-0.03_noneg_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/07232025152745_size-100x100_select-0.3_seed-0.0333_noneg/07232025152745_size-100x100_select-0.3_seed-0.0333_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025162614_size-100x100_select-0.3_seed-0.05_noneg/07232025162614_size-100x100_select-0.3_seed-0.05_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152552_size-100x100_select-0.3_seed-0.0667_noneg/07232025152552_size-100x100_select-0.3_seed-0.0667_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152554_size-100x100_select-0.3_seed-0.1_noneg/07232025152554_size-100x100_select-0.3_seed-0.1_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152556_size-100x100_select-0.3_seed-0.125_noneg/07232025152556_size-100x100_select-0.3_seed-0.125_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152621_size-100x100_select-0.3_seed-0.15_noneg/07232025152621_size-100x100_select-0.3_seed-0.15_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152648_size-100x100_select-0.3_seed-0.175_noneg/07232025152648_size-100x100_select-0.3_seed-0.175_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025152708_size-100x100_select-0.3_seed-0.2_noneg/07232025152708_size-100x100_select-0.3_seed-0.2_noneg_levels_all.npy",
+	"/home/kd766/quorum-sensing/outputs/07232025164017_size-100x100_select-0.3_seed-0.225_noneg/07232025164017_size-100x100_select-0.3_seed-0.225_noneg_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/07232025164023_size-100x100_select-0.3_seed-0.25_noneg/07232025164023_size-100x100_select-0.3_seed-0.25_noneg_levels_all.npy",
+	# "/home/kd766/quorum-sensing/outputs/07232025164056_size-100x100_select-0.3_seed-0.275_noneg/07232025164056_size-100x100_select-0.3_seed-0.275_noneg_levels_all.npy",
+]
+
 # timepoints at which to analyze each of the above experiments; one set per setup.
 timepoints_mat = [
-	[x for x in range(1, 49, 5)],  	# 0.025
+	[x for x in range(1, 49, 5)],  		# 0.025
 	[x for x in range(1, 49, 5)],		# 0.033
 	[x for x in range(1, 49, 4)],		# 0.0667
 	[x for x in range(1, 49, 4)],		# 0.0667
@@ -110,59 +128,69 @@ timepoints_mat = [
 	[x for x in range(1, 49, 4)],		# 0.0667
 ]
 
-# set the reqd. cells per window range -- window size will be scaled based on density.
-for levels_fpath, timepoints_l in zip(levels_l, timepoints_mat):
-	
-	# infer simulation config.
-	dirpath, fname = os.path.split(levels_fpath)
-	clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_all.npy')
-	seeding_density_str = fname.split('_')[-3].split('-')[-1]
-	seeding_density = round(float(seeding_density_str), 4)
-	
-	# read files.
-	levels = np.load(levels_fpath)
-	clouds = np.load(clouds_fpath)
+for feedback_str in ["", "noneg"]:
 
-	# compute window/neighborhood size range.
-	neighborhood_range = [x for x in range(6, 16, 1)]
-	print(neighborhood_range)
-	
-	# run sliding window on levels and clouds.
-	levels_fig = plot.figure(figsize=(16, 12))
-	clouds_fig = plot.figure(figsize=(16, 12))
-	cloud_overlay_idx = 0
-	for idx, r in enumerate(neighborhood_range):
+	# pick levels matrix accordingly.
+	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
+
+	# set the reqd. cells per window range -- window size will be scaled based on density.
+	for levels_fpath, timepoints_l in zip(levels_l, timepoints_mat):
 		
-		# levels.
+		# infer simulation config.
+		dirpath, fname = os.path.split(levels_fpath)
+		clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_all.npy')
+		seeding_density_str = fname.split('_')[-3].split('-')[-1]
+		seeding_density = round(float(seeding_density_str), 4)
+		
+		# read files.
+		levels = np.load(levels_fpath)
+		clouds = np.load(clouds_fpath)
+
+		# compute window/neighborhood size range.
+		neighborhood_range = [x for x in range(6, 16, 1)]
+		print(neighborhood_range)
+		
+		# run sliding window on levels and clouds.
+		levels_fig = plot.figure(figsize=(16, 12))
+		clouds_fig = plot.figure(figsize=(16, 12))
+		for idx, r in enumerate(neighborhood_range):
+			
+			# levels.
+			plot.figure(levels_fig)
+			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			for tpoint_idx, tpoint in enumerate(timepoints_l):
+				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
+					mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
+				ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
+					label=f"t={tpoint}", alpha=0.5)
+			ax.set_xlabel("mean signal")
+			ax.set_ylabel("std dev. signal")
+			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+			
+			# clouds.
+			plot.figure(clouds_fig)
+			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			for tpoint_idx, tpoint in enumerate(timepoints_l):
+				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
+					mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
+				ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
+					label=f"t={tpoint}", alpha=0.5)
+			ax.set_xlabel("mean cloud")
+			ax.set_ylabel("std dev. cloud")
+			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+		
+		# save the figures.
 		plot.figure(levels_fig)
-		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		for tpoint in timepoints_l:
-			means_l, stdevs_l, n_cells_l = slide_window_using_tree(
-				mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-			ax.scatter(means_l, stdevs_l, s=0.8, label=f"t={tpoint}", alpha=0.5)
-		ax.set_xlabel("mean signal")
-		ax.set_ylabel("std dev. signal")
-		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
-		
-		# clouds.
+		plot.legend()
+		plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
+		plot.savefig(os.path.join(
+			f'analysis_outputs/kdtree/temporal/{feedback_str}', 
+			f'kdtree_{feedback_str}_temporal_local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 		plot.figure(clouds_fig)
-		ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-		for tpoint in timepoints_l:
-			means_l, stdevs_l, n_cells_l = slide_window_using_tree(
-				mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-			ax.scatter(means_l, stdevs_l, s=0.8, label=f"t={tpoint}", alpha=0.5)
-		ax.set_xlabel("mean cloud")
-		ax.set_ylabel("std dev. cloud")
-		ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
-	
-	# save the figures.
-	plot.figure(levels_fig)
-	plot.legend()
-	plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
-	plot.savefig(os.path.join(
-		'analysis_outputs/temporal', f'temporal_local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
-	plot.figure(clouds_fig)
-	plot.legend()
-	plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
-	plot.savefig(os.path.join(
-		'analysis_outputs/temporal', f'temporal_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		plot.legend()
+		plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
+		plot.savefig(os.path.join(
+			f'analysis_outputs/kdtree/temporal/{feedback_str}', 
+			f'kdtree_{feedback_str}_temporal_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
