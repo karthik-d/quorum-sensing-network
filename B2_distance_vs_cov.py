@@ -111,7 +111,7 @@ for feedback_str in ["", "noneg"]:
 		clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(4, 12, 1)]
+		neighborhood_range = [x for x in range(4, 37, 4)]
 		
 		# run sliding window on levels and clouds.
 		levels_fig = plot.figure(figsize=(16, 12))
@@ -122,7 +122,7 @@ for feedback_str in ["", "noneg"]:
 			# covs_l, mean_dists_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 			covs_l, mean_dists_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 			ax.scatter(mean_dists_l, covs_l, s=0.8)
 			ax.set_xlabel("mean cell–cell distance (plate units)")
 			ax.set_ylabel("CoV (signal level)")
@@ -131,17 +131,17 @@ for feedback_str in ["", "noneg"]:
 			# [levels] add plot to overlay figure, if in list.
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 				ax.scatter(mean_dists_l, covs_l, s=0.8, label=seeding_density_str, alpha=0.5)
-				ax.set_xlabel("mean level")
-				ax.set_ylabel("std dev. level")
-				ax.set_title(f"# cells / window = {r}")
+				ax.set_xlabel("mean cell–cell distance (plate units)")
+				ax.set_ylabel("CoV (signal level)")
+				ax.set_title(f"# neighbors = {r}")
 			
 			# clouds.
 			# covs_l, mean_dists_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 			covs_l, mean_dists_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 			ax.scatter(mean_dists_l, covs_l, s=0.8)
 			ax.set_xlabel("mean cell–cell distance (plate units)")
 			ax.set_ylabel("CoV (cloud intensity)")
@@ -150,11 +150,11 @@ for feedback_str in ["", "noneg"]:
 			# [clouds] add plot to overlay figure, if in list.
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 				ax.scatter(mean_dists_l, covs_l, s=0.8, label=seeding_density_str, alpha=0.5)
-				ax.set_xlabel("mean cloud")
-				ax.set_ylabel("std dev. cloud")
-				ax.set_title(f"# cells / window = {r}")
+				ax.set_xlabel("mean cell–cell distance (plate units)")
+				ax.set_ylabel("CoV (cloud intensity)")
+				ax.set_title(f"# neighbors = {r}")
 		
 		# save the figures.
 		plot.figure(levels_fig)

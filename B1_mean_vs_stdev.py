@@ -138,13 +138,19 @@ cloud_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1",
 levels_overlay_densities_l = ["0.025", "0.03", "0.0333", "0.05", "0.0667", "0.1", "0.125", "0.15", 
 	"0.175", "0.2", "0.225", "0.25", "0.275"]
 
+cloud_density_vals = [float(x) for x in cloud_overlay_densities_l]
+levels_density_vals = [float(x) for x in levels_overlay_densities_l]
+print(cloud_density_vals)
 
 for feedback_str in ["", "noneg"]:
 	# set the reqd. cells per window range -- window size will be scaled based on density.
 	cloud_overlay_fig = plot.figure(figsize=(16, 12))
 	levels_overlay_fig = plot.figure(figsize=(16, 12))
 	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
-	for levels_fpath in levels_l:
+
+	cloud_overlay_idx = 0
+	levels_overlay_idx = 0
+	for density_idx, levels_fpath in enumerate(levels_l):
 		
 		# infer simulation config.
 		dirpath, fname = os.path.split(levels_fpath)
@@ -157,21 +163,22 @@ for feedback_str in ["", "noneg"]:
 		clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(4, 12, 1)]
+		neighborhood_range = [x for x in range(4, 37, 4)]
 		print(neighborhood_range)
 		
 		# run sliding window on levels and clouds.
 		levels_fig = plot.figure(figsize=(16, 12))
 		clouds_fig = plot.figure(figsize=(16, 12))
-		cloud_overlay_idx = 0
+		levels_overlayed = False
+		cloud_overlayed = False 
 		for idx, r in enumerate(neighborhood_range):
 			
 			# levels.
 			# means_l, stdevs_l, n_cells_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-			ax.scatter(means_l, stdevs_l, s=0.8)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax.scatter(means_l, stdevs_l, s=0.9)
 			ax.set_xlabel("mean signal")
 			ax.set_ylabel("std dev. signal")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -179,19 +186,22 @@ for feedback_str in ["", "noneg"]:
 			# [levels] add plot to overlay figure, if in list.
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-				ax.scatter(means_l, stdevs_l, s=0.8, label=seeding_density_str,
-					alpha=0.5)
+				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis', 
+					c=[levels_density_vals[levels_overlay_idx]]*len(means_l),
+					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
+					label=seeding_density_str, alpha=0.5)
 				ax.set_xlabel("mean level")
 				ax.set_ylabel("std dev. level")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+				levels_overlayed = True
 			
 			# clouds.
 			# means_l, stdevs_l, n_cells_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-			ax.scatter(means_l, stdevs_l, s=0.8)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax.scatter(means_l, stdevs_l, s=0.9)
 			ax.set_xlabel("mean cloud")
 			ax.set_ylabel("std dev. cloud")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -199,12 +209,15 @@ for feedback_str in ["", "noneg"]:
 			# [clouds] add plot to overlay figure, if in list.
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
-				ax.scatter(means_l, stdevs_l, s=0.8, label=seeding_density_str,
-					alpha=0.5)
+				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis', 
+					c=[cloud_density_vals[cloud_overlay_idx]]*len(means_l), 
+					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
+					label=seeding_density_str, alpha=0.5)
 				ax.set_xlabel("mean cloud")
 				ax.set_ylabel("std dev. cloud")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+				cloud_overlayed = True
 		
 		# save the figures.
 		plot.figure(levels_fig)
@@ -221,9 +234,14 @@ for feedback_str in ["", "noneg"]:
 			f'kdtree_{feedback_str}_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
 		plot.close()
 
+		# update scatter color index.
+		levels_overlay_idx += 1 if levels_overlayed else 0
+		cloud_overlay_idx += 1 if cloud_overlayed else 0
+
 	# save levels overlay figure.
 	plot.figure(levels_overlay_fig)
-	plot.legend()
+	# plot.legend()
+	plot.colorbar(levels_overlay)
 	plot.suptitle("signal levels overlayed for select densities")
 	plot.savefig(os.path.join(
 		f'analysis_outputs/kdtree/{feedback_str}', 
@@ -232,7 +250,8 @@ for feedback_str in ["", "noneg"]:
 
 	# save cloud overlay figure.
 	plot.figure(cloud_overlay_fig)
-	plot.legend()
+	# plot.legend()
+	plot.colorbar(cloud_overlay)
 	plot.suptitle("cloud intensities overlayed for select densities")
 	plot.savefig(os.path.join(
 		f'analysis_outputs/kdtree/{feedback_str}', 
