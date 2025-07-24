@@ -148,7 +148,7 @@ for feedback_str in ["", "noneg"]:
 				ax.set_xlabel("mean cell–cell distance (plate units)")
 				ax.set_ylabel("CoV (signal level)")
 				ax.set_title(f"# neighbors = {r}")
-				signals_overlayed = True
+				levels_overlayed = True
 			
 			# clouds.
 			# covs_l, mean_dists_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
