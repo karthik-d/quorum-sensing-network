@@ -153,7 +153,7 @@ for feedback_str in ["", "noneg"]:
 		# infer simulation config.
 		dirpath, fname = os.path.split(levels_fpath)
 		clouds_fpath = os.path.join(dirpath, '_'.join(fname.split('_')[:-2]) + '_clouds_all.npy')
-		seeding_density_str = fname.split('_')[-3].split('-')[-1]
+		seeding_density_str = fname.split('_')[3].split('-')[-1]
 		seeding_density = round(float(seeding_density_str), 4)
 		
 		# read files.
@@ -171,11 +171,11 @@ for feedback_str in ["", "noneg"]:
 			
 			# levels.
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-				ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+				levels_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
 					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
 					label=f"t={tpoint}", alpha=0.5)
 			ax.set_xlabel("mean signal")
@@ -184,11 +184,11 @@ for feedback_str in ["", "noneg"]:
 			
 			# clouds.
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2, idx+1)
+			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-				ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+				cloud_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
 					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
 					label=f"t={tpoint}", alpha=0.5)
 			ax.set_xlabel("mean cloud")
@@ -197,14 +197,18 @@ for feedback_str in ["", "noneg"]:
 		
 		# save the figures.
 		plot.figure(levels_fig)
-		plot.legend()
+		# plot.legend()
+		plot.colorbar(levels_plot)
 		plot.suptitle(f"signaling intensity at density={seeding_density*100}%")
 		plot.savefig(os.path.join(
 			f'analysis_outputs/kdtree/temporal/{feedback_str}', 
 			f'kdtree_{feedback_str}_temporal_local-mean-stdev_levels_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		plot.close()
 		plot.figure(clouds_fig)
-		plot.legend()
+		# plot.legend()
+		plot.colorbar(cloud_plot)
 		plot.suptitle(f"cloud intensity at density={seeding_density*100}%")
 		plot.savefig(os.path.join(
 			f'analysis_outputs/kdtree/temporal/{feedback_str}', 
 			f'kdtree_{feedback_str}_temporal_local-mean-stdev_cloud_select-{str(seeding_density).ljust(4, '0')}.png'), dpi=100)
+		plot.close()
