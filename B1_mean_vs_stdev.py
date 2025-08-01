@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 
-from utils.animation import custom_tri_colormap
+from utils.animation import custom_n_colormap
 
 
 def _old_slide_window(mat, r=10):
@@ -183,7 +183,7 @@ for feedback_str in ["", "noneg"]:
 			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			ax.scatter(means_l, stdevs_l, s=0.9)
 			# enforce a square plot area
-			ax.set_aspect('equal', adjustable='box')
+			ax.set_box_aspect(1) 
 			ax.set_xlabel("mean signal")
 			ax.set_ylabel("std dev. signal")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -192,12 +192,12 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
 				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
-				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(n=3), 
+				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=3), 
 					c=[levels_density_vals[levels_overlay_idx]]*len(means_l),
 					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
 					label=seeding_density_str, alpha=0.5)
 				# enforce a square plot area
-				ax.set_aspect('equal', adjustable='box')
+				ax.set_box_aspect(1) 
 				ax.set_xlabel("mean level")
 				ax.set_ylabel("std dev. level")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -210,7 +210,7 @@ for feedback_str in ["", "noneg"]:
 			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			ax.scatter(means_l, stdevs_l, s=0.9)
 			# enforce a square plot area
-			ax.set_aspect('equal', adjustable='box')
+			ax.set_box_aspect(1) 
 			ax.set_xlabel("mean cloud")
 			ax.set_ylabel("std dev. cloud")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -219,12 +219,12 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
 				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
-				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(n=3), 
+				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=3), 
 					c=[cloud_density_vals[cloud_overlay_idx]]*len(means_l), 
 					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
 					label=seeding_density_str, alpha=0.5)
 				# enforce a square plot area
-				ax.set_aspect('equal', adjustable='box')
+				ax.set_box_aspect(1) 
 				ax.set_xlabel("mean cloud")
 				ax.set_ylabel("std dev. cloud")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
