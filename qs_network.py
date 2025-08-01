@@ -115,6 +115,7 @@ class QSNetworkSimulator:
 		self.signaling_frac = kwargs.get("signaling_frac", 1)
 		self.fixed_signalers = kwargs.get('fixed_signalers', False)
 		self.seeding_frac = kwargs.get("cell_seeding_frac", 0.1)
+		self.seeding_transition_frac = kwargs.get("seeding_transition_frac", False)
 		self.verbose = kwargs.get("verbose", False)
 
 		# initialize simulator by seeding network and running one step.
@@ -339,7 +340,8 @@ class QSNetworkSimulator:
 				datetime.now().strftime("%m%d%Y%H%M%S")}_size-{
 					'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
 						round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
-							'_fixedsig' if self.fixed_signalers else ''}""")
+							'_fixedsig' if self.fixed_signalers else ''}{
+								'_gradedseeding' if self.seeding_transition_frac else ''}""")
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
@@ -473,71 +475,75 @@ class QSNetworkSimulator:
 # )
 
 ## 2. constant seeding.
-simulation_config = dict(
-	# network params.
-	cell_seeding_frac = 0.275,
-	cell_area_dim = (100, 100),
-	negative_feedback = True,
-
-	# set simulation id to load seeding from; None for random.
-	# seeding related config values will be overwritten upon load. 
-	# seeding_src = None,
-
-	## for 50x50.
-	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
-	# seeding_src = "03242025054229_size-50x50_select-1_seed-0.0667", 	# 6.67%
-	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
-	# seeding_src = "03242025054236_size-50x50_select-1_seed-0.0333",  	# 3.33%
-
-	## for 100x100.
-	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
-	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
-	# seeding_src = "05292025212917_size-100x100_select-1_seed-0.0667",	# 6.67%
-	# seeding_src = "05292025172550_size-100x100_select-1_seed-0.1",	# 10%
-	# seeding_src = "05292025172613_size-100x100_select-1_seed-0.125",	# 12.5%
-	# seeding_src = "05292025172604_size-100x100_select-1_seed-0.15",	# 15%
-	# seeding_src = "05292025172633_size-100x100_select-1_seed-0.175",	# 17.5%
-	# seeding_src = "05292025172642_size-100x100_select-1_seed-0.2",	# 20%
-
-	## for 150x150.
-	# seeding_src = "03242025065647_size-150x150_select-1_seed-0.025",	# 2.50%
-	# seeding_src = "03242025065738_size-150x150_select-1_seed-0.0333",	# 3.33%
-	# seeding_src = "03242025065720_size-150x150_select-1_seed-0.0667",	# 6.67%
-
-	# params for graded seeding; set to `None` if using uniform seeding.
-	seeding_transition_frac = None,
-	n_seeding_transitions = None,
-
-	# simulator params.
-	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.3,
-
-	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
-	# during updation, a set is chosen cyclically to respond.
-	fixed_signalers = False,
-
-	# other params 
-	verbose = True
-)
-
-## 3. graded seeding.
 # simulation_config = dict(
 # 	# network params.
-# 	cell_seeding_frac = 0.02,
-# 	cell_area_dim = (96, 50),
+# 	cell_seeding_frac = 0.275,
+# 	cell_area_dim = (100, 100),
 # 	negative_feedback = True,
 
+# 	# set simulation id to load seeding from; None for random.
+# 	# seeding related config values will be overwritten upon load. 
+# 	# seeding_src = None,
+
+# 	## for 50x50.
+# 	# seeding_src = "02152025033708_size-50x50_select-1_seed-0.0667", 	# 6.67%
+# 	# seeding_src = "03242025054229_size-50x50_select-1_seed-0.0667", 	# 6.67%
+# 	# seeding_src = "02152025042853_size-50x50_select-1_seed-0.0333",  	# 3.33%
+# 	# seeding_src = "03242025054236_size-50x50_select-1_seed-0.0333",  	# 3.33%
+
+# 	## for 100x100.
+# 	# seeding_src = "03242025061244_size-100x100_select-1_seed-0.025",	# 2.5%
+# 	# seeding_src = "03242025060053_size-100x100_select-1_seed-0.0333",	# 3.33%
+# 	# seeding_src = "05292025212917_size-100x100_select-1_seed-0.0667",	# 6.67%
+# 	# seeding_src = "05292025172550_size-100x100_select-1_seed-0.1",	# 10%
+# 	# seeding_src = "05292025172613_size-100x100_select-1_seed-0.125",	# 12.5%
+# 	# seeding_src = "05292025172604_size-100x100_select-1_seed-0.15",	# 15%
+# 	# seeding_src = "05292025172633_size-100x100_select-1_seed-0.175",	# 17.5%
+# 	# seeding_src = "05292025172642_size-100x100_select-1_seed-0.2",	# 20%
+
+# 	## for 150x150.
+# 	# seeding_src = "03242025065647_size-150x150_select-1_seed-0.025",	# 2.50%
+# 	# seeding_src = "03242025065738_size-150x150_select-1_seed-0.0333",	# 3.33%
+# 	# seeding_src = "03242025065720_size-150x150_select-1_seed-0.0667",	# 6.67%
+
 # 	# params for graded seeding; set to `None` if using uniform seeding.
-# 	seeding_transition_frac = 0.005,
-# 	n_seeding_transitions = 7,
+# 	seeding_transition_frac = None,
+# 	n_seeding_transitions = None,
 
 # 	# simulator params.
-# 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
-# 	signaling_frac = 1,
+# 	obs_duration = 48,		# set as (perfect_sq - 1) for good formatting.
+# 	signaling_frac = 0.3,
+
+# 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
+# 	# during updation, a set is chosen cyclically to respond.
+# 	fixed_signalers = False,
 
 # 	# other params 
 # 	verbose = True
 # )
+
+## 3. graded seeding.
+simulation_config = dict(
+	# network params.
+	cell_seeding_frac = 0.12,
+	cell_area_dim = (150, 60),
+	negative_feedback = False,
+
+	# params for graded seeding; set to `None` if using uniform seeding.
+	seeding_transition_frac = 0.08,
+	n_seeding_transitions = 4,
+
+	# simulator params.
+	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
+	signaling_frac = 0.4,
+
+# 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
+# 	# during updation, a set is chosen cyclically to respond.
+# 	fixed_signalers = False,
+
+	# other params 
+	verbose = True
+)
 
 
 # -----
@@ -564,15 +570,15 @@ else:
 # -----
 # run simulation.
 # -----
-# simulator = QSNetworkSimulator(
-# 	qs_net = QSNetwork(simulation_config),
-# 	config = simulation_config)
-# log = simulator.run_qs_simulation(
-# 	save_outputs = True,
-# 	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
-# 	save_animations = False,		# saves GIFs if True.
-# 	save_log = True
-# )
+simulator = QSNetworkSimulator(
+	qs_net = QSNetwork(simulation_config),
+	config = simulation_config)
+log = simulator.run_qs_simulation(
+	save_outputs = True,
+	save_cytoscape_assets = True, 	# saves nodetable, edgetable if True.
+	save_animations = False,		# saves GIFs if True.
+	save_log = True
+)
 
 
 # edge_matrix, node_posns = simulator.get_network_graph(log["levels"])
@@ -612,21 +618,21 @@ else:
 # densities = np.arange(22, 2.4, -1.5)
 # for density in densities:
 
-density = 5.5/100
-print(density)
-for trial_id in range(5):
-	print(trial_id)
-	simulation_config["cell_seeding_frac"] = density
-	simulation_config.update(dict(
-		cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
-	))
-	simulator = QSNetworkSimulator(
-		qs_net = QSNetwork(simulation_config),
-		config = simulation_config)
-	log = simulator.run_qs_simulation(
-		save_outputs = True,
-		save_cytoscape_assets = False,
-		save_animations = False,
-		save_log = False,
-		subexp_op_subdir = 'subexp',
-	)
+# density = 5.5/100
+# print(density)
+# for trial_id in range(5):
+# 	print(trial_id)
+# 	simulation_config["cell_seeding_frac"] = density
+# 	simulation_config.update(dict(
+# 		cell_posn_encoding = seeding.uniform_density_array(**simulation_config)
+# 	))
+# 	simulator = QSNetworkSimulator(
+# 		qs_net = QSNetwork(simulation_config),
+# 		config = simulation_config)
+# 	log = simulator.run_qs_simulation(
+# 		save_outputs = True,
+# 		save_cytoscape_assets = False,
+# 		save_animations = False,
+# 		save_log = False,
+# 		subexp_op_subdir = 'subexp',
+# 	)
