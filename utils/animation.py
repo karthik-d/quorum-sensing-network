@@ -2,6 +2,7 @@ from PIL import Image
 from matplotlib import pyplot as plot
 
 import matplotlib.animation as animation
+import matplotlib.colors as mcolors
 import io
 import numpy as np
 
@@ -39,3 +40,10 @@ def img_bytes2array(fig_bytes):
     buf = io.BytesIO(fig_bytes)
     img = Image.open(buf)
     return np.asarray(img)
+
+
+def custom_tri_colormap():
+	custom_cmap = mcolors.LinearSegmentedColormap.from_list("my_custom_cmap", [
+		(0, "#3d26a6"), (0.5, "#42ca8b"), (1, "#fdbc3e")
+	])
+	return custom_cmap

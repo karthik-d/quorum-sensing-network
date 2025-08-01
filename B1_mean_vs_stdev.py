@@ -5,6 +5,9 @@ import pandas as pd
 import os
 
 
+from utils.animation import custom_tri_colormap
+
+
 def _old_slide_window(mat, r=10):
 	"""
 	previous method, sliding a constant window over the entire array
@@ -187,7 +190,7 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
 				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis', 
+				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(), 
 					c=[levels_density_vals[levels_overlay_idx]]*len(means_l),
 					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
 					label=seeding_density_str, alpha=0.5)
@@ -210,7 +213,7 @@ for feedback_str in ["", "noneg"]:
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
 				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis', 
+				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(), 
 					c=[cloud_density_vals[cloud_overlay_idx]]*len(means_l), 
 					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
 					label=seeding_density_str, alpha=0.5)
