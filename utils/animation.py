@@ -42,8 +42,19 @@ def img_bytes2array(fig_bytes):
     return np.asarray(img)
 
 
-def custom_tri_colormap():
-	custom_cmap = mcolors.LinearSegmentedColormap.from_list("my_custom_cmap", [
-		(0, "#3d26a6"), (0.5, "#42ca8b"), (1, "#fdbc3e")
-	])
+def custom_n_colormap(n=3):
+	
+	colors_list = [
+		"#3d26a6",		# purple
+		"#5584c1",		# blue
+		"#42ca8b",		# green
+		"#fdbc3e",		# orange
+	]
+
+	anchor_pts = np.linspace(0, 1, n)
+	assignment_list = list(zip(
+		anchor_pts, colors_list[0:1] + colors_list[-(n-1):]))
+	custom_cmap = mcolors.LinearSegmentedColormap.from_list("my_custom_cmap", 
+		assignment_list)
+	
 	return custom_cmap

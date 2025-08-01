@@ -180,8 +180,10 @@ for feedback_str in ["", "noneg"]:
 			# means_l, stdevs_l, n_cells_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			ax.scatter(means_l, stdevs_l, s=0.9)
+			# enforce a square plot area
+			ax.set_aspect('equal', adjustable='box')
 			ax.set_xlabel("mean signal")
 			ax.set_ylabel("std dev. signal")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -189,11 +191,13 @@ for feedback_str in ["", "noneg"]:
 			# [levels] add plot to overlay figure, if in list.
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(), 
+				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(n=3), 
 					c=[levels_density_vals[levels_overlay_idx]]*len(means_l),
 					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
 					label=seeding_density_str, alpha=0.5)
+				# enforce a square plot area
+				ax.set_aspect('equal', adjustable='box')
 				ax.set_xlabel("mean level")
 				ax.set_ylabel("std dev. level")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -203,8 +207,10 @@ for feedback_str in ["", "noneg"]:
 			# means_l, stdevs_l, n_cells_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			ax.scatter(means_l, stdevs_l, s=0.9)
+			# enforce a square plot area
+			ax.set_aspect('equal', adjustable='box')
 			ax.set_xlabel("mean cloud")
 			ax.set_ylabel("std dev. cloud")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
@@ -212,11 +218,13 @@ for feedback_str in ["", "noneg"]:
 			# [clouds] add plot to overlay figure, if in list.
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
-				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(), 
+				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_tri_colormap(n=3), 
 					c=[cloud_density_vals[cloud_overlay_idx]]*len(means_l), 
 					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
 					label=seeding_density_str, alpha=0.5)
+				# enforce a square plot area
+				ax.set_aspect('equal', adjustable='box')
 				ax.set_xlabel("mean cloud")
 				ax.set_ylabel("std dev. cloud")
 				ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
