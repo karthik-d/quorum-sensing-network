@@ -5,6 +5,9 @@ import pandas as pd
 import os
 
 
+from utils.animation import custom_n_colormap
+
+
 def _old_slide_window(mat, r=10):
 	"""
 	previous method, sliding a constant window over the entire array
@@ -171,26 +174,30 @@ for feedback_str in ["", "noneg"]:
 			
 			# levels.
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-				levels_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+				levels_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=4),
 					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
 					label=f"t={tpoint}", alpha=0.5)
+			# enforce a square plot area
+			ax.set_box_aspect(1) 
 			ax.set_xlabel("mean signal")
 			ax.set_ylabel("std dev. signal")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 			
 			# clouds.
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
-				cloud_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap='viridis',
+				cloud_plot = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=4),
 					c=[tpoint]*len(means_l), vmin=min(timepoints_l), vmax=max(timepoints_l),
 					label=f"t={tpoint}", alpha=0.5)
+			# enforce a square plot area
+			ax.set_box_aspect(1) 
 			ax.set_xlabel("mean cloud")
 			ax.set_ylabel("std dev. cloud")
 			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
