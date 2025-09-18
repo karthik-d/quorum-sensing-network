@@ -533,17 +533,17 @@ class QSNetworkSimulator:
 ## 3. graded seeding.
 simulation_config = dict(
 	# network params.
-	cell_seeding_frac = 0.12,
-	cell_area_dim = (150, 60),
+	cell_seeding_frac = 0.05,
+	cell_area_dim = (210, 60),
 	negative_feedback = False,
 
 	# params for graded seeding; set to `None` if using uniform seeding.
-	seeding_transition_frac = 0.08,
-	n_seeding_transitions = 4,
+	seeding_transition_frac = 0.05,
+	n_seeding_transitions = 6,
 
 	# simulator params.
 	obs_duration = 24,		# set as (perfect_sq - 1) for good formatting.
-	signaling_frac = 0.4,
+	signaling_frac = 0.8,
 
 # 	# when True, cells are divided (based on signaling_frac) into pre-defined sets; 
 # 	# during updation, a set is chosen cyclically to respond.
