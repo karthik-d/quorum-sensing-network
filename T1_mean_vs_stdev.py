@@ -164,17 +164,17 @@ for feedback_str in ["", "noneg"]:
 		clouds = np.load(clouds_fpath)
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(4, 37, 4)]
+		neighborhood_range = [28]
 		print(neighborhood_range)
 		
 		# run sliding window on levels and clouds.
-		levels_fig = plot.figure(figsize=(16, 12))
-		clouds_fig = plot.figure(figsize=(16, 12))
+		levels_fig = plot.figure(figsize=(8, 8))
+		clouds_fig = plot.figure(figsize=(8, 8))
 		for idx, r in enumerate(neighborhood_range):
 			
 			# levels.
 			plot.figure(levels_fig)
-			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+			ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=levels[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
@@ -189,7 +189,7 @@ for feedback_str in ["", "noneg"]:
 			
 			# clouds.
 			plot.figure(clouds_fig)
-			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+			ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 			for tpoint_idx, tpoint in enumerate(timepoints_l):
 				means_l, stdevs_l, n_cells_l = slide_window_using_tree(
 					mat=clouds[tpoint, :, :], ref_mat=levels[tpoint, :, :], n_neighbors=r)
