@@ -8,5 +8,5 @@ Agent-based quorum sensing model to analyze the coordination of macrophages in t
 
 ## Analysis Scripts
 
-- Prefixed `B*_` are scripts used for baseline analysis—a single timepoint across different densities, seeding inits, etc.
+- Prefixed `B*_` are scripts used for baseline analysis—a single timepoint compared across different densities, seeding inits, etc.
 - Prefixed `T*_` are scripts used for temporal analysis—comparing different timepoints of a given experiment / model setup.
