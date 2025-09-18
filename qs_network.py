@@ -535,7 +535,7 @@ simulation_config = dict(
 	# network params.
 	cell_seeding_frac = 0.05,
 	cell_area_dim = (210, 60),
-	negative_feedback = False,
+	negative_feedback = True,
 
 	# params for graded seeding; set to `None` if using uniform seeding.
 	seeding_transition_frac = 0.05,
