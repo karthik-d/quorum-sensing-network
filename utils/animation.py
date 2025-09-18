@@ -8,7 +8,7 @@ import numpy as np
 
 
 
-def save_animation(data, save_path):
+def save_animation(data, save_path, val_range_l=None):
 
 	# each sublist should be a list of images; so data should be a 4D array [subplot_series, timepoint, img_width, img_height].
 	num_subplots = len(data)
@@ -20,12 +20,18 @@ def save_animation(data, save_path):
 			axes[ax_idx].set_title(f"time={i}")
 		return imgs[ax_idx], 
 
+	# load value ranges.
+	if val_range_l is None:
+		val_range_l = [(0, 10) for _ in range(num_subplots)]
+
 	fig, axes = plot.subplots(1, num_subplots)
 	axes = [axes] if not isinstance(axes, (list, np.ndarray)) else axes
 	imgs = [None for _ in range(num_subplots)]
 	for ax_idx in range(num_subplots):
 		# set the initial image.
-		imgs[ax_idx] = axes[ax_idx].imshow(data[ax_idx][0], animated=True, vmin=0, vmax=10, aspect=1)
+		imgs[ax_idx] = axes[ax_idx].imshow(
+			data[ax_idx][0], animated=True, 
+			vmin=val_range_l[ax_idx][0], vmax=val_range_l[ax_idx][1], aspect=1)
 		axes[ax_idx].set_title(f"time={1}")
 		fig.colorbar(imgs[ax_idx])
 	

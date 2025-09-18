@@ -288,7 +288,8 @@ class QSNetworkSimulator:
 				responding_cells = np.zeros(self.net.cells.shape)
 				responding_cells[*list(zip(*all_cell_posns[i:i+n_cells_per_set]))] = 1
 				signaling_sets.append(responding_cells)
-			
+
+		max_cloud_intensity = 0	
 		for time in range(1, obs_duration+1):
 			# decide whether or not to signal.
 			if time % signaling_interval != 0:
@@ -329,6 +330,7 @@ class QSNetworkSimulator:
 				self.net.levels[i]*(self.net.cell_response_map.get(i)+1) for i in self.net.domain
 			], axis=0) 
 			log.get("cloud")[time] = signal_cloud.copy()
+			max_cloud_intensity = max(max_cloud_intensity, np.max(signal_cloud))
 
 
 		# optionally, save time evolution outputs.
@@ -341,7 +343,8 @@ class QSNetworkSimulator:
 					'x'.join(map(str, self.net.size))}_select-{round(self.signaling_frac, 2)}_seed-{
 						round(self.seeding_frac, 4)}{'_noneg' if not self.net.has_negative_feedback else ''}{
 							'_fixedsig' if self.fixed_signalers else ''}{
-								'_gradedseeding' if self.seeding_transition_frac else ''}""")
+								'_gradedseeding' if self.seeding_transition_frac else ''}""",
+								max_cloud_intensity)
 		else:
 			_ = print("done running. not saving.") if self.verbose else None
 
@@ -350,7 +353,7 @@ class QSNetworkSimulator:
 
 	def save_outputs(self, log, obs_duration, config, 
 		save_cytoscape_assets, save_animations, save_log, subexp_op_subdir, 
-		sim_id):
+		sim_id, max_cloud_intensity):
 		
 		savedir = os.path.join("./outputs", (subexp_op_subdir if subexp_op_subdir is not None else ''),
 			f"{sim_id}")
@@ -389,14 +392,14 @@ class QSNetworkSimulator:
 			plot.figure(2, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"cloud; time={time}")
-			plot.imshow(log["cloud"][time], vmin=0, vmax=10)
+			plot.imshow(log["cloud"][time], vmin=0, vmax=max_cloud_intensity)
 			plot.colorbar()
 
 			# plot each delta of `cloud`.
 			plot.figure(3, figsize=(30, 30))
 			plot.subplot(subplot_dim, subplot_dim, time+1)
 			plot.title(f"cloud delta; time={time}")
-			plot.imshow(cloud_delta, vmin=0, vmax=10)
+			plot.imshow(cloud_delta, vmin=0, vmax=max_cloud_intensity)
 			plot.colorbar()
 
 			# make graphs at each time step.
@@ -446,7 +449,12 @@ class QSNetworkSimulator:
 					clouds_l,
 					delta_clouds_l,
 				],
-				save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif")
+				save_path = os.path.join(savedir, f"levels_cloud_time-evolution.gif"),
+				val_range_l = [
+					(0, 10),
+					(0, max_cloud_intensity),
+					(0, max_cloud_intensity)
+				]
 			)
 
 		# save final levels and clouds as matrices.
