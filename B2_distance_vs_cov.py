@@ -98,8 +98,8 @@ print(cloud_density_vals)
 
 for feedback_str in ["", "noneg"]:
 	# set the reqd. cells per window range -- window size will be scaled based on dennsity.
-	cloud_overlay_fig = plot.figure(figsize=(16, 12))
-	levels_overlay_fig = plot.figure(figsize=(16, 12))
+	cloud_overlay_fig = plot.figure(figsize=(8, 8))
+	levels_overlay_fig = plot.figure(figsize=(8, 8))
 	reqd_cells_per_win_range = list(range(4, 19, 2))
 	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
 	
@@ -118,11 +118,11 @@ for feedback_str in ["", "noneg"]:
 		clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(4, 37, 4)]
+		neighborhood_range = [28]
 		
 		# run sliding window on levels and clouds.
-		levels_fig = plot.figure(figsize=(16, 12))
-		clouds_fig = plot.figure(figsize=(16, 12))
+		levels_fig = plot.figure(figsize=(8, 8))
+		clouds_fig = plot.figure(figsize=(8, 8))
 		levels_overlayed = False
 		cloud_overlayed = False 
 		for idx, r in enumerate(neighborhood_range):
@@ -131,7 +131,7 @@ for feedback_str in ["", "noneg"]:
 			# covs_l, mean_dists_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 			covs_l, mean_dists_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
 			plot.figure(levels_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 			ax.scatter(mean_dists_l, covs_l, s=0.8)
 			ax.set_xlabel("mean cell–cell distance (plate units)")
 			ax.set_ylabel("CoV (signal level)")
@@ -140,7 +140,7 @@ for feedback_str in ["", "noneg"]:
 			# [levels] add plot to overlay figure, if in list.
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+				ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 				levels_overlay = ax.scatter(mean_dists_l, covs_l, s=0.9, cmap='viridis', 
 					c=[levels_density_vals[levels_overlay_idx]]*len(covs_l),
 					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
@@ -154,7 +154,7 @@ for feedback_str in ["", "noneg"]:
 			# covs_l, mean_dists_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 			covs_l, mean_dists_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
 			plot.figure(clouds_fig)
-			ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+			ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 			ax.scatter(mean_dists_l, covs_l, s=0.8)
 			ax.set_xlabel("mean cell–cell distance (plate units)")
 			ax.set_ylabel("CoV (cloud intensity)")
@@ -163,7 +163,7 @@ for feedback_str in ["", "noneg"]:
 			# [clouds] add plot to overlay figure, if in list.
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
-				ax = plot.subplot(2, len(neighborhood_range)//2+1, idx+1)
+				ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 				cloud_overlay = ax.scatter(mean_dists_l, covs_l, s=0.9, cmap='viridis', 
 					c=[cloud_density_vals[cloud_overlay_idx]]*len(covs_l), 
 					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),

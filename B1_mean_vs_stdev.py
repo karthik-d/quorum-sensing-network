@@ -147,8 +147,8 @@ print(cloud_density_vals)
 
 for feedback_str in ["", "noneg"]:
 	# set the reqd. cells per window range -- window size will be scaled based on density.
-	cloud_overlay_fig = plot.figure(figsize=(16, 12))
-	levels_overlay_fig = plot.figure(figsize=(16, 12))
+	cloud_overlay_fig = plot.figure(figsize=(8, 8))
+	levels_overlay_fig = plot.figure(figsize=(8, 8))
 	levels_l = levels_noneg_l if feedback_str=="noneg" else levels_withneg_l
 
 	cloud_overlay_idx = 0
@@ -166,12 +166,12 @@ for feedback_str in ["", "noneg"]:
 		clouds = pd.read_csv(clouds_fpath, header=None).to_numpy()
 
 		# compute window/neighborhood size range.
-		neighborhood_range = [x for x in range(4, 37, 4)]
+		neighborhood_range = [28]
 		print(neighborhood_range)
 		
 		# run sliding window on levels and clouds.
-		levels_fig = plot.figure(figsize=(16, 12))
-		clouds_fig = plot.figure(figsize=(16, 12))
+		levels_fig = plot.figure(figsize=(8, 8))
+		clouds_fig = plot.figure(figsize=(8, 8))
 		levels_overlayed = False
 		cloud_overlayed = False 
 		for idx, r in enumerate(neighborhood_range):
@@ -179,19 +179,19 @@ for feedback_str in ["", "noneg"]:
 			# levels.
 			# means_l, stdevs_l, n_cells_l = slide_window(levels, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(levels, ref_mat=levels, n_neighbors=r)
-			plot.figure(levels_fig)
-			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
-			ax.scatter(means_l, stdevs_l, s=0.9)
-			# enforce a square plot area
-			ax.set_box_aspect(1) 
-			ax.set_xlabel("mean signal")
-			ax.set_ylabel("std dev. signal")
-			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+			# plot.figure(levels_fig)
+			# ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
+			# ax.scatter(means_l, stdevs_l, s=0.9)
+			# # enforce a square plot area
+			# ax.set_box_aspect(1) 
+			# ax.set_xlabel("mean signal")
+			# ax.set_ylabel("std dev. signal")
+			# ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 
 			# [levels] add plot to overlay figure, if in list.
 			if seeding_density_str in levels_overlay_densities_l:
 				plot.figure(levels_overlay_fig)
-				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+				ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 				levels_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=3), 
 					c=[levels_density_vals[levels_overlay_idx]]*len(means_l),
 					vmin=min(levels_density_vals), vmax=max(levels_density_vals),
@@ -206,19 +206,19 @@ for feedback_str in ["", "noneg"]:
 			# clouds.
 			# means_l, stdevs_l, n_cells_l = slide_window(clouds, ref_mat=levels, neighbor_thresh=r)
 			means_l, stdevs_l, n_cells_l = slide_window_using_tree(clouds, ref_mat=levels, n_neighbors=r)
-			plot.figure(clouds_fig)
-			ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
-			ax.scatter(means_l, stdevs_l, s=0.9)
-			# enforce a square plot area
-			ax.set_box_aspect(1) 
-			ax.set_xlabel("mean cloud")
-			ax.set_ylabel("std dev. cloud")
-			ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
+			# plot.figure(clouds_fig)
+			# ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+			# ax.scatter(means_l, stdevs_l, s=0.9)
+			# # enforce a square plot area
+			# ax.set_box_aspect(1) 
+			# ax.set_xlabel("mean cloud")
+			# ax.set_ylabel("std dev. cloud")
+			# ax.set_title(f"# cells / window = {round(np.mean(n_cells_l), 2)}")
 
 			# [clouds] add plot to overlay figure, if in list.
 			if seeding_density_str in cloud_overlay_densities_l:
 				plot.figure(cloud_overlay_fig)
-				ax = plot.subplot(3, len(neighborhood_range)//3+1, idx+1)
+				ax = plot.subplot(1, len(neighborhood_range)//2+1, idx+1)
 				cloud_overlay = ax.scatter(means_l, stdevs_l, s=0.9, cmap=custom_n_colormap(n=3), 
 					c=[cloud_density_vals[cloud_overlay_idx]]*len(means_l), 
 					vmin=min(cloud_density_vals), vmax=max(cloud_density_vals),
